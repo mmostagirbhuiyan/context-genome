@@ -1,0 +1,82 @@
+{
+  "round": 16,
+  "title": "Selective Compression on Production Monorepo",
+  "date": "2026-02-26",
+  "hypothesis": "The selective compression prompt correctly classifies static vs mutable sections on a production monorepo with living CLAUDE.md files",
+  "methodology": {
+    "project": "anonymized enterprise SaaS monorepo",
+    "task": "Validate selective compression classification accuracy",
+    "task_type": "classification/compression",
+    "model": "claude-sonnet-4-6",
+    "genome_version": "0.3.0 (selective compression prompt)",
+    "input": {
+      "files": 9,
+      "total_size_kb": 92.4,
+      "file_types": [
+        "root CLAUDE.md (9.1KB)",
+        "README.md (55.4KB)",
+        "CONTRIBUTING.md (8.9KB)",
+        "package.json (1.5KB)",
+        "4 nested CLAUDE.md files (13.7KB)",
+        "1 external CLAUDE.md (3.9KB)"
+      ],
+      "project_characteristics": {
+        "monorepo": true,
+        "apps": 2,
+        "packages": 3,
+        "nested_claude_md_files": 5,
+        "slash_commands": 10,
+        "active_sessions_tracked": 156,
+        "has_session_state": true,
+        "has_task_tracking": true,
+        "has_deployment_notes": true
+      }
+    }
+  },
+  "quantitative_results": {
+    "output_genome_sections": 27,
+    "output_mutable_sections": 3,
+    "output_total_size_kb": 18.6,
+    "genome_token_estimate": 5644,
+    "static_compression_ratio": "~5x",
+    "classification_accuracy": "30/30 (100%)",
+    "misclassified_static_as_mutable": 0,
+    "misclassified_mutable_as_static": 0
+  },
+  "genome_sections_classified_static": [
+    "PRODUCT", "STACK", "DESIGN_SYSTEM", "ARCHITECTURE", "MONOREPO_LAYOUT",
+    "KEY_FILES", "SCHEMA_SPEC", "DATATABLE_TYPES", "ENTITY_FILTERS",
+    "DB_MODELS", "SUBMISSION_STATES", "API_ROUTES", "COMMANDS", "DEPLOY",
+    "UI_PATTERNS", "CHANGE_TRACES", "TESTING", "DEMO_ACCOUNTS", "ENV_VARS",
+    "FEATURE_FLAGS", "SLASH_COMMANDS", "PM_CONTEXT", "SECURITY",
+    "DEAD_APPROACHES", "CRITICAL_RULES", "DOCS_POLICY", "PERFORMANCE"
+  ],
+  "mutable_sections_preserved": [
+    {
+      "name": "Session State",
+      "content_type": "Session number, feature inventory, production URL, VM IP, sprint status",
+      "preserved_verbatim": true
+    },
+    {
+      "name": "Archived Sessions",
+      "content_type": "Session history table with file references",
+      "preserved_verbatim": true
+    },
+    {
+      "name": "Archived History",
+      "content_type": "Archive index pointers",
+      "preserved_verbatim": true
+    }
+  ],
+  "quality_checks": {
+    "dead_approaches": "7/7 captured with reasons",
+    "critical_rules": "14/14 captured",
+    "state_machine": "6 states + transitions captured",
+    "cross_cutting_traces": "present",
+    "demo_accounts": "preserved with credentials",
+    "session_number_preserved": true,
+    "vm_ip_preserved": true,
+    "feature_inventory_preserved": true
+  },
+  "conclusion": "Selective compression correctly classified all 30 sections on a production monorepo. The static/mutable distinction maps cleanly to content semantics — architecture is always static, session numbers are always mutable. No misclassification. The prompt's classification guidance is sufficient without complex heuristics."
+}

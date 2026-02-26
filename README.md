@@ -124,7 +124,7 @@ Just write it. Add new architecture decisions, rules, or stack changes anywhere 
 
 ## Experiments
 
-The format was validated across 15 rounds of controlled experiments on 3 model families (Claude, Codex, Gemini). Key results:
+The format was validated across 16 rounds of controlled experiments on 3 model families (Claude, Codex, Gemini). Key results:
 
 | Round | What was tested | Result |
 |-------|----------------|--------|
@@ -135,6 +135,7 @@ The format was validated across 15 rounds of controlled experiments on 3 model f
 | 13 | Auto-generated genomes vs hand-crafted | Auto-generated scores 88-93% (hand-crafted: 93%) |
 | 14 | A/B test: code implementation task (collar hedge) | +2 points, but 2.3x more tokens. Marginal for code tasks. |
 | 15 | A/B test: interpretation/audit task (leverage model) | Found real bug that no-genome missed. 22% fewer tokens, 55% faster. |
+| 16 | Selective compression on production monorepo (92KB, 9 files) | 100% classification accuracy (30/30 sections). ~5x compression on static content, mutable sections preserved verbatim. |
 
 Raw data and evaluations are in `experiments/`.
 
