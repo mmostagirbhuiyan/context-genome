@@ -1,6 +1,6 @@
 {
   "name": "context-genome",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "CLI tool that compresses project context files into structured genome format for LLM agents",
   "type": "module",
   "bin": {
