@@ -14,6 +14,8 @@ import {
   type Provider,
 } from "./generate.js";
 import { createMeta, writeMeta, readMeta } from "./meta.js";
+import { diffGenomes, formatDiff, summarizeDiff } from "./diff.js";
+import { mergeGenomes } from "./merge.js";
 
 const CLAUDE_MD = "CLAUDE.md";
 
@@ -35,6 +37,12 @@ async function main(): Promise<void> {
       break;
     case "status":
       await status(args.slice(1));
+      break;
+    case "diff":
+      await diff(args.slice(1));
+      break;
+    case "merge":
+      await merge(args.slice(1));
       break;
     default:
       console.error(`Unknown command: ${command}`);
@@ -133,9 +141,14 @@ async function update(args: string[]): Promise<void> {
   );
   const context = concatenateContext(files);
 
-  // TODO: diff against existing genome to show what changed.
-  // For now, regenerates from scratch. Future `genome diff` will
-  // compare section-by-section with per-section merge strategies.
+  // Read existing genome for diffing after regeneration
+  let oldGenome = "";
+  try {
+    oldGenome = await readFile(join(repoPath, output), "utf-8");
+  } catch {
+    // No existing file to diff against
+  }
+
   console.log(`\nRegenerating genome via ${resolvedProvider}...`);
   let genome = await generateGenome(context, resolvedProvider);
 
@@ -153,6 +166,12 @@ async function update(args: string[]): Promise<void> {
     genomeContent: genome,
   });
   genomeMeta.version = existingMeta.version + 1;
+
+  // Show section-level diff against previous genome
+  if (oldGenome) {
+    const diffs = diffGenomes(oldGenome, genome);
+    console.log(`\n${summarizeDiff(diffs)}`);
+  }
 
   if (dryRun) {
     console.log(
@@ -210,6 +229,79 @@ async function status(args: string[]): Promise<void> {
   console.log(
     `  Checksum:  ${meta.checksum}${modified ? " (MODIFIED)" : ""}`,
   );
+}
+
+async function diff(args: string[]): Promise<void> {
+  // Mode 1: genome diff <file1> <file2> — compare two files directly
+  const nonFlagArgs = args.filter((a) => !a.startsWith("-"));
+  if (nonFlagArgs.length === 2) {
+    const [file1, file2] = nonFlagArgs.map((f) => resolve(f));
+    const old = await readFile(file1, "utf-8");
+    const cur = await readFile(file2, "utf-8");
+    const diffs = diffGenomes(old, cur);
+    console.log(formatDiff(diffs));
+    return;
+  }
+
+  // Mode 2: genome diff [path] — regenerate and compare against current CLAUDE.md
+  const { repoPath, provider, output } = parseArgs(args);
+
+  const outputPath = join(repoPath, output);
+  let oldGenome: string;
+  try {
+    oldGenome = await readFile(outputPath, "utf-8");
+  } catch {
+    console.error(`No genome found at ${output}. Run 'genome init' first.`);
+    process.exit(1);
+  }
+
+  const files = await discoverContextFiles(repoPath);
+  if (files.length === 0) {
+    console.error("No context files found.");
+    process.exit(1);
+  }
+
+  const resolvedProvider = await resolveProvider(provider);
+  const context = concatenateContext(files);
+
+  console.log(`Generating fresh genome via ${resolvedProvider} for comparison...\n`);
+  const newGenome = await generateGenome(context, resolvedProvider);
+
+  const diffs = diffGenomes(oldGenome, newGenome);
+  console.log(formatDiff(diffs));
+}
+
+async function merge(args: string[]): Promise<void> {
+  let outputFile: string | null = null;
+  const files: string[] = [];
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--output" || arg === "-o") {
+      outputFile = args[++i];
+    } else if (!arg.startsWith("-")) {
+      files.push(arg);
+    }
+  }
+
+  if (files.length < 2) {
+    console.error("Usage: genome merge <file1> <file2> [...files] [-o output]");
+    process.exit(1);
+  }
+
+  const genomes: string[] = [];
+  for (const file of files) {
+    genomes.push(await readFile(resolve(file), "utf-8"));
+  }
+
+  const merged = mergeGenomes(genomes);
+
+  if (outputFile) {
+    await writeFile(resolve(outputFile), merged + "\n");
+    console.log(`Wrote merged genome to ${outputFile}`);
+  } else {
+    console.log(merged);
+  }
 }
 
 function parseArgs(args: string[]): {
@@ -270,9 +362,12 @@ function printUsage(): void {
   console.log(`context-genome - Compress project context for LLM agents
 
 Usage:
-  genome init [path] [options]     Generate genome from project context files
-  genome update [path] [options]   Regenerate genome from updated context
-  genome status [path]             Show genome metadata and status
+  genome init [path] [options]           Generate genome from project context files
+  genome update [path] [options]         Regenerate genome from updated context
+  genome status [path]                   Show genome metadata and status
+  genome diff [path] [options]           Regenerate and diff against current genome
+  genome diff <file1> <file2>            Compare two genome files directly
+  genome merge <f1> <f2> [...] [-o out]  Merge multiple genome files
 
 Options:
   -p, --provider <name>   LLM to use: claude, codex, gemini (auto-detected)
@@ -288,7 +383,11 @@ Examples:
   genome init -p gemini            # Use Gemini CLI
   genome init --dry-run            # Preview without writing
   genome update                    # Regenerate from updated sources
-  genome status                    # Check genome version and metadata`);
+  genome status                    # Check genome version and metadata
+  genome diff                      # Show what changed since last generation
+  genome diff a.md b.md            # Compare two genome files
+  genome merge apps/*/CLAUDE.md    # Merge monorepo genomes
+  genome merge a.md b.md -o out.md # Merge and write to file`);
 }
 
 main().catch((err) => {

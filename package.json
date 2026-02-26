@@ -20,6 +20,14 @@
   ],
   "author": "Mo Mostagir Bhuiyan",
   "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmostagirbhuiyan/context-genome.git"
+  },
   "engines": {
     "node": ">=20"
   },
