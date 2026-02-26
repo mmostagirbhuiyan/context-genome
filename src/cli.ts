@@ -13,7 +13,7 @@ import {
   detectProvider,
   type Provider,
 } from "./generate.js";
-import { createMeta, writeMeta, readMeta } from "./meta.js";
+import { createMeta, writeMeta, readMeta, checksumFiles } from "./meta.js";
 import { diffGenomes, formatDiff, summarizeDiff } from "./diff.js";
 import { mergeGenomes } from "./merge.js";
 import { splitHybrid, joinHybrid } from "./parse.js";
@@ -106,6 +106,7 @@ async function init(args: string[]): Promise<void> {
     provider: resolvedProvider,
     edited,
     sourceFiles: files.map((f) => f.relativePath),
+    sourceChecksums: checksumFiles(files),
     genomeContent: genome,
     outputFiles: outputs,
   });
@@ -193,6 +194,7 @@ async function update(args: string[]): Promise<void> {
     provider: resolvedProvider,
     edited,
     sourceFiles: files.map((f) => f.relativePath),
+    sourceChecksums: checksumFiles(files),
     genomeContent: finalOutput,
     outputFiles: outputs,
   });
@@ -256,6 +258,28 @@ async function status(args: string[]): Promise<void> {
     }
   }
 
+  // Check source file staleness
+  const staleFiles: string[] = [];
+  const newFiles: string[] = [];
+  if (meta.sourceChecksums) {
+    const currentFiles = await discoverContextFiles(repoPath);
+    for (const file of currentFiles) {
+      const oldChecksum = meta.sourceChecksums[file.relativePath];
+      if (!oldChecksum) {
+        newFiles.push(file.relativePath);
+      } else {
+        const { createHash: hashFn } = await import("node:crypto");
+        const currentChecksum = hashFn("sha256")
+          .update(file.content)
+          .digest("hex")
+          .slice(0, 16);
+        if (currentChecksum !== oldChecksum) {
+          staleFiles.push(file.relativePath);
+        }
+      }
+    }
+  }
+
   console.log(`Genome v${meta.version}`);
   console.log(`  Generated: ${meta.generatedAt}`);
   console.log(
@@ -265,6 +289,17 @@ async function status(args: string[]): Promise<void> {
   console.log(`  Sources:   ${meta.sourceFiles.join(", ")}`);
   console.log(`  Outputs:   ${fileStatuses.join(", ")}`);
   console.log(`  Checksum:  ${meta.checksum}`);
+
+  if (staleFiles.length > 0 || newFiles.length > 0) {
+    console.log(`\n  STALE — source files changed since last generation:`);
+    for (const f of staleFiles) {
+      console.log(`    ~ ${f} (modified)`);
+    }
+    for (const f of newFiles) {
+      console.log(`    + ${f} (new)`);
+    }
+    console.log(`\n  Run 'genome update' to regenerate.`);
+  }
 }
 
 async function diff(args: string[]): Promise<void> {

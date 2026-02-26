@@ -9,6 +9,7 @@ export interface GenomeMeta {
   edited: boolean;
   checksum: string;
   sourceFiles: string[];
+  sourceChecksums: Record<string, string>;
   outputFiles: string[];
   tokenEstimate: number;
 }
@@ -19,6 +20,7 @@ export function createMeta(opts: {
   provider: string;
   edited: boolean;
   sourceFiles: string[];
+  sourceChecksums: Record<string, string>;
   genomeContent: string;
   outputFiles: string[];
 }): GenomeMeta {
@@ -29,9 +31,23 @@ export function createMeta(opts: {
     edited: opts.edited,
     checksum: checksum(opts.genomeContent + "\n"),
     sourceFiles: opts.sourceFiles,
+    sourceChecksums: opts.sourceChecksums,
     outputFiles: opts.outputFiles,
     tokenEstimate: estimateTokens(opts.genomeContent),
   };
+}
+
+/**
+ * Checksum a set of discovered files for staleness detection.
+ */
+export function checksumFiles(
+  files: { relativePath: string; content: string }[],
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const f of files) {
+    result[f.relativePath] = checksum(f.content);
+  }
+  return result;
 }
 
 export async function writeMeta(
