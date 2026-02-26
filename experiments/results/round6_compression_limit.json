@@ -1,0 +1,1419 @@
+{
+  "experiment": "Round 6: Compression Limit Study - Cross Model",
+  "variants": {
+    "full_doc": {
+      "tokens": 1339,
+      "compression": "1.0x"
+    },
+    "genome_a": {
+      "tokens": 846,
+      "compression": "1.6x"
+    },
+    "genome_b": {
+      "tokens": 558,
+      "compression": "2.4x"
+    },
+    "genome_c": {
+      "tokens": 267,
+      "compression": "5.0x"
+    }
+  },
+  "summary_by_model": {
+    "claude": {
+      "full_doc": "53/60",
+      "genome_a": "57/60",
+      "genome_b": "48/60",
+      "genome_c": "20/60"
+    },
+    "codex": {
+      "full_doc": "54/60",
+      "genome_a": "56/60",
+      "genome_b": "60/60",
+      "genome_c": "53/60"
+    },
+    "gemini": {
+      "full_doc": "48/60",
+      "genome_a": "55/60",
+      "genome_b": "48/60",
+      "genome_c": "21/60"
+    }
+  },
+  "by_category_claude": {
+    "direct_recall_q1_q5": {
+      "full_doc": "10/10",
+      "genome_a": "10/10",
+      "genome_b": "10/10",
+      "genome_c": "1/10"
+    },
+    "decision_rationale_q6_q9": {
+      "full_doc": "7/8",
+      "genome_a": "8/8",
+      "genome_b": "6/8",
+      "genome_c": "6/8"
+    },
+    "cross_service_q10_q14": {
+      "full_doc": "8/10",
+      "genome_a": "10/10",
+      "genome_b": "8/10",
+      "genome_c": "4/10"
+    },
+    "constraints_q15_q19": {
+      "full_doc": "7/10",
+      "genome_a": "8/10",
+      "genome_b": "8/10",
+      "genome_c": "3/10"
+    },
+    "recent_changes_q20_q24": {
+      "full_doc": "10/10",
+      "genome_a": "10/10",
+      "genome_b": "8/10",
+      "genome_c": "1/10"
+    },
+    "synthesis_q25_q30": {
+      "full_doc": "11/12",
+      "genome_a": "11/12",
+      "genome_b": "8/12",
+      "genome_c": "5/12"
+    }
+  },
+  "by_category_codex": {
+    "direct_recall_q1_q5": {
+      "full_doc": "10/10",
+      "genome_a": "10/10",
+      "genome_b": "10/10",
+      "genome_c": "10/10"
+    },
+    "decision_rationale_q6_q9": {
+      "full_doc": "7/8",
+      "genome_a": "8/8",
+      "genome_b": "8/8",
+      "genome_c": "6/8"
+    },
+    "cross_service_q10_q14": {
+      "full_doc": "9/10",
+      "genome_a": "10/10",
+      "genome_b": "10/10",
+      "genome_c": "10/10"
+    },
+    "constraints_q15_q19": {
+      "full_doc": "9/10",
+      "genome_a": "9/10",
+      "genome_b": "10/10",
+      "genome_c": "9/10"
+    },
+    "recent_changes_q20_q24": {
+      "full_doc": "10/10",
+      "genome_a": "9/10",
+      "genome_b": "10/10",
+      "genome_c": "8/10"
+    },
+    "synthesis_q25_q30": {
+      "full_doc": "9/12",
+      "genome_a": "10/12",
+      "genome_b": "12/12",
+      "genome_c": "10/12"
+    }
+  },
+  "by_category_gemini": {
+    "direct_recall_q1_q5": {
+      "full_doc": "10/10",
+      "genome_a": "10/10",
+      "genome_b": "10/10",
+      "genome_c": "1/10"
+    },
+    "decision_rationale_q6_q9": {
+      "full_doc": "7/8",
+      "genome_a": "7/8",
+      "genome_b": "7/8",
+      "genome_c": "6/8"
+    },
+    "cross_service_q10_q14": {
+      "full_doc": "7/10",
+      "genome_a": "10/10",
+      "genome_b": "9/10",
+      "genome_c": "4/10"
+    },
+    "constraints_q15_q19": {
+      "full_doc": "7/10",
+      "genome_a": "9/10",
+      "genome_b": "8/10",
+      "genome_c": "3/10"
+    },
+    "recent_changes_q20_q24": {
+      "full_doc": "10/10",
+      "genome_a": "9/10",
+      "genome_b": "8/10",
+      "genome_c": "2/10"
+    },
+    "synthesis_q25_q30": {
+      "full_doc": "7/12",
+      "genome_a": "10/12",
+      "genome_b": "6/12",
+      "genome_c": "5/12"
+    }
+  },
+  "compression_curve": {
+    "claude": {
+      "1.0x": "53/60",
+      "1.6x": "57/60",
+      "2.4x": "48/60",
+      "5.0x": "20/60"
+    },
+    "codex": {
+      "1.0x": "54/60",
+      "1.6x": "56/60",
+      "2.4x": "60/60",
+      "5.0x": "53/60"
+    },
+    "gemini": {
+      "1.0x": "48/60",
+      "1.6x": "55/60",
+      "2.4x": "48/60",
+      "5.0x": "21/60"
+    }
+  },
+  "genome_c_compression_losses": [
+    {
+      "q": "Q1",
+      "info_lost": "Argon2id parameters (64MB/3/4) stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q2",
+      "info_lost": "Refresh token expiry (7d) and rotation policy stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q3",
+      "info_lost": "Port number 9200 stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q4",
+      "info_lost": "PostgreSQL version numbers (15.4/14.9) stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q5",
+      "info_lost": "API Gateway throttle values (5000/2000) stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q13",
+      "info_lost": "UTC+13/+14 timezone bug fix detail stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q15",
+      "info_lost": "Connection pool size (20) and instance count stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q18",
+      "info_lost": "Stateless auth doctrine detail stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q19",
+      "info_lost": "RPO/RTO values and cross-region detail stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q20",
+      "info_lost": "SSL connection string parameters stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q21",
+      "info_lost": "tax_lots table columns stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q23",
+      "info_lost": "Recovery code count (10) and single-use policy stripped",
+      "all_models_affected": true
+    },
+    {
+      "q": "Q24",
+      "info_lost": "Webhook retry policy details stripped",
+      "all_models_affected": true
+    }
+  ],
+  "claude_details": [
+    {
+      "q": 1,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Argon2id. Memory: 64MB, iterations: 3, parallelism: 4",
+      "full_answer": "Argon2id is used for password hashing. Parameters: Memory cost 64MB, iterations 3, parallelism 4. Chosen over bcrypt for resistance to side-channel attacks.",
+      "genome_a_answer": "Argon2id with parameters: 64MB memory, 3 iterations, 4 parallelism factor.",
+      "genome_b_answer": "Argon2id with parameters: 64MB memory cost, 3 iterations, 4 parallelism factor.",
+      "genome_c_answer": "Argon2id is the password hashing algorithm used in production. Parameters include side-channel resistance hardening as mentioned in the security justifications, but specific values for time cost, memory cost, and parallelism are NOT IN CONTEXT."
+    },
+    {
+      "q": 2,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "7 days, rotates on every use",
+      "full_answer": "Refresh tokens expire in 7 days and rotate on every use. This prevents token reuse attacks while maintaining reasonable session duration for users.",
+      "genome_a_answer": "Refresh token expiration period is 7 days with rotation-on-use policy (new token issued with each use).",
+      "genome_b_answer": "Refresh token expiration is 7 days with rotation policy (rotate on use).",
+      "genome_c_answer": "NOT IN CONTEXT. The seed mentions RS256-tokens and JWT implementation but does not specify refresh token expiration period or rotation policy."
+    },
+    {
+      "q": 3,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "9200",
+      "full_answer": "The Notification Service runs on port 9200.",
+      "genome_a_answer": "The Notification Service runs on port 9200.",
+      "genome_b_answer": "The Notification Service runs on port 9200.",
+      "genome_c_answer": "NOT IN CONTEXT. The Notification Service runs on Go/Chi with SES+SNS+FCM integration, but the specific port number is not provided in the seed."
+    },
+    {
+      "q": 4,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "PostgreSQL 15.4 (upgraded from 14.9)",
+      "full_answer": "PostgreSQL 15.4 is currently running. It was upgraded from version 14.9.",
+      "genome_a_answer": "Currently running PostgreSQL 15.4, upgraded from version 14.9.",
+      "genome_b_answer": "RDS PostgreSQL 15.4 is currently running, upgraded from PostgreSQL 14.9.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed indicates RDS-upgrade occurred (listed under 'added'), but the current version and previous version are not specified in the context."
+    },
+    {
+      "q": 5,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "5000 req/s burst, 2000 req/s steady state",
+      "full_answer": "API Gateway throttle limits are 5000 req/s burst and 2000 req/s steady state.",
+      "genome_a_answer": "API Gateway throttle limits are 5000 burst and 2000 steady-state requests per second.",
+      "genome_b_answer": "API Gateway throttle limits: 5000 burst per second, 2000 steady-state requests per second.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed mentions ALB-rate (pre-container) for rate limiting, but specific throttle limit values are not provided."
+    },
+    {
+      "q": 6,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Resistance to side-channel attacks",
+      "full_answer": "Argon2id was chosen over bcrypt for its superior resistance to side-channel attacks, making it a more secure choice for protecting sensitive password credentials.",
+      "genome_a_answer": "Argon2id was chosen over bcrypt because it provides side-channel resistance, which bcrypt cannot offer.",
+      "genome_b_answer": "Argon2id was chosen over bcrypt because it is resistant to side-channel attacks, providing stronger security guarantees in multi-tenant environments.",
+      "genome_c_answer": "Argon2id was chosen over bcrypt because it provides stronger side-channel resistance. The seed explicitly lists 'Argon2id(side-channel)' as a key reason for the architecture decisions."
+    },
+    {
+      "q": 7,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Zero runtime dependencies, SQL-like TypeScript output",
+      "full_answer": "Drizzle is used instead of Prisma because it has no runtime dependencies and produces SQL-like TypeScript, providing more explicit control and better performance for the Auth Service requirements.",
+      "genome_a_answer": "Drizzle was chosen instead of Prisma because it has zero runtime dependencies and provides SQL-like TypeScript syntax.",
+      "genome_b_answer": "Drizzle is used instead of Prisma because it has zero external dependencies, reducing attack surface and improving supply chain security.",
+      "genome_c_answer": "Drizzle is used instead of Prisma because it has zero external dependencies ('Drizzle(zero-deps)'), making it more suitable for the microservices architecture where dependency minimization is critical."
+    },
+    {
+      "q": 8,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Via RS256 JWKS endpoint. Portfolio, Notification, and API Gateway Lambda all validate.",
+      "full_answer": "Both Portfolio and Notification services verify auth tokens by making requests to the Auth Service's JWKS endpoint (/.well-known/jwks.json) to obtain public keys for RS256 JWT validation.",
+      "genome_a_answer": "Both Portfolio and Notification services verify auth tokens via the API Gateway Lambda authorizer, which validates JWT tokens against the JWKS endpoint and injects claims into requests.",
+      "genome_b_answer": "Both Portfolio and Notification services verify auth tokens using Lambda-JWKS endpoint to validate RS256-signed JWTs.",
+      "genome_c_answer": "Both Portfolio and Notification services verify auth tokens by calling the shared Lambda-JWKS endpoint through the API Gateway. The flow is: auth service signs with RS256, other services fetch public keys from Lambda-JWKS for validation via the gateway."
+    },
+    {
+      "q": 9,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "DDoS protection before requests reach containers",
+      "full_answer": "Rate limiting is done at the ALB level rather than in application code to protect against DDoS attacks before requests consume container resources. Current limit: 1000 req/min per IP.",
+      "genome_a_answer": "Rate limiting is done at the ALB (Application Load Balancer) instead of application code because it stops DDoS attacks before reaching containers, providing a network-level defense.",
+      "genome_b_answer": "Rate limiting at ALB level (1000 req/min per IP) provides DDoS protection before traffic reaches application containers, reducing resource consumption and container scaling needs.",
+      "genome_c_answer": "Rate limiting is done at the ALB (Application Load Balancer) pre-container instead of in application code because it provides a defense layer before requests reach individual services, reducing load and preventing application-level DoS attacks."
+    },
+    {
+      "q": 10,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "JWT hits API Gateway. Lambda authorizer validates via JWKS, injects claims. Portfolio checks role.",
+      "full_answer": "The chain involves: Portfolio Service receives request -> validates JWT via JWKS endpoint -> uses role claims in JWT to determine authorization -> executes rebalance if role permits. The Auth Service issued the JWT with role hierarchy claims.",
+      "genome_a_answer": "The chain involves: user request \u2192 API Gateway HTTP-API \u2192 Lambda authorizer (validates JWT via JWKS, injects role claims) \u2192 VPCLink \u2192 ALB (rate limiting 1000/min/IP) \u2192 Portfolio Service (RBAC middleware checks role hierarchy).",
+      "genome_b_answer": "Request > Gateway HTTP-API > Lambda-JWKS-claims validation > VPCLink > ALB (rate limit check) > handlePostLogin > Auth Service (RBAC role-hierarchy validation) > Portfolio Service.",
+      "genome_c_answer": "When Portfolio Service validates a user's role before rebalance: Client request hits ALB with rate limiting > Lambda-JWKS verifies token signature > Portfolio Service receives validated JWT > RBAC-middleware checks role permissions from token claims > approval/denial returned."
+    },
+    {
+      "q": 11,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Portfolio, Notification, API Gateway Lambda fail to validate. Auth continues issuing (private key local). LRU cache (1000/5min) grace period.",
+      "full_answer": "If the JWKS endpoint goes down, Portfolio and Notification services cannot validate new tokens. However, tokens with cached JWKS keys (cached with 5-minute TTL, max 1000 entries) can still be validated during the grace period. After TTL expiration, new token validations fail.",
+      "genome_a_answer": "If JWKS endpoint goes down, all downstream services (Portfolio, Notification) cannot validate new tokens and auth fails. Auth Service continues to issue tokens using its local private key. There is a 5-minute TTL grace period in the LRU cache (1000 entries) for cached JWKS.",
+      "genome_b_answer": "If JWKS endpoint fails, all services cannot validate new tokens. Auth Service has an LRU cache (1000 keys, 5 min TTL) as grace period. If issue continues, private key stored locally is used. All services fail-down together.",
+      "genome_c_answer": "If JWKS endpoint goes down, all three services (auth, portfolio, notify) are affected because they depend on JWKS for token validation. There is a grace period via LRU-cache-grace, meaning cached keys allow continued operation until cache expires, but on cache miss requests fail."
+    },
+    {
+      "q": 12,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "WebSocket planned Q3. Requires BOTH Notification Service AND API Gateway WebSocket API.",
+      "full_answer": "Real-time portfolio alerting depends on WebSocket API functionality. Current status: planned for Q3 roadmap. It depends on implementation in the Notification Service and AWS API Gateway WebSocket API support.",
+      "genome_a_answer": "Real-time portfolio alerting depends on both the Notification Service and gateway WebSocket API. Status: planned for Q3 (not yet implemented).",
+      "genome_b_answer": "Real-time portfolio alerting depends on WebSocket support, which is planned for Q3. Current status: NOT IN CONTEXT (system under investigation).",
+      "genome_c_answer": "Real-time portfolio alerting (WebSocket) is listed as a 'next' feature (Q3 roadmap item), currently NOT IN CONTEXT as to dependencies or status."
+    },
+    {
+      "q": 13,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "Yes. UTC+13/+14 timezone bug. Fixed with Unix timestamps instead of Date objects.",
+      "full_answer": "Yes, the UTC+14 token expiry bug has been fixed. The fix involved changing all expiry calculations to use Unix timestamps instead of Date objects, eliminating timezone-related premature expiry issues.",
+      "genome_a_answer": "Yes, the UTC+14 token expiry bug has been fixed by using Unix timestamps instead of Date objects, ensuring consistent timezone handling across all regions.",
+      "genome_b_answer": "Yes, UTC+14 token expiry bug has been fixed by enforcing UTC timezone for all token timestamp operations (unix-ts format) across the system.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed does not mention a UTC+14 token expiry bug or whether it has been fixed."
+    },
+    {
+      "q": 14,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Notification Service has webhooks. Register endpoint, route Auth events through webhook channel.",
+      "full_answer": "Implement webhook notifications by registering a webhook endpoint via the Notification Service's POST /api/v1/notifications/webhooks/register endpoint. Configure retry policy: exponential backoff with 5 attempts over 24 hours. Auth events would trigger webhook deliveries to registered enterprise endpoints.",
+      "genome_a_answer": "Implement webhook notifications for auth events by using the /api/v1/notifications/webhooks/register endpoint, storing webhook URLs per tenant, triggering POST requests on auth events (login/logout/MFA), and implementing exponential backoff retry policy with 5 attempts over 24 hours.",
+      "genome_b_answer": "Implement webhook endpoint using: Notification Service (Go/Chi:9200) with exponential backoff retry (5 attempts over 24 hours), MJML templating for auth event emails, SES/SNS for delivery, and webhook table with exp-backoff tracking.",
+      "genome_c_answer": "Webhook notifications for auth events would be implemented using the existing webhook infrastructure mentioned in the seed. Implementation would involve: auth service emitting auth events > webhook service queuing via Celery > HTTP POST delivery with retry policy (specific retry details NOT IN CONTEXT)."
+    },
+    {
+      "q": 15,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "20 x 5 = 100 connections",
+      "full_answer": "Maximum simultaneous database connections across 5 Auth Service instances: 5 instances \u00d7 20 connections per instance = 100 total connections.",
+      "genome_a_answer": "Maximum simultaneous database connections across 5 Auth Service instances: 5 instances \u00d7 20 connections/instance = 100 total connections.",
+      "genome_b_answer": "With connection pool size of 20 per instance \u00d7 5 Auth Service instances = 100 maximum simultaneous database connections.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed does not specify maximum database connections per Auth Service instance or total across 5 instances."
+    },
+    {
+      "q": 16,
+      "full_score": 0,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Tax lots exhaust memory. 20-connection limit constrains concurrent recalculations.",
+      "full_answer": "The Celery memory issue is separate from connection pool management. During large portfolio recalculations, Celery worker memory grows unbounded. The connection pool (20 per instance) manages database access but doesn't directly cause the memory leak; the issue lies in task memory management during recalculation processing.",
+      "genome_a_answer": "The connection pool (20/instance) is separate from the Celery memory issue. During large tax-lot processing in Portfolio Service (running on Fargate Spot with Celery/Redis), unbounded Celery memory is the issue being investigated, independent of the database connection pool constraints.",
+      "genome_b_answer": "During tax-lot processing, Celery/Redis has unbounded memory usage issue (currently under investigation). Connection pool (20 connections) handles DB access, but Celery memory leak can cause pod eviction and loss of in-flight jobs.",
+      "genome_c_answer": "The connection pool interacts with the Celery memory issue during tax-lot processing by potentially exhausting available connections when Celery workers attempt database access. The Celery-mem bug is noted as a current issue. Pool configuration details and resolution are NOT IN CONTEXT."
+    },
+    {
+      "q": 17,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "No. Zero-downtime requirement. Spot can be interrupted. Spot only for batch.",
+      "full_answer": "No, Fargate Spot cannot be used for Auth Service. It is not an always-on service, but the system requirement for zero-downtime deployments and consistent availability conflicts with Spot's interruption risk. Spot is reserved only for non-critical batch workloads like portfolio recalculation and notification digest.",
+      "genome_a_answer": "No, Fargate Spot cannot be used for Auth Service because Spot instances carry interrupt risk. Fargate Spot is only for batch workloads (portfolio-recalc, digest) that can tolerate interruption, not always-on services.",
+      "genome_b_answer": "No, Fargate Spot cannot be used for Auth Service. Rule R4 specifies Spot-ONLY-batch: Spot instances are only for batch jobs. Auth Service requires guaranteed availability with min 2 instances across 3 AZs.",
+      "genome_c_answer": "Fargate Spot cannot be used for Auth Service because it handles authentication and token signing (RS256-JWKS). Spot instances can be interrupted, causing service unavailability. The seed specifies 'Spot-batch-only', restricting Spot to batch workloads only."
+    },
+    {
+      "q": 18,
+      "full_score": 2,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "Stateless auth doctrine. No sessions, no server-side state. JWT carries all claims.",
+      "full_answer": "Stateless auth architecture prohibits adding an in-memory session cache. The system must support stateless horizontal scaling; JWT carries all claims including role hierarchy, and sessions would create state coupling that breaks the scaling model.",
+      "genome_a_answer": "Multi-service architecture. Auth Service cannot add an in-memory session cache because other services (Portfolio, Notification) need to validate tokens via JWKS without local state. Shared session state would violate the distributed architecture and create tight coupling.",
+      "genome_b_answer": "Rule R3 prohibits adding in-memory session cache: all services require statelessness to enable horizontal scaling. JWKS-LRU cache is exception for cryptographic key lookup, not session data.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed does not identify a specific doctrine or principle that prohibits in-memory session caching for the Auth Service. This may relate to statelessness requirements or security isolation principles, but details are not provided."
+    },
+    {
+      "q": 19,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "RPO 1h, RTO 4h, 30-day retention exceeds RPO. Cross-region to us-west-2.",
+      "full_answer": "The 30-day backup retention supports the RPO of 1 hour and RTO of 4 hours by providing sufficient recovery data. If data corruption or loss occurs, backups within the 30-day window enable recovery within the 4-hour RTO target.",
+      "genome_a_answer": "30-day backup retention ensures RPO (Recovery Point Objective) of 1 hour and RTO (Recovery Time Objective) of 4 hours. Backups enable recovery to any point within 30 days; the hourly backup cadence meets RPO requirements. Replicas in us-west-2 support RTO targets.",
+      "genome_b_answer": "30-day backup retention exceeds RPO (1 hour) and RTO (4 hours) targets. 1-hour RPO ensures data loss < 1 hour; 4-hour RTO enables recovery in us-west2 failover within 4 hours.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed does not mention 30-day backup retention or RPO/RTO targets explicitly. Backup and recovery policies are not detailed in the compressed seed."
+    },
+    {
+      "q": 20,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "?sslmode=verify-full&sslrootcert=global-bundle.pem",
+      "full_answer": "The connection string now requires: ?sslmode=verify-full&sslrootcert=global-bundle.pem",
+      "genome_a_answer": "The RDS upgrade from 14.9 to 15.4 required changing the connection string to sslmode=verify-full and including the global-bundle.pem certificate for SSL/TLS verification.",
+      "genome_b_answer": "Connection string changed to require sslmode=verify-full with global-bundle certificate validation (RDS 15.4 upgrade from 14.9).",
+      "genome_c_answer": "NOT IN CONTEXT. The seed indicates an RDS-upgrade occurred but does not specify what connection string changes were required (e.g., SSL mode, host, or parameter group changes)."
+    },
+    {
+      "q": 21,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at",
+      "full_answer": "The tax_lots table columns are: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at.",
+      "genome_a_answer": "The tax_lots table columns are: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at.",
+      "genome_b_answer": "tax_lots table columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed mentions tax_lots as a newly added feature but does not list the columns in the tax_lots table schema."
+    },
+    {
+      "q": 22,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "MFA verification after credential validation when enabled.",
+      "full_answer": "MFA affects the login flow by adding an MFA setup phase: POST /api/v1/auth/mfa/setup returns QR code URI. MFA is required on login when enabled for the user. 10 single-use recovery codes are generated during setup for account recovery.",
+      "genome_a_answer": "MFA affects the login flow by requiring an additional verification step after password validation. If MFA is enabled, the user receives a TOTP challenge; they must provide the correct code before issuing the access token.",
+      "genome_b_answer": "MFA affects login flow by adding TOTP verification step: handlePostLogin > Argon2id password verify > MFA-TOTP prompt > user enters code from 10-code single-use backup > RS256 access token (15m) + refresh token (7d).",
+      "genome_c_answer": "MFA affects the login flow by adding an additional step: standard credential validation (Argon2id hash verification) > MFA-TOTP verification > RS256-token generation. MFA is listed as a recently added feature in the current state."
+    },
+    {
+      "q": 23,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "10 single-use codes. Permanently consumed.",
+      "full_answer": "10 single-use recovery codes are generated at MFA setup. When a code is used, it is permanently consumed and cannot be reused, providing one-time backup access if the authenticator device is lost.",
+      "genome_a_answer": "10 recovery codes are generated during MFA setup. Each code is single-use and permanently consumed upon use; codes cannot be reused.",
+      "genome_b_answer": "10 single-use recovery codes are generated during MFA setup. When a code is used, it becomes invalid. If all codes depleted, user must re-enable MFA with new QR code.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed confirms MFA has been added but does not specify how many recovery codes are generated or what happens when they are used."
+    },
+    {
+      "q": 24,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "Exponential backoff, 5 attempts, 24 hours",
+      "full_answer": "Webhook retry policy: exponential backoff with maximum 5 attempts over a 24-hour window.",
+      "genome_a_answer": "Webhook retry policy uses exponential backoff with 5 attempts over 24 hours.",
+      "genome_b_answer": "Webhook retry policy: exponential backoff with 5 attempts over 24 hours. Soft limit: 10 notifications/hour per webhook.",
+      "genome_c_answer": "NOT IN CONTEXT. The seed mentions webhooks have been added as a feature but does not provide the specific retry policy details (retry count, backoff strategy, etc.)."
+    },
+    {
+      "q": 25,
+      "full_score": 2,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "At rest: AES-256-GCM per-tenant, Argon2id(64M/3/4). Transit: mTLS Envoy, sslmode=verify-full. Secrets: 90-day.",
+      "full_answer": "Security posture for credential data: At rest: all PII fields encrypted using AES-256-GCM with per-tenant keys. Passwords hashed with Argon2id (64MB, 3 iterations, parallelism 4). In transit: mTLS between services via AWS App Mesh/Envoy sidecars. JWT tokens use RS256 signing with public key distribution via JWKS. Secrets Manager rotates all secrets every 90 days. Access tokens expire in 15 minutes; refresh tokens rotate on every use with 7-day expiration.",
+      "genome_a_answer": "Security posture for credential data: At rest: AES-256-GCM encryption with per-tenant keys. Passwords: Argon2id(64MB/3iter/4par). In transit: mTLS enforced via Envoy (AppMesh), database connections use sslmode=verify-full with global-bundle.pem, JWT RS256 used for token verification (no shared secrets between services).",
+      "genome_b_answer": "Security posture: At rest\u2014PII encrypted with AES256-GCM per tenant. Passwords hashed with Argon2id (64M/3/4). In transit\u2014mTLS via Envoy between services, sslmode=verify-full to RDS with global SSL bundle, RS256-JWKS for API auth. Key rotation every 90 days. Secrets stored externally (NOT IN CONTEXT: specific secret manager).",
+      "genome_c_answer": "Credential security posture: At rest - AES256-GCM encryption per tenant ('AES256GCM-tenant'), Argon2id hashing for passwords in production. In transit - mTLS between services ('Envoy-mTLS'), sslmode-verify-full for database connections, RS256-JWT tokens signed by Lambda-JWKS and validated by all consumers."
+    },
+    {
+      "q": 26,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "API Gateway schema > Lambda JWKS > VPC Link > ALB(1000/min/IP) > handlePostLogin > Argon2id > MFA/TOTP > RS256 tokens issued.",
+      "full_answer": "Full login lifecycle with MFA: 1) Client sends credentials to POST /api/v1/auth/login. 2) Auth Service validates password (Argon2id comparison). 3) If MFA enabled, returns 403 with MFA challenge. 4) Client obtains TOTP from authenticator. 5) Client sends TOTP to POST /api/v1/auth/mfa/verify. 6) Auth Service validates TOTP. 7) Auth Service generates JWT (RS256 signed) with role claims and issues access + refresh tokens. 8) Tokens returned to client. 9) Refresh tokens stored in secure HTTP-only cookie. 10) Role claims in JWT enable RBAC at service level via JWKS validation.",
+      "genome_a_answer": "Full login lifecycle with MFA: 1) User submits credentials to /api/v1/auth/login. 2) Gateway validates request schema. 3) Lambda authorizer validates JWT (N/A for login). 4) Auth Service receives request, validates via ALB rate limiting (1000/min/IP). 5) Service queries PostgreSQL, verifies password with Argon2id. 6) If MFA enabled, generate TOTP challenge and return QR URI. 7) User scans QR, submits TOTP code. 8) Server verifies TOTP against stored secret. 9) Issue RS256 access token (15min) and refresh token (7day rotate-on-use). 10) Return tokens to client.",
+      "genome_b_answer": "Full login lifecycle: Request > API Gateway (rate limit 1000/min/IP) > ALB > Lambda-JWKS-claims (validates auth context) > handlePostLogin route > Argon2id password verification > MFA-TOTP prompt > 10 recovery codes validated (single-use) > RS256 access token issued (15m expiry) > RS256 refresh token issued (7d expiry, rotate on use) > Response with tokens via mTLS > Client stores in secure storage.",
+      "genome_c_answer": "Complete login with MFA: Client submits credentials > ALB rate limiting check > Fastify auth service receives request > Argon2id verifies password against PostgreSQL stored hash > MFA-TOTP prompt issued > User provides TOTP > Validation succeeds > RS256-JWT token signed > Token returned to client."
+    },
+    {
+      "q": 27,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "JWKS auth, RFC7807 errors, ECS Fargate blue-green, real PG tests, GitHub Actions + Claude Code review, min 2 tasks/3 AZs, App Mesh mTLS.",
+      "full_answer": "A new Billing Service in Rust should follow established patterns: 1) Use RS256 JWT validation via JWKS endpoint for auth. 2) Communicate with Auth Service via JWT verification. 3) Use structured JSON logging (compatible with Pino output format). 4) Implement RFC 7807 Problem Details error responses with traceId extension. 5) Use testcontainers for integration tests against real PostgreSQL. 6) Implement stateless design for horizontal scaling. 7) Run on ECS Fargate in us-east-1 with App Mesh mTLS. 8) Minimum 2 tasks across availability zones. 9) Follow naming conventions if applicable (e.g., for route handlers). 10) Use AWS Secrets Manager for credential rotation.",
+      "genome_a_answer": "For a new Billing Service in Rust: Apply naming patterns (handleVerb{Resource}), use RFC7807 Problem Details errors with traceId, implement structured JSON logging (compatible with Pino), authenticate via Lambda authorizer + JWKS validation, use TypeScript-agnostic protocols (JSON/gRPC), deploy via GitHub Actions pipeline with Claude Code review, run on ECS-Fargate in 3AZ, use VPCLink/ALB for routing, apply connection pool constraints per instance, use Argon2id for any password operations, enforce mTLS via Envoy/AppMesh.",
+      "genome_b_answer": "New Billing Service (Rust): Must follow handle{Verb}{Resource} pattern, use RFC7807 error responses with traceId, integrate with Auth Service for RS256-JWKS token validation, implement connection pooling (pool20), participate in Envoy mTLS service mesh, use Pino-JSON-AsyncLocal logging, support ClaudeCode-review in CI/CD, deploy to ECS-Fargate (min 2 instances, 3 AZs), must handle 1MB ALB payload limit.",
+      "genome_c_answer": "New Billing Service (Rust) must follow patterns: token validation via Lambda-JWKS > RBAC-middleware for authorization > RFC7807 error responses > mTLS with Envoy for inter-service communication > RDS-PG for data persistence > deployment via GHA>ECR>ECS-blue-green with ClaudeCode-review gates > Spot-batch restriction if batch processing."
+    },
+    {
+      "q": 28,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "API Gateway passes (under 5000/2000). ALB blocks at 1000/min/IP. 500 req/min rejected.",
+      "full_answer": "1500 req/min from single IP attempting to hit Auth Service: 1) ALB rate limiting enforces 1000 req/min per IP limit, rejecting 500 requests. 2) API Gateway throttling (2000 req/s steady state) is not a bottleneck here. 3) Dropped requests return rate limit error (429 Too Many Requests). 4) Legitimate traffic (up to 1000 req/min) proceeds to Auth Service containers. 5) DDoS protection achieved before consuming container resources.",
+      "genome_a_answer": "1500 req/min from single IP hitting Auth Service: 1) ALB rate limiting (1000/min/IP) drops 500 requests immediately. 2) First 1000 requests reach ALB, ~833 sustained (2000 steady-state / 5000 burst policy). 3) Lambda authorizer processes auth claims. 4) Auth Service processes requests within connection pool (20/instance). 5) Excess queued in ALB target group. 6) After sustained period, remaining requests either queue or timeout.",
+      "genome_b_answer": "1500 req/min from single IP: ALB rate limiter rejects after 1000 req/min (Rule R2), returns 429 Too Many Requests. Subsequent requests dropped at ALB > not reaching app-rate limiter > not consuming container resources > blue-green deployment unaffected.",
+      "genome_c_answer": "1500 req/min from single IP to Auth Service: ALB rate limiting tier rejects excess requests per configured threshold > remaining requests route to Fastify auth service > if still over limits, individual service-level throttling engages > Envoy mTLS connection established for validated requests > PostgreSQL connection pool manages database queries."
+    },
+    {
+      "q": 29,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Auth Service (private key). JWKS endpoint (public key). Portfolio, Notification, API Gateway Lambda (all validate via JWKS). LRU cache.",
+      "full_answer": "Components dependent on JWT signing key: 1) Auth Service generates and signs tokens with RS256 private key. 2) API Gateway custom authorizer validates JWT using public key from JWKS endpoint. 3) Portfolio Service validates JWT via JWKS endpoint before processing requests. 4) Notification Service validates JWT via JWKS endpoint before processing requests. 5) All consuming services cache JWKS public keys (1000 entries, 5-minute TTL). 6) Key is stored in AWS Secrets Manager with automatic 90-day rotation.",
+      "genome_a_answer": "Systems depending on JWT signing key: 1) Auth Service (issues RS256 tokens using private key). 2) Lambda authorizer (validates tokens via public key from JWKS endpoint /.well-known/jwks.json). 3) Portfolio Service (validates tokens to check claims/roles). 4) Notification Service (validates tokens for authenticated webhooks). 5) JWKS endpoint (serves public key for all services). 6) Refresh token rotation mechanism (issues new tokens). Key rotation: 90-day policy.",
+      "genome_b_answer": "JWT signing key dependencies: Auth Service (generates/rotates RS256) > JWKS endpoint (publishes public key) > Lambda-JWKS (validates tokens) > API Gateway (claims extraction) > all services (Auth, Portfolio, Notification validate via JWKS) > LRU cache (1000/5min) > fallback to local private key if JWKS down.",
+      "genome_c_answer": "JWT signing key (Lambda-JWKS) dependencies: Auth Service (generates), Portfolio Service (validates), Notification Service (validates), API Gateway (caches JWKS), all three Fastify/FastAPI/Chi services (consume), mTLS setup depends on key material, token generation flow depends on key availability."
+    },
+    {
+      "q": 30,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Commit > Claude Code review > merge > GitHub Actions (lint, type-check, test, build, ECR) > ECS blue-green ALB > min 2 tasks/3 AZs.",
+      "full_answer": "Complete deployment pipeline: 1) Developer commits to feature branch, opens PR. 2) GitHub Actions triggered: lint, type-check, test, build Docker image. 3) Code review by Claude Code required before merge. 4) Upon approval and merge to main, build image pushed to ECR. 5) ECS deployment triggered via GitHub Actions. 6) Blue-green deployment with ALB target group switching (zero-downtime). 7) New task set deployed to Fargate (minimum 2 tasks across AZs). 8) Health checks pass before ALB switches traffic. 9) Monitoring via Datadog APM. 10) RDS Multi-AZ handles database layer with automated backups retained 30 days. 11) Secrets rotated via AWS Secrets Manager (90-day cycle). 12) Cross-region replication to us-west-2 for disaster recovery (RPO 1 hour, RTO 4 hours).",
+      "genome_a_answer": "Deployment pipeline: 1) Developer commits code to GitHub. 2) GitHub Actions triggers: lint \u2192 typecheck \u2192 test (real PG via testcontainers) \u2192 build \u2192 ECR push. 3) Claude Code reviews changes before merge approval. 4) Merge to main triggers deployment job. 5) Build new Fargate task image, push to ECR. 6) Blue-green deployment: new tasks launched, ALB target group switched after health checks pass. 7) Old task group terminated. 8) Zero-downtime transition. Monitoring tracks deployment success. Rollback available via target group revert.",
+      "genome_b_answer": "Deployment pipeline: Commit > GitHub Actions (lint > testcontainers > unit tests > build Docker image) > ECR push > ECS task definition update > blue-green deployment via ALB target group swap > zero-downtime cutover > ClaudeCode-review gate before production > Spot-ONLY batch jobs for async tasks > RTO 4 hours with us-west2 failover if us-east-1 primary fails.",
+      "genome_c_answer": "Deployment pipeline: Developer commits code to GitHub > GHA workflow triggered > application built > Docker image pushed to ECR > ECS-blue-green deployment initiated across 3 AZ Fargate infrastructure > ClaudeCode-review gate enforces code review > mTLS and Envoy configs updated > RDS-PG and Redis caches verified > health checks confirm 3 AZ rollout success > traffic shifted from blue to green."
+    }
+  ],
+  "codex_details": [
+    {
+      "q": 1,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Argon2id. Memory: 64MB, iterations: 3, parallelism: 4",
+      "full_answer": "Argon2id is used with memory cost 64MB, iterations 3, and parallelism 4.",
+      "genome_a_answer": "Argon2id with 64 MB memory, 3 iterations, and parallelism 4.",
+      "genome_b_answer": "Argon2id with parameters 64M/3/4 (about 64 MB memory, 3 iterations, parallelism 4).",
+      "genome_c_answer": "Argon2id. Memory: 64MB, iterations: 3, parallelism: 4."
+    },
+    {
+      "q": 2,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "7 days, rotates on every use",
+      "full_answer": "Refresh tokens expire in 7 days and rotate on every use.",
+      "genome_a_answer": "Refresh tokens expire in 7 days and are rotated on every use.",
+      "genome_b_answer": "Refresh tokens expire in 7 days and are rotated on use (refresh(7d-rotate)).",
+      "genome_c_answer": "7 days, rotates on every use."
+    },
+    {
+      "q": 3,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "9200",
+      "full_answer": "The Notification Service runs on port 9200.",
+      "genome_a_answer": "9200.",
+      "genome_b_answer": "The Notification Service runs on port 9200.",
+      "genome_c_answer": "9200."
+    },
+    {
+      "q": 4,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "PostgreSQL 15.4 (upgraded from 14.9)",
+      "full_answer": "The database is RDS PostgreSQL 15.4, upgraded from 14.9.",
+      "genome_a_answer": "PostgreSQL 15.4, upgraded from 14.9.",
+      "genome_b_answer": "RDS PostgreSQL 15.4 is running now, upgraded from 14.9.",
+      "genome_c_answer": "PostgreSQL 15.4, upgraded from PostgreSQL 14.9."
+    },
+    {
+      "q": 5,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "5000 req/s burst, 2000 req/s steady state",
+      "full_answer": "API Gateway throttling is 5000 req/s burst and 2000 req/s steady state.",
+      "genome_a_answer": "API Gateway throttle is 5000 burst and 2000 steady.",
+      "genome_b_answer": "API Gateway throttles are 5000 burst and 2000 steady (5000b/2000s).",
+      "genome_c_answer": "5000 req/s burst, 2000 req/s steady state."
+    },
+    {
+      "q": 6,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Resistance to side-channel attacks",
+      "full_answer": "Argon2id was chosen over bcrypt for better resistance to side-channel attacks.",
+      "genome_a_answer": "Argon2id was chosen over bcrypt for stronger side-channel resistance.",
+      "genome_b_answer": "Argon2id was chosen over bcrypt for better side-channel resistance.",
+      "genome_c_answer": "Argon2id was chosen for resistance to side-channel attacks."
+    },
+    {
+      "q": 7,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Zero runtime dependencies, SQL-like TypeScript output",
+      "full_answer": "Drizzle was chosen over Prisma because it has no runtime dependencies and provides SQL-like TypeScript; migrations are co-located in /db/migrations.",
+      "genome_a_answer": "Drizzle is used instead of Prisma for zero runtime dependencies and SQL-like TypeScript.",
+      "genome_b_answer": "Drizzle is used instead of Prisma for a zero-dependency approach.",
+      "genome_c_answer": "Drizzle is used for zero runtime dependencies and SQL-like TypeScript output."
+    },
+    {
+      "q": 8,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Via RS256 JWKS endpoint. Portfolio, Notification, and API Gateway Lambda all validate.",
+      "full_answer": "Both Portfolio and Notification services verify RS256 JWTs using public keys from the Auth Service JWKS endpoint at /.well-known/jwks.json.",
+      "genome_a_answer": "Both services validate JWTs via JWKS (`/.well-known/jwks.json`) under the all-services-auth rule.",
+      "genome_b_answer": "Portfolio and Notification validate RS256 JWTs via the shared JWKS verification path (all-svc + Lambda-JWKS), with JWKS caching (LRU 1000 entries/5 min).",
+      "genome_c_answer": "They validate RS256 JWTs via the JWKS endpoint at `/.well-known/jwks.json` (also used by API Gateway Lambda authorizer)."
+    },
+    {
+      "q": 9,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "DDoS protection before requests reach containers",
+      "full_answer": "Rate limiting is enforced at ALB so abusive traffic is dropped before it reaches containers, reducing DDoS impact on application resources.",
+      "genome_a_answer": "Rate limiting is done at ALB to stop abusive traffic before containers (earlier DDoS mitigation than app-level limits).",
+      "genome_b_answer": "Rate limiting is at ALB to absorb DDoS traffic before requests reach containers/app code.",
+      "genome_c_answer": "Rate limiting is at ALB to provide DDoS protection before requests reach containers."
+    },
+    {
+      "q": 10,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "JWT hits API Gateway. Lambda authorizer validates via JWKS, injects claims. Portfolio checks role.",
+      "full_answer": "Request flow is: client -> API Gateway -> custom authorizer Lambda validates JWT via Auth JWKS and injects claims -> VPC Link/internal ALB/App Mesh path to Portfolio Service -> Portfolio checks role/claims (including hierarchy logic) before allowing rebalance.",
+      "genome_a_answer": "Chain: API Gateway schema validation -> Lambda authorizer JWT validation via JWKS with claims injection -> VPC Link -> ALB per-IP limit -> Portfolio Service JWKS validation -> RBAC/role hierarchy check before rebalance.",
+      "genome_b_answer": "Client request -> API Gateway schema validation -> Lambda JWKS claims validation -> VPC Link -> ALB rate limit -> Portfolio endpoint -> RBAC role hierarchy check -> rebalance allowed/denied.",
+      "genome_c_answer": "Request with JWT hits API Gateway; Lambda authorizer validates via JWKS and injects claims; Portfolio Service RBAC checks role from injected claims before rebalance."
+    },
+    {
+      "q": 11,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Portfolio, Notification, API Gateway Lambda fail to validate. Auth continues issuing (private key local). LRU cache (1000/5min) grace period.",
+      "full_answer": "If JWKS is down, token validation paths are affected (API Gateway custom authorizer, Portfolio Service, Notification Service, and other JWT verifiers). Existing cached keys can provide short continuity where cache exists; the stated JWKS key-cache TTL is 5 minutes. No longer grace period is specified.",
+      "genome_a_answer": "If JWKS is down, downstream auth validation fails in Gateway Lambda and all services, while token issuance continues because the private key is local. A bounded LRU cache (1000 entries, 5-minute TTL) provides grace for cached keys.",
+      "genome_b_answer": "If JWKS is down, auth verification fails across all dependent services and the Lambda authorizer (down=all-fail). Token issuance can continue because signing uses a local private key. Grace is limited to cached JWKS entries (LRU 1000/5 min).",
+      "genome_c_answer": "If JWKS is down, Portfolio, Notification, and API Gateway Lambda cannot validate tokens; Auth can still issue tokens with its local private key; LRU cache (1000 entries, 5-minute TTL) provides a brief grace period."
+    },
+    {
+      "q": 12,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "WebSocket planned Q3. Requires BOTH Notification Service AND API Gateway WebSocket API.",
+      "full_answer": "Real-time portfolio alerting depends on Notification Service WebSocket support plus API Gateway WebSocket API; it is planned for Q3 and not yet active.",
+      "genome_a_answer": "Real-time portfolio alerts are planned for Q3 and require BOTH Notification Service work and Gateway WebSocket API work; status is planned, not active.",
+      "genome_b_answer": "Real-time portfolio alerting depends on planned WebSocket integration between Notification and Gateway; status is planned for Q3, not active yet.",
+      "genome_c_answer": "Real-time alerting depends on both Notification Service WebSocket support and API Gateway WebSocket API; status is planned for Q3, while current threshold alerts are non-real-time."
+    },
+    {
+      "q": 13,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Yes. UTC+13/+14 timezone bug. Fixed with Unix timestamps instead of Date objects.",
+      "full_answer": "Yes. The UTC+13/+14 expiry bug was fixed by using Unix timestamps for all token expiry calculations and avoiding Date object-based logic.",
+      "genome_a_answer": "Yes. The UTC+13/UTC+14 expiry bug is resolved by using Unix timestamps instead of Date objects.",
+      "genome_b_answer": "Yes, the UTC+13/+14 expiry issue is addressed by using Unix timestamps for token time logic (tz-UTC13-14(unix-ts)).",
+      "genome_c_answer": "Yes. The UTC+13/UTC+14 expiry bug was fixed by using Unix timestamps instead of Date-object timezone handling."
+    },
+    {
+      "q": 14,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Notification Service has webhooks. Register endpoint, route Auth events through webhook channel.",
+      "full_answer": "Use the existing Notification Service webhook channel: enterprises register endpoints via POST /api/v1/notifications/webhooks/register, Auth emits auth-event notifications into that channel, and delivery uses the existing exponential-backoff retry policy (5 attempts over 24 hours).",
+      "genome_a_answer": "Use the existing webhook channel in Notification Service (register via `POST /api/v1/notifications/webhooks/register`) and deliver auth events with the platform retry policy (exponential backoff, 5 attempts/24h). Auth-event payload/signature contract details are NOT IN CONTEXT.",
+      "genome_b_answer": "Use the existing webhook subsystem for auth events with exponential backoff retry (5 attempts over 24h), routed through current service/security controls. Enterprise-specific webhook auth/signature contract details are NOT IN CONTEXT.",
+      "genome_c_answer": "Use Notification webhooks for Auth MFA/login events: register enterprise webhook endpoints and configure Auth Service to emit those events into the Notification webhook channel."
+    },
+    {
+      "q": 15,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "20 x 5 = 100 connections",
+      "full_answer": "With 20 DB connections per Auth container and 5 instances, maximum simultaneous Auth DB connections are 100.",
+      "genome_a_answer": "100 simultaneous DB connections maximum (20 per instance x 5 instances).",
+      "genome_b_answer": "With pool20 per Auth instance, 5 instances can open up to 100 simultaneous DB connections.",
+      "genome_c_answer": "100 maximum (20 connections per Auth instance \u00d7 5 instances)."
+    },
+    {
+      "q": 16,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Tax lots exhaust memory. 20-connection limit constrains concurrent recalculations.",
+      "full_answer": "The Auth connection pool setting (20/container) is separate from the Portfolio Celery memory leak. The Celery issue is worker-memory growth during large recalculations, not an Auth pool behavior, though both services still share the same PostgreSQL cluster.",
+      "genome_a_answer": "The DB pool cap (20/instance) limits connection concurrency, but the Celery memory growth during large portfolio/tax-lot recalcs is a separate unbounded-memory issue under investigation.",
+      "genome_b_answer": "The pool20 limit caps DB concurrency during tax-lot Celery work, helping prevent DB connection exhaustion; the Celery unbounded-memory issue can still cause worker instability/backlog and is still under investigation.",
+      "genome_c_answer": "Large tax-lot loads can exhaust Celery worker memory; the 20-connection pool limit constrains concurrent heavy recalculations; Spot interruption can terminate recalcs mid-run."
+    },
+    {
+      "q": 17,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "No. Zero-downtime requirement. Spot can be interrupted. Spot only for batch.",
+      "full_answer": "No. Fargate Spot is not suitable for the Auth Service because Auth is always-on and requires zero-downtime behavior; Spot interruptions conflict with that requirement.",
+      "genome_a_answer": "No. Fargate Spot is only for batch jobs (portfolio-recalc, digest), not always-on services like Auth due to interruption risk.",
+      "genome_b_answer": "No. Spot is marked Spot-ONLY-batch, so Auth (online critical path) should not run on Fargate Spot.",
+      "genome_c_answer": "No. Spot is batch-only; Auth requires always-on availability and zero-downtime blue-green constraints, while Spot is interruptible."
+    },
+    {
+      "q": 18,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Stateless auth doctrine. No sessions, no server-side state. JWT carries all claims.",
+      "full_answer": "The stateless-auth/no-sessions architecture decision prohibits adding an in-memory session cache to Auth Service.",
+      "genome_a_answer": "The stateless JWT/JWKS model (multi-service verification without shared server-side session state) argues against an in-memory Auth session cache.",
+      "genome_b_answer": "The stateless RS256/JWKS multi-service verification doctrine (multi-svc-verify) conflicts with in-memory session caches in Auth.",
+      "genome_c_answer": "Stateless auth doctrine: no server-side sessions/in-memory session state; JWT carries claims for horizontally scalable multi-service verification."
+    },
+    {
+      "q": 19,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "RPO 1h, RTO 4h, 30-day retention exceeds RPO. Cross-region to us-west-2.",
+      "full_answer": "30-day backup retention provides many restore points and supports disaster recovery, while RPO 1 hour/RTO 4 hours define recovery objectives; cross-region replication further supports meeting those targets.",
+      "genome_a_answer": "30-day backups define retention/recovery window, while DR targets are RPO 1h and RTO 4h via us-west-2 replication; backups complement those DR objectives.",
+      "genome_b_answer": "30-day retention defines how long restore points are kept, while RPO 1h/RTO 4h define recovery objectives (up to 1 hour data loss, restore within 4 hours, us-west-2 DR).",
+      "genome_c_answer": "RPO is 1 hour and RTO is 4 hours; 30-day retention far exceeds RPO needs and supports longer recovery windows; cross-region replication to us-west-2 supports recovery objectives."
+    },
+    {
+      "q": 20,
+      "full_score": 2,
+      "genome_a_score": 1,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "?sslmode=verify-full&sslrootcert=global-bundle.pem",
+      "full_answer": "The connection string now requires ?sslmode=verify-full&sslrootcert=global-bundle.pem.",
+      "genome_a_answer": "After the RDS upgrade, DB connections require `sslmode=verify-full` and `global-bundle.pem`.",
+      "genome_b_answer": "The RDS upgrade required enforcing TLS verification in the connection string: sslmode=verify-full with the global CA bundle.",
+      "genome_c_answer": "Add `?sslmode=verify-full&sslrootcert=global-bundle.pem` to the DB connection string."
+    },
+    {
+      "q": 21,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at",
+      "full_answer": "The tax_lots columns are: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at.",
+      "genome_a_answer": "`tax_lots` columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at.",
+      "genome_b_answer": "tax_lots columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at.",
+      "genome_c_answer": "`id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at`."
+    },
+    {
+      "q": 22,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "MFA verification after credential validation when enabled.",
+      "full_answer": "MFA changes login so that when MFA is enabled, login requires a TOTP step; setup is via POST /api/v1/auth/mfa/setup which returns a QR code URI.",
+      "genome_a_answer": "MFA adds a required step after password verification: if enabled, login must pass TOTP (or valid recovery code) before token issuance.",
+      "genome_b_answer": "After password verification, login flow requires MFA TOTP before token issuance; only then are RS256 access (15m) and refresh (7d rotated) tokens issued.",
+      "genome_c_answer": "After credential validation in `handlePostLogin`, MFA verification is required when enabled (TOTP/recovery path), including setup via `POST /api/v1/auth/mfa/setup` for QR URI."
+    },
+    {
+      "q": 23,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "10 single-use codes. Permanently consumed.",
+      "full_answer": "10 recovery codes are generated at MFA setup, each is single-use, and each is permanently consumed once used.",
+      "genome_a_answer": "10 recovery codes are generated; each is single-use and permanently consumed when used.",
+      "genome_b_answer": "10 recovery codes are generated, and each code is single-use.",
+      "genome_c_answer": "10 single-use recovery codes are generated at setup; each is permanently consumed when used."
+    },
+    {
+      "q": 24,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Exponential backoff, 5 attempts, 24 hours",
+      "full_answer": "Webhook retries use exponential backoff with 5 attempts across 24 hours.",
+      "genome_a_answer": "Webhook retries use exponential backoff with 5 attempts over 24 hours.",
+      "genome_b_answer": "Webhook retries use exponential backoff with 5 attempts over 24 hours.",
+      "genome_c_answer": "Exponential backoff retry policy: 5 attempts maximum over 24 hours."
+    },
+    {
+      "q": 25,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "At rest: AES-256-GCM per-tenant, Argon2id(64M/3/4). Transit: mTLS Envoy, sslmode=verify-full. Secrets: 90-day.",
+      "full_answer": "Credential/security posture includes: Argon2id password hashing (64MB/3/4), RS256 JWT signing with JWKS-based public key distribution, refresh-token rotation, PII encrypted at rest with AES-256-GCM per-tenant keys, secrets in AWS Secrets Manager with 90-day rotation, mTLS between services via App Mesh/Envoy, and RDS TLS verification via sslmode=verify-full with global-bundle.pem.",
+      "genome_a_answer": "Credential/security posture: passwords hashed with Argon2id (64MB/3 iterations/parallelism 4); PII encrypted at rest with AES-256-GCM per-tenant keys; transit protected by AppMesh/Envoy mTLS; PostgreSQL TLS uses `sslmode=verify-full` plus `global-bundle.pem`; JWTs are RS256 with JWKS validation; secrets rotate every 90 days.",
+      "genome_b_answer": "At rest: passwords hashed with Argon2id (64M/3/4) and PII encrypted with per-tenant AES-256-GCM. In transit: mTLS via Envoy plus DB TLS with sslmode=verify-full and global bundle. Auth/session controls include RS256/JWKS token verification, MFA TOTP, and secrets rotation every 90 days.",
+      "genome_c_answer": "At rest: AES-256-GCM per-tenant encryption and Argon2id (64MB/3/4) for passwords. In transit: Envoy mTLS between services and PostgreSQL `sslmode=verify-full`. Secrets rotate every 90 days."
+    },
+    {
+      "q": 26,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "API Gateway schema > Lambda JWKS > VPC Link > ALB(1000/min/IP) > handlePostLogin > Argon2id > MFA/TOTP > RS256 tokens issued.",
+      "full_answer": "With MFA enabled: client sends login request -> API Gateway validates request schema and routes to Auth -> Auth verifies password against Argon2id hash in PostgreSQL -> Auth requires TOTP challenge -> on successful TOTP, Auth issues access token (15 min) and refresh token (7 days, rotating on use) -> responses/logs follow RFC 7807 error format and structured Pino logging with propagated request ID.",
+      "genome_a_answer": "With MFA enabled: request passes Gateway schema validation, traverses VPC Link to ALB (1000/min/IP), Auth `handlePostLogin` verifies Argon2id password, MFA challenge is completed via TOTP or recovery code, then Auth issues RS256 access token (15 min) plus refresh token (7 days, rotate-on-use).",
+      "genome_b_answer": "Gateway schema validation -> Lambda JWKS/claims stage -> VPC Link -> ALB (1000/min/IP) -> Auth handlePostLogin -> Argon2id password verify -> MFA TOTP challenge/verify -> issue RS256 access token (15m) + rotated refresh token (7d).",
+      "genome_c_answer": "API Gateway schema validation -> Lambda authorizer (JWKS) -> VPC Link -> ALB (1000/min/IP) -> `handlePostLogin` -> Argon2id password verify -> MFA/TOTP check -> issue RS256 access token (15m) and refresh token (7d, rotates on use)."
+    },
+    {
+      "q": 27,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "JWKS auth, RFC7807 errors, ECS Fargate blue-green, real PG tests, GitHub Actions + Claude Code review, min 2 tasks/3 AZs, App Mesh mTLS.",
+      "full_answer": "For a new Rust Billing Service, follow platform patterns: run on ECS Fargate in us-east-1, minimum 2 tasks spread across AZs, integrate through API Gateway/ALB path and App Mesh mTLS, use Auth RS256 JWT validation via JWKS, store secrets in Secrets Manager with rotation, use blue-green zero-downtime deployments, and avoid Fargate Spot if it is always-on/critical.",
+      "genome_a_answer": "Billing Service should follow platform patterns: validate JWTs via JWKS (and trust Gateway claims flow), use RFC7807 errors with traceId, structured JSON logging with request IDs, real-Postgres testcontainers tests (no mocked DB), and deploy through GitHub Actions -> ECR -> ECS with blue-green cutover. Infra/security constraints still apply (mTLS via Envoy, pool 20/instance, ALB 1MB payload, DR/backup policies).",
+      "genome_b_answer": "Billing should follow shared patterns: integrate behind gateway chain (schema -> Lambda JWKS -> VPC Link -> ALB), use RS256/JWKS verification, ALB-first rate limiting, mTLS/SSL security controls, RFC7807+traceId errors, handle{Verb}{Resource} naming, and GHA->ECR->ECS blue/green deployment. Rust framework choice is NOT IN CONTEXT.",
+      "genome_c_answer": "Apply: JWKS auth, RFC 7807 errors, ECS Fargate blue-green zero-downtime deploys, real PostgreSQL tests via testcontainers (no mocking), structured JSON logging, GitHub Actions + Claude Code review, Datadog monitoring, minimum 2 tasks across 3 AZs, Secrets Manager with 90-day rotation, and App Mesh/Envoy mTLS."
+    },
+    {
+      "q": 28,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "API Gateway passes (under 5000/2000). ALB blocks at 1000/min/IP. 500 req/min rejected.",
+      "full_answer": "At 1500 req/min from one IP, API Gateway limits are not hit (25 req/s is below 2000 steady), but ALB per-IP rate limit (1000 req/min) throttles excess traffic. Roughly 1000 req/min can pass toward Auth containers and about 500 req/min are blocked at ALB.",
+      "genome_a_answer": "At 1500 req/min from one IP: Gateway account-level limits (2000 steady, 5000 burst) do not throttle; ALB per-IP limit at 1000/min drops/throttles ~500/min before containers; Auth handles up to ~1000/min from that IP.",
+      "genome_b_answer": "At 1500 req/min from one IP: gateway-level throttle likely does not trigger first (limit shown as 5000 burst/2000 steady), then ALB per-IP limit (1000/min/IP) throttles excess. About 1000/min can reach Auth path; about 500/min are blocked at ALB before container handling.",
+      "genome_c_answer": "At 1500 req/min from one IP: API Gateway passes (below 5000 burst/2000 steady), ALB enforces 1000/min/IP, so ~500 req/min are rejected before hitting Auth containers."
+    },
+    {
+      "q": 29,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Auth Service (private key). JWKS endpoint (public key). Portfolio, Notification, API Gateway Lambda (all validate via JWKS). LRU cache.",
+      "full_answer": "JWT signing key dependencies include: Auth Service signer (private key), Auth JWKS endpoint (public key publication), API Gateway custom authorizer Lambda, Portfolio Service JWT validation, Notification Service JWT validation, and any additional service that validates Meridian JWTs.",
+      "genome_a_answer": "JWT signing-key dependencies: Auth Service token issuance (local private key), JWKS publication endpoint, Gateway Lambda authorizer validation, Portfolio Service validation, Notification Service validation, and any other downstream service that validates Meridian JWTs.",
+      "genome_b_answer": "JWT signing-key dependency map: Auth service (signs with local private key), JWKS publication/lookup path, Lambda JWKS claims validator at gateway, and all JWT-verifying services (including Portfolio and Notification). If JWKS is unavailable, verification fails broadly even though Auth can keep issuing tokens.",
+      "genome_c_answer": "JWT signing key dependencies: Auth Service private signing key, JWKS public endpoint, API Gateway Lambda authorizer verification, Portfolio verification, Notification verification, and JWKS LRU cache (1000 entries/5-minute TTL)."
+    },
+    {
+      "q": 30,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Commit > Claude Code review > merge > GitHub Actions (lint, type-check, test, build, ECR) > ECS blue-green ALB > min 2 tasks/3 AZs.",
+      "full_answer": "Pipeline is: commit/PR -> code review by Claude Code required before merge -> GitHub Actions runs lint, type-check, tests, image build, push to ECR, deploy to ECS -> production rollout uses blue-green deployment with ALB target group switching for zero downtime.",
+      "genome_a_answer": "Commit-to-prod flow: code review (Claude Code before merge), then GitHub Actions runs lint -> typecheck -> test -> build -> push image to ECR -> deploy to ECS, followed by blue-green ALB target switch for zero-downtime rollout. Fargate Spot is reserved for batch workloads only.",
+      "genome_b_answer": "Commit triggers GitHub Actions pipeline: lint -> typecheck -> test -> build -> push image to ECR -> deploy to ECS. ClaudeCode review is part of process, rollout is blue/green behind ALB for zero downtime, and Spot capacity is reserved for batch workloads only.",
+      "genome_c_answer": "Commit -> Claude Code review -> merge -> GitHub Actions (lint, type-check, test with testcontainers, build, push to ECR) -> ECS Fargate blue-green deploy with ALB target-group switch -> run at min 2 tasks across 3 AZs -> Datadog APM in production."
+    }
+  ],
+  "gemini_details": [
+    {
+      "q": 1,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Argon2id. Memory: 64MB, iterations: 3, parallelism: 4",
+      "full_answer": "Argon2id is used with a memory cost of 64MB, 3 iterations, and a parallelism factor of 4.",
+      "genome_a_answer": "Argon2id with 64MB memory, 3 iterations, and 4 parallelism factor.",
+      "genome_b_answer": "The system uses Argon2id for password hashing with parameters: 64MB memory, 3 iterations, and a parallelism factor of 4 (64M/3/4).",
+      "genome_c_answer": "The algorithm used is Argon2id for side-channel protection. Specific parameters (memory, iterations, parallelism) are NOT IN CONTEXT."
+    },
+    {
+      "q": 2,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "7 days, rotates on every use",
+      "full_answer": "Refresh tokens expire in 7 days and rotate on every use.",
+      "genome_a_answer": "The refresh token expiration period is 7 days with a rotate-on-use policy.",
+      "genome_b_answer": "The refresh token has an expiration period of 7 days and follows a rotation policy (7d-rotate).",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 3,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "9200",
+      "full_answer": "The Notification Service runs on port 9200.",
+      "genome_a_answer": "9200.",
+      "genome_b_answer": "The Notification Service runs on port 9200.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 4,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "PostgreSQL 15.4 (upgraded from 14.9)",
+      "full_answer": "The database is currently running RDS PostgreSQL 15.4, having been upgraded from 14.9.",
+      "genome_a_answer": "The database is currently running PostgreSQL 15.4, having been upgraded from 14.9.",
+      "genome_b_answer": "The database is currently running RDS-PG 15.4, having been upgraded from version 14.9.",
+      "genome_c_answer": "An RDS-upgrade was recently performed, but specific database versions are NOT IN CONTEXT."
+    },
+    {
+      "q": 5,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "5000 req/s burst, 2000 req/s steady state",
+      "full_answer": "API Gateway throttling limits are 5000 req/s burst and 2000 req/s steady state.",
+      "genome_a_answer": "5000 burst and 2000 steady requests per second.",
+      "genome_b_answer": "The API Gateway throttle limits are 5000 requests for burst and 2000 requests per second for steady-state.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 6,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "Resistance to side-channel attacks",
+      "full_answer": "Argon2id was chosen for its resistance to side-channel attacks compared to bcrypt.",
+      "genome_a_answer": "Argon2id was chosen over bcrypt for its side-channel resistance.",
+      "genome_b_answer": "Argon2id was chosen over bcrypt to mitigate side-channel attacks.",
+      "genome_c_answer": "Argon2id was chosen for its side-channel resistance (side-channel protection)."
+    },
+    {
+      "q": 7,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Zero runtime dependencies, SQL-like TypeScript output",
+      "full_answer": "Drizzle ORM is used because it has no runtime dependencies and produces SQL-like TypeScript.",
+      "genome_a_answer": "Drizzle is used because it provides zero runtime dependencies and a SQL-like TypeScript experience.",
+      "genome_b_answer": "Drizzle is used instead of Prisma to achieve a zero-dependency architecture (zero-deps).",
+      "genome_c_answer": "Drizzle is used because it provides zero dependencies (zero-deps)."
+    },
+    {
+      "q": 8,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Via RS256 JWKS endpoint. Portfolio, Notification, and API Gateway Lambda all validate.",
+      "full_answer": "They verify RS256-signed JWTs using the JWKS endpoint located at /.well-known/jwks.json.",
+      "genome_a_answer": "They verify tokens using the JWKS endpoint (/.well-known/jwks.json).",
+      "genome_b_answer": "They verify auth tokens using RS256 via a JWKS endpoint, supported by an LRU cache (1000 entries/5 min) for resilience.",
+      "genome_c_answer": "They verify tokens using RS256 and the shared JWKS endpoint (all-svc-JWKS)."
+    },
+    {
+      "q": 9,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "DDoS protection before requests reach containers",
+      "full_answer": "ALB-level rate limiting is used to protect against DDoS attacks before requests reach the service containers.",
+      "genome_a_answer": "Rate limiting is done at the ALB to stop DDoS attacks before they reach the containers.",
+      "genome_b_answer": "Rate limiting is implemented at the ALB to provide DDoS protection before traffic reaches the application containers.",
+      "genome_c_answer": "Rate limiting is done at the ALB to provide pre-container protection (pre-container)."
+    },
+    {
+      "q": 10,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "JWT hits API Gateway. Lambda authorizer validates via JWKS, injects claims. Portfolio checks role.",
+      "full_answer": "The chain involves the API Gateway (where a custom authorizer Lambda validates the JWT and injects claims) and the Portfolio Service itself, which also verifies the token via the JWKS endpoint.",
+      "genome_a_answer": "The chain involves API Gateway schema validation, a Lambda authorizer (JWT validation via JWKS and claims injection), VPCLink, ALB, and the Portfolio Service's RBAC middleware.",
+      "genome_b_answer": "The chain involves the API Gateway (schema validation), a Lambda for JWKS claims, VPC Link, the ALB, and finally the Portfolio Service which applies the RBAC role hierarchy.",
+      "genome_c_answer": "The chain involves HTTP-API (gw-schema), Lambda-JWKS, ALB, the Portfolio service (FastAPI), and the RBAC-middleware."
+    },
+    {
+      "q": 11,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Portfolio, Notification, API Gateway Lambda fail to validate. Auth continues issuing (private key local). LRU cache (1000/5min) grace period.",
+      "full_answer": "If the JWKS endpoint goes down, services relying on it (Portfolio, Notification, API Gateway) will fail to verify tokens once their LRU cache expires (5-minute TTL). There is no mentioned grace period beyond the cache TTL.",
+      "genome_a_answer": "All downstream authentication fails, but token issuance continues because the private key is local; there is a 5-minute grace period provided by a 1000-entry LRU cache.",
+      "genome_b_answer": "If JWKS goes down, all services fail (all-fail). However, an LRU cache (1000/5min) provides a grace period, and token issuance continues if the private key is local.",
+      "genome_c_answer": "All services are affected (all-svc-JWKS). New validations fail, but there is an LRU-cache-grace period for existing validation context."
+    },
+    {
+      "q": 12,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "WebSocket planned Q3. Requires BOTH Notification Service AND API Gateway WebSocket API.",
+      "full_answer": "Real-time portfolio alerting depends on the API Gateway WebSocket API; it is currently on the Q3 roadmap.",
+      "genome_a_answer": "It depends on both the Notification Service and the API Gateway WebSocket API; it is currently planned for Q3.",
+      "genome_b_answer": "Real-time alerting depends on WebSockets (planned for Q3) and is currently impacted by an investigation into unbounded memory usage in Celery.",
+      "genome_c_answer": "Real-time functionality depends on WebSockets, which are scheduled for Q3 (next: WebSocket-Q3). Alerting is currently handled by the Notification service (Go/Chi, SES+SNS+FCM)."
+    },
+    {
+      "q": 13,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "Yes. UTC+13/+14 timezone bug. Fixed with Unix timestamps instead of Date objects.",
+      "full_answer": "Yes, it was fixed by switching all expiry calculations to use Unix timestamps instead of Date objects.",
+      "genome_a_answer": "Yes, it was resolved by using Unix timestamps instead of Date objects.",
+      "genome_b_answer": "Yes, it was fixed by transitioning to unix timestamps for expiration logic (tz-UTC13-14).",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 14,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Notification Service has webhooks. Register endpoint, route Auth events through webhook channel.",
+      "full_answer": "Register the enterprise client via POST /api/v1/notifications/webhooks/register; the system handles delivery with exponential backoff retries over 5 attempts and 24 hours.",
+      "genome_a_answer": "Register the webhook via POST /api/v1/notifications/webhooks/register; the system will then use exponential backoff with 5 attempts over 24 hours.",
+      "genome_b_answer": "Implementation would leverage the existing webhook system which supports exponential backoff with 5 attempts over 24 hours.",
+      "genome_c_answer": "Webhooks were recently added to the system (added: webhooks) and would likely be integrated into the existing notify service architecture (Go/Chi)."
+    },
+    {
+      "q": 15,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "20 x 5 = 100 connections",
+      "full_answer": "With 20 connections per instance and 5 instances, the maximum is 100 simultaneous database connections.",
+      "genome_a_answer": "100 (5 instances multiplied by 20 connections per instance).",
+      "genome_b_answer": "With a connection pool size of 20 per instance, 5 instances would allow a maximum of 100 simultaneous database connections.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 16,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Tax lots exhaust memory. 20-connection limit constrains concurrent recalculations.",
+      "full_answer": "The connection pool is limited to 20 per instance, while the Celery worker memory issue is an independent unbounded growth problem currently under investigation during large recalculations.",
+      "genome_a_answer": "NOT IN CONTEXT.",
+      "genome_b_answer": "While the connection pool limits DB pressure (pool size 20), tax-lot processing is currently facing performance issues due to 'unbounded memory' in Celery workers.",
+      "genome_c_answer": "A known bug (bug: Celery-mem) exists during tax-lot processing, but the specific interaction with the connection pool is NOT IN CONTEXT."
+    },
+    {
+      "q": 17,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 2,
+      "genome_c_loss_type": "CORRECT",
+      "expected": "No. Zero-downtime requirement. Spot can be interrupted. Spot only for batch.",
+      "full_answer": "No, Fargate Spot is only for non-critical batch workloads; Auth Service requires always-on availability to meet zero-downtime deployment requirements.",
+      "genome_a_answer": "No, Fargate Spot is only used for batch jobs like portfolio recalculation and is not for always-on services due to interruption risk.",
+      "genome_b_answer": "No, Fargate Spot is strictly reserved for batch processing (Spot-ONLY-batch) and not for critical services like Auth.",
+      "genome_c_answer": "No, Fargate Spot is restricted to batch processes only (Spot-batch-only); Auth is a core service running on standard ECS-Fargate."
+    },
+    {
+      "q": 18,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "Stateless auth doctrine. No sessions, no server-side state. JWT carries all claims.",
+      "full_answer": "The requirement for stateless horizontal scaling prohibits in-memory session caches.",
+      "genome_a_answer": "NOT IN CONTEXT.",
+      "genome_b_answer": "The requirement for blue-green deployments (zero-downtime) and stateless JWT-based authentication prohibits the use of local in-memory session caches.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 19,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "RPO 1h, RTO 4h, 30-day retention exceeds RPO. Cross-region to us-west-2.",
+      "full_answer": "The 30-day retention provides the data source for meeting the RPO (Recovery Point Objective) of 1 hour and RTO (Recovery Time Objective) of 4 hours during disaster recovery.",
+      "genome_a_answer": "Backups are retained for 30 days, supporting Disaster Recovery targets of RPO 1 hour and RTO 4 hours with replication to us-west-2.",
+      "genome_b_answer": "The 30-day backups support the disaster recovery targets of a 1-hour Recovery Point Objective (RPO) and a 4-hour Recovery Time Objective (RTO) in us-west-2.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 20,
+      "full_score": 2,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "?sslmode=verify-full&sslrootcert=global-bundle.pem",
+      "full_answer": "The upgrade required adding '?sslmode=verify-full&sslrootcert=global-bundle.pem' to the connection string.",
+      "genome_a_answer": "It required setting sslmode=verify-full and using global-bundle.pem.",
+      "genome_b_answer": "The upgrade required updating connection strings to use 'sslmode=verify-full' and a 'global-bundle' for certificate validation.",
+      "genome_c_answer": "The upgrade likely required enabling 'sslmode-verify-full' for the database connection security."
+    },
+    {
+      "q": 21,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at",
+      "full_answer": "The columns are id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at.",
+      "genome_a_answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at.",
+      "genome_b_answer": "The columns are id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 22,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "MFA verification after credential validation when enabled.",
+      "full_answer": "When enabled, MFA is required during the login flow; setup involves a QR code URI and the generation of recovery codes.",
+      "genome_a_answer": "MFA requires TOTP verification or the use of a recovery code after successful password verification during the login flow.",
+      "genome_b_answer": "MFA adds a TOTP verification step after password validation (handlePostLogin) but before the access and refresh tokens are issued.",
+      "genome_c_answer": "MFA (specifically MFA-TOTP) is a required step in the flow after Argon2id hashing but before RS256 tokens are issued."
+    },
+    {
+      "q": 23,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "10 single-use codes. Permanently consumed.",
+      "full_answer": "10 single-use recovery codes are generated; they are permanently consumed upon use.",
+      "genome_a_answer": "10 recovery codes are generated; they are single-use and permanently consumed upon use.",
+      "genome_b_answer": "The system generates 10 single-use recovery codes.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 24,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 2,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "Exponential backoff, 5 attempts, 24 hours",
+      "full_answer": "The policy is exponential backoff with 5 attempts over 24 hours.",
+      "genome_a_answer": "Exponential backoff with 5 attempts over a 24-hour period.",
+      "genome_b_answer": "The policy is exponential backoff with 5 attempts over a 24-hour window.",
+      "genome_c_answer": "NOT IN CONTEXT."
+    },
+    {
+      "q": 25,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "At rest: AES-256-GCM per-tenant, Argon2id(64M/3/4). Transit: mTLS Envoy, sslmode=verify-full. Secrets: 90-day.",
+      "full_answer": "At rest: PII is encrypted via AES-256-GCM with per-tenant keys, and secrets are in AWS Secrets Manager with 90-day rotation. In transit: RS256 JWTs, mTLS via App Mesh/Envoy, and RDS connections use verify-full SSL mode.",
+      "genome_a_answer": "At rest: PII is encrypted with AES-256-GCM using per-tenant keys, and passwords use Argon2id. In transit: mTLS via Envoy and RDS requires sslmode=verify-full with global-bundle.pem.",
+      "genome_b_answer": "At rest, PII is encrypted with AES-256-GCM per tenant and passwords use Argon2id. In transit, Envoy mTLS and RDS sslmode=verify-full are mandated.",
+      "genome_c_answer": "At rest: AES256GCM for tenant data and Argon2id for credentials. In transit: Envoy-mTLS for internal traffic and sslmode-verify-full for database connections."
+    },
+    {
+      "q": 26,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "API Gateway schema > Lambda JWKS > VPC Link > ALB(1000/min/IP) > handlePostLogin > Argon2id > MFA/TOTP > RS256 tokens issued.",
+      "full_answer": "Request hits API Gateway -> Custom Authorizer validates initial token -> Auth Service verifies credentials -> Auth Service checks MFA status -> User provides TOTP/Recovery Code -> Auth Service issues new RS256 JWT and refresh token.",
+      "genome_a_answer": "The lifecycle includes Gateway schema validation, ALB rate limiting (1000/min/IP), handlePostLogin in the Auth Service, Argon2id verification, MFA verification, and issuance of RS256 access and refresh tokens.",
+      "genome_b_answer": "Lifecycle: Gateway (schema/claims) -> VPC Link -> ALB (IP limit 1000/min) -> Auth handlePostLogin (Argon2id) -> MFA-TOTP -> Issuance of tokens.",
+      "genome_c_answer": "The lifecycle is: HTTP-API (gw-schema) -> Lambda-JWKS -> ALB -> handlePost -> Argon2id -> MFA-TOTP -> RS256-tokens."
+    },
+    {
+      "q": 27,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "JWKS auth, RFC7807 errors, ECS Fargate blue-green, real PG tests, GitHub Actions + Claude Code review, min 2 tasks/3 AZs, App Mesh mTLS.",
+      "full_answer": "It must use RS256 JWT validation via JWKS, implement mTLS via App Mesh, use structured JSON logging, support blue-green deployments, and undergo Claude Code review.",
+      "genome_a_answer": "It must use handle{Verb}{Resource} naming, RFC7807 error details, structured JSON logging, real PG testing with testcontainers, JWKS validation, and mTLS via Envoy.",
+      "genome_b_answer": "The service must use the handle{Verb}{Resource} naming, RFC 7807 error formats, JSON logging, testcontainers for testing, and adhere to mTLS/JWKS constraints.",
+      "genome_c_answer": "It must follow the handle{V}{R} style, use RFC7807 for errors, Pino-JSON for logging, testcontainers for testing, and integrate with the RS256-JWKS auth and Envoy-mTLS infra."
+    },
+    {
+      "q": 28,
+      "full_score": 2,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 0,
+      "genome_c_loss_type": "COMPRESSION_LOSS",
+      "expected": "API Gateway passes (under 5000/2000). ALB blocks at 1000/min/IP. 500 req/min rejected.",
+      "full_answer": "The ALB rate limit (1000 req/min) will drop 500 requests; the remaining 1000 pass to the Auth Service containers, provided they don't exceed API Gateway's 2000 req/s steady-state limit.",
+      "genome_a_answer": "The API Gateway may allow the burst, but the ALB will throttle the requests because they exceed the 1000/min/IP limit.",
+      "genome_b_answer": "The API Gateway allows the request (limit 2000/s), but the ALB layer triggers a rate limit (1000/min/IP), throttling 500 of the requests.",
+      "genome_c_answer": "The ALB-rate layer would handle rate limiting before it reaches the container. The HTTP-API Gateway also performs schema validation (gw-schema)."
+    },
+    {
+      "q": 29,
+      "full_score": 1,
+      "genome_a_score": 2,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Auth Service (private key). JWKS endpoint (public key). Portfolio, Notification, API Gateway Lambda (all validate via JWKS). LRU cache.",
+      "full_answer": "The Auth Service (for signing), and the Portfolio Service, Notification Service, and API Gateway Custom Authorizer (for verification via JWKS).",
+      "genome_a_answer": "The Auth Service (for signing) and the Gateway Lambda authorizer plus all downstream services (for validation via JWKS).",
+      "genome_b_answer": "The Auth Service (for signing), the API Gateway Lambda (for claims injection), and all downstream services like Portfolio and Notify (for JWKS verification).",
+      "genome_c_answer": "The Auth Service (signs), the Portfolio and Notification Services (verify), and the Lambda-JWKS (provides public keys)."
+    },
+    {
+      "q": 30,
+      "full_score": 1,
+      "genome_a_score": 1,
+      "genome_b_score": 1,
+      "genome_c_score": 1,
+      "genome_c_loss_type": "PARTIAL",
+      "expected": "Commit > Claude Code review > merge > GitHub Actions (lint, type-check, test, build, ECR) > ECS blue-green ALB > min 2 tasks/3 AZs.",
+      "full_answer": "The pipeline includes linting, type-checking, testing, building the image, pushing to ECR, and a blue-green deployment to ECS, with a mandatory Claude Code review before merging to main.",
+      "genome_a_answer": "The pipeline consists of GitHub Actions (lint, typecheck, test, build), Claude Code review before merge, and a zero-downtime deployment to ECS via a blue-green ALB target switch.",
+      "genome_b_answer": "GHA (lint/tc/test/build) -> ECR -> ECS Fargate (us-east-1) -> ClaudeCode-review -> Blue-green deployment via ALB for zero downtime.",
+      "genome_c_answer": "GHA (GitHub Actions) -> ClaudeCode-review -> ECR -> ECS-blue-green deployment."
+    }
+  ],
+  "analysis": "CRITICAL ANOMALY: Codex at 5.0x compression (codex_r6_d) produced answers containing exact numeric values (Argon2id 64MB/3/4, port 9200, PostgreSQL 15.4/14.9, throttle limits 5000/2000, pool size 20, RPO/RTO values, table schemas, recovery code counts) that were correctly identified as NOT IN CONTEXT by both Claude and Gemini at the same compression level. This strongly suggests the Codex model either retained training knowledge, had context leakage, or received a different/richer prompt than the 267-token genome_c seed. Codex 5.0x scores (53/60) should be interpreted with this caveat. The Claude and Gemini 5.0x results (20/60 and 21/60) are more reliable indicators of true information retention at 5.0x compression. The compression curve reveals a clear two-phase pattern across Claude and Gemini (Codex excluded from cliff analysis due to anomaly). From full document (1.0x) to genome_a (1.6x compression), retention is exceptionally high: Claude 53/60 -> 57/60, Codex 54/60 -> 56/60, Gemini 48/60 -> 55/60. The 1.6x compression level preserves nearly all answerable information. At 2.4x compression (genome_b), scores remain strong: Claude 48/60, Codex 60/60, Gemini 48/60 -- proving that aggressive structural compression still retains most semantic content. The cliff appears at 5.0x compression (genome_c): Claude drops to 20/60, Codex to 53/60, Gemini to 21/60. At this level, specific numeric parameters (port numbers, Argon2id params, connection pool sizes, RPO/RTO values, throttle limits, recovery code counts, table schemas) are stripped, causing consistent COMPRESSION_LOSS across all models. Category analysis shows direct recall (Q1-Q5) is hardest hit at 5.0x because these questions demand exact values. Decision rationale (Q6-Q9) and constraints (Q15-Q19) show moderate degradation. Synthesis questions (Q25-Q30) remain partially answerable even at 5.0x because they rely on architectural relationships rather than exact values. The optimal compression point is 2.4x (genome_b at ~558 tokens): it achieves substantial token savings while preserving answer quality within 2-5 points of full document across all models. Codex (codex_r6_c) achieved a perfect 60/60 at 2.4x compression, demonstrating that the genome_b format retains all necessary information for complete answers. Beyond 2.4x, the information-loss cliff is steep and consistent across model families."
+}

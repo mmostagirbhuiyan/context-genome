@@ -1,0 +1,60 @@
+{
+  "experiment": "Round 9: Redundant Multi-Path Encoding (Moses Experiment)",
+  "hypothesis": "Redundant cross-references that re-encode facts through multiple conceptual pathways recover accuracy at extreme compression",
+  "conditions": {
+    "extreme_baseline": "267 tokens, same as Round 6 Genome C",
+    "naive_padding": "~350 tokens, flat VALUES appendix with missing atomic values",
+    "multipath_encoding": "~350 tokens, same facts woven into cross-referencing rule chains"
+  },
+  "summary_by_model": {
+    "claude": {"extreme": "23/60", "naive": "50/60", "multipath": "47/60"},
+    "codex": {"extreme": "16/60", "naive": "48/60", "multipath": "50/60"},
+    "gemini": {"extreme": "14/60", "naive": "42/60", "multipath": "45/60"}
+  },
+  "by_category_claude": {
+    "direct_recall_q1_q5": {"extreme": "1/10", "naive": "10/10", "multipath": "8/10"},
+    "decision_rationale_q6_q9": {"extreme": "6/8", "naive": "7/8", "multipath": "7/8"},
+    "cross_service_q10_q14": {"extreme": "4/10", "naive": "7/10", "multipath": "7/10"},
+    "constraints_q15_q19": {"extreme": "3/10", "naive": "7/10", "multipath": "6/10"},
+    "recent_changes_q20_q24": {"extreme": "3/10", "naive": "10/10", "multipath": "10/10"},
+    "synthesis_q25_q30": {"extreme": "6/12", "naive": "9/12", "multipath": "9/12"}
+  },
+  "by_category_codex": {
+    "direct_recall_q1_q5": {"extreme": "1/10", "naive": "10/10", "multipath": "10/10"},
+    "decision_rationale_q6_q9": {"extreme": "4/8", "naive": "6/8", "multipath": "6/8"},
+    "cross_service_q10_q14": {"extreme": "3/10", "naive": "7/10", "multipath": "8/10"},
+    "constraints_q15_q19": {"extreme": "1/10", "naive": "6/10", "multipath": "7/10"},
+    "recent_changes_q20_q24": {"extreme": "1/10", "naive": "10/10", "multipath": "10/10"},
+    "synthesis_q25_q30": {"extreme": "6/12", "naive": "9/12", "multipath": "9/12"}
+  },
+  "by_category_gemini": {
+    "direct_recall_q1_q5": {"extreme": "1/10", "naive": "10/10", "multipath": "10/10"},
+    "decision_rationale_q6_q9": {"extreme": "4/8", "naive": "5/8", "multipath": "5/8"},
+    "cross_service_q10_q14": {"extreme": "1/10", "naive": "7/10", "multipath": "8/10"},
+    "constraints_q15_q19": {"extreme": "1/10", "naive": "4/10", "multipath": "6/10"},
+    "recent_changes_q20_q24": {"extreme": "1/10", "naive": "10/10", "multipath": "10/10"},
+    "synthesis_q25_q30": {"extreme": "6/12", "naive": "6/12", "multipath": "6/12"}
+  },
+  "key_comparisons": {
+    "recovery_from_extreme": {
+      "naive_vs_extreme_avg": "+29.0",
+      "multipath_vs_extreme_avg": "+29.7"
+    },
+    "encoding_effect": {
+      "multipath_vs_naive_avg": "+0.7",
+      "multipath_vs_naive_per_model": {"claude": "-3", "codex": "+2", "gemini": "+3"}
+    }
+  },
+  "details": [
+    {"model": "claude", "condition": "extreme", "scores": [1,0,0,0,0,2,1,1,2,1,1,1,0,1,0,1,1,1,0,1,0,2,0,0,1,1,1,1,1,1], "total": "23/60"},
+    {"model": "claude", "condition": "naive", "scores": [2,2,2,2,2,2,1,2,2,1,2,0,2,2,2,0,1,2,2,2,2,2,2,2,2,2,1,2,1,1], "total": "50/60"},
+    {"model": "claude", "condition": "multipath", "scores": [2,2,2,2,0,2,1,2,2,1,1,1,2,2,2,1,1,0,2,2,2,2,2,2,2,2,1,2,1,1], "total": "47/60"},
+    {"model": "codex", "condition": "extreme", "scores": [1,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,1,1,1], "total": "16/60"},
+    {"model": "codex", "condition": "naive", "scores": [2,2,2,2,2,2,1,2,1,1,2,1,2,1,2,1,1,0,2,2,2,2,2,2,2,2,1,2,1,1], "total": "48/60"},
+    {"model": "codex", "condition": "multipath", "scores": [2,2,2,2,2,2,1,2,1,1,2,2,2,1,2,1,2,0,2,2,2,2,2,2,2,2,1,2,1,1], "total": "50/60"},
+    {"model": "gemini", "condition": "extreme", "scores": [1,0,0,0,0,1,1,1,1,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,1,1,1], "total": "14/60"},
+    {"model": "gemini", "condition": "naive", "scores": [2,2,2,2,2,2,1,1,1,1,1,2,2,1,2,0,1,0,1,2,2,2,2,2,1,1,1,1,1,1], "total": "42/60"},
+    {"model": "gemini", "condition": "multipath", "scores": [2,2,2,2,2,2,1,1,1,1,2,2,2,1,2,0,2,0,2,2,2,2,2,2,2,1,0,1,1,1], "total": "45/60"}
+  ],
+  "analysis": "HEADLINE: Multi-path encoding shows a small but consistent advantage over naive padding for Codex (+2) and Gemini (+3), while Claude slightly favors naive (-3). The average multipath advantage is +0.7 points, a marginal effect. Both conditions massively recover from extreme compression (~+29 points on average).\n\n(1) DOES REDUNDANCY RECOVER THE CLIFF? Emphatically yes. The extreme condition averages 17.7/60 across all models, while both naive (46.7) and multipath (47.3) recover to ~78% accuracy. The ~83-token increase from extreme to either condition recovers approximately 30 points, confirming the sharp cliff at extreme compression is driven by missing atomic values, not format.\n\n(2) IS MULTI-PATH ENCODING BETTER THAN FLAT DATA? The effect is small and inconsistent across models. Codex and Gemini both benefit from multipath encoding (+2 and +3 respectively), but Claude scores 3 points lower with multipath than naive. The average advantage of +0.7 is within noise for a 30-question instrument. The Moses hypothesis -- that weaving facts into cross-referencing rule chains outperforms flat appendices -- is not strongly supported at this token budget.\n\n(3) WHICH CATEGORIES BENEFIT MOST FROM REDUNDANCY? Direct recall (Q1-Q5) benefits most dramatically: extreme averages 1/10 across all models, while both conditions achieve 9-10/10. Recent changes (Q20-Q24) show identical perfect recovery in both conditions. The constraints category (Q15-Q19) shows the clearest multipath advantage: Codex gains +1 and Gemini gains +2 over naive, suggesting cross-referenced constraint facts are more resilient than flat listings. Decision rationale (Q6-Q9) is the most resilient category at extreme compression (4-6/8), confirming that conceptual 'why' facts survive compression better than atomic values.\n\n(4) DOES THE MOSES PATTERN HAVE MEASURABLE ADVANTAGE? The evidence is mixed. For 2 of 3 models (Codex, Gemini), multipath encoding produces modest gains, particularly in cross-service reasoning (Q10-Q14) and constraints (Q15-Q19) where cross-referencing helps models connect related facts. However, Claude's -3 deficit suggests that for some models, the structural complexity of interwoven rule chains may create parsing overhead that offsets the redundancy benefit. The Q5 failure in Claude multipath (scored 0 -- answered with ALB limit instead of API Gateway throttle) illustrates how cross-referencing can actually confuse models when related-but-distinct values are woven too closely together.\n\nCONCLUSION: At ~350 tokens, the dominant factor is having the atomic values present at all, not how they are encoded. Multi-path encoding provides a slight edge for some models in reasoning-heavy categories but is not a universal improvement. The experiment suggests diminishing returns from encoding sophistication at this compression level -- the next meaningful improvement likely requires additional tokens rather than cleverer arrangement of existing ones."
+}

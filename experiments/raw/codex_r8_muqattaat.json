@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id with parameters 64MB memory, 3 iterations, and parallelism 4 (Argon2id(64MB/3iter/4par))."
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "Refresh tokens expire in 7 days and are rotate-on-use."
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "9200."
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "RDS PostgreSQL 15.4, upgraded from 14.9."
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "5000 burst and 2000 steady."
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "Because Argon2id provides better side-channel resistance."
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "Drizzle was chosen for zero runtime dependencies and SQL-like TypeScript ergonomics."
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "Like all services, they validate JWTs via JWKS (RS256). Validation uses a bounded LRU cache (1000 entries) with 5-minute TTL grace period."
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "To stop DDoS traffic before it reaches containers."
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "Gateway schema validation -> Lambda authorizer JWT validation via JWKS with claims injection -> VPC Link -> ALB per-IP rate limiting -> Portfolio service JWT validation via JWKS -> RBAC middleware/role hierarchy check before the rebalance handler."
+  },
+  {
+    "question": "Q11: What happens if the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "All downstream auth validation fails (gateway Lambda and service-side validation across services). Token issuance continues because the private signing key is local. There is an LRU cache grace window: 1000 entries with 5-minute TTL."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "It is planned for Q3 and depends on both Notification Service and Gateway WebSocket API work."
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "Yes. The UTC+13/+14 expiry issue was resolved by using Unix timestamps instead of Date objects."
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "Use the Notification Service webhook system: register endpoint via POST /api/v1/notifications/webhooks/register and deliver events with exponential backoff (5 attempts over 24h). Auth-event payload contract/signing details are NOT IN CONTEXT."
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "100 (pool size 20 per instance x 5 instances)."
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "Pool size is capped at 20 per instance, but Celery memory growth during large portfolio recalculation is a separate ongoing investigation; direct interaction details are NOT IN CONTEXT."
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "No. Fargate Spot is restricted to batch jobs (portfolio recalculation, digest) and not always-on services due to interruption risk."
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "The architecture is stateless JWT/JWKS-based across services (multi-service verification without shared secrets), which conflicts with per-instance in-memory session state."
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "Backups retained for 30 days define how far back restores can go, while DR objectives are RPO 1h and RTO 4h with us-west-2 replication; they are complementary but distinct controls."
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "Use sslmode=verify-full and trust the global-bundle.pem CA bundle."
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at."
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "After password verification, MFA is required if enabled (TOTP). Only after successful MFA are RS256 access (15 min) and refresh (7 day, rotate-on-use) tokens issued."
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "10 recovery codes are generated; each is single-use and permanently consumed when used."
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "Exponential backoff with 5 attempts within 24 hours."
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "Passwords are stored as Argon2id hashes (64MB/3iter/4par). PII at rest is encrypted with AES-256-GCM using per-tenant keys. In transit, service-to-service uses mTLS via Envoy and DB connections require sslmode=verify-full with global-bundle.pem. Secrets rotate every 90 days."
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "Request hits gateway schema validation -> Lambda authorizer validates JWT via JWKS and injects claims -> traffic goes through VPC Link to ALB (1000/min/IP) -> Auth handler handlePostLogin verifies password with Argon2id -> if MFA enabled, TOTP challenge is required (with recovery-code fallback behavior defined as single-use permanent-consume) -> on success issue RS256 access token (15 min) and refresh token (7 day, rotate-on-use)."
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "Apply system auth and infra patterns: JWT RS256 validated via JWKS in service (and by gateway Lambda), gateway + ALB fronting with limits (5000 burst/2000 steady at gateway, 1000/min/IP at ALB), mTLS via Envoy, DB client TLS verify-full with global-bundle.pem, pool cap 20/instance, ALB payload cap 1MB, RFC7807 errors with traceId, real-DB integration tests via testcontainers, and standard CI/CD pipeline to ECS with blue-green cutover."
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "At API Gateway, this is below 5000 burst/2000 steady limits so it passes. At ALB, per-IP limit is 1000/min, so excess traffic (~500 req/min) is throttled/blocked before containers. Up to 1000 req/min continue to Auth Service handlers."
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "Auth Service depends on the private key to issue RS256 tokens; the JWKS endpoint exposes the corresponding public key; API Gateway Lambda authorizer depends on JWKS/public key for validation; and every service (including Portfolio and Notification) depends on JWKS/public key for token validation."
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "Changes are reviewed with Claude Code before merge, then GitHub Actions runs lint -> typecheck -> test -> build -> push image to ECR -> deploy to ECS. Production rollout uses blue-green ALB target switching for zero downtime. Fargate Spot is used only for batch workloads, not always-on services."
+  }
+]

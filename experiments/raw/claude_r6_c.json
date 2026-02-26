@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "Argon2id with parameters: 64MB memory cost, 3 iterations, 4 parallelism factor."
+  },
+  {
+    "q": 2,
+    "answer": "Refresh token expiration is 7 days with rotation policy (rotate on use)."
+  },
+  {
+    "q": 3,
+    "answer": "The Notification Service runs on port 9200."
+  },
+  {
+    "q": 4,
+    "answer": "RDS PostgreSQL 15.4 is currently running, upgraded from PostgreSQL 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "API Gateway throttle limits: 5000 burst per second, 2000 steady-state requests per second."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen over bcrypt because it is resistant to side-channel attacks, providing stronger security guarantees in multi-tenant environments."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle is used instead of Prisma because it has zero external dependencies, reducing attack surface and improving supply chain security."
+  },
+  {
+    "q": 8,
+    "answer": "Both Portfolio and Notification services verify auth tokens using Lambda-JWKS endpoint to validate RS256-signed JWTs."
+  },
+  {
+    "q": 9,
+    "answer": "Rate limiting at ALB level (1000 req/min per IP) provides DDoS protection before traffic reaches application containers, reducing resource consumption and container scaling needs."
+  },
+  {
+    "q": 10,
+    "answer": "Request > Gateway HTTP-API > Lambda-JWKS-claims validation > VPCLink > ALB (rate limit check) > handlePostLogin > Auth Service (RBAC role-hierarchy validation) > Portfolio Service."
+  },
+  {
+    "q": 11,
+    "answer": "If JWKS endpoint fails, all services cannot validate new tokens. Auth Service has an LRU cache (1000 keys, 5 min TTL) as grace period. If issue continues, private key stored locally is used. All services fail-down together."
+  },
+  {
+    "q": 12,
+    "answer": "Real-time portfolio alerting depends on WebSocket support, which is planned for Q3. Current status: NOT IN CONTEXT (system under investigation)."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, UTC+14 token expiry bug has been fixed by enforcing UTC timezone for all token timestamp operations (unix-ts format) across the system."
+  },
+  {
+    "q": 14,
+    "answer": "Implement webhook endpoint using: Notification Service (Go/Chi:9200) with exponential backoff retry (5 attempts over 24 hours), MJML templating for auth event emails, SES/SNS for delivery, and webhook table with exp-backoff tracking."
+  },
+  {
+    "q": 15,
+    "answer": "With connection pool size of 20 per instance × 5 Auth Service instances = 100 maximum simultaneous database connections."
+  },
+  {
+    "q": 16,
+    "answer": "During tax-lot processing, Celery/Redis has unbounded memory usage issue (currently under investigation). Connection pool (20 connections) handles DB access, but Celery memory leak can cause pod eviction and loss of in-flight jobs."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot cannot be used for Auth Service. Rule R4 specifies Spot-ONLY-batch: Spot instances are only for batch jobs. Auth Service requires guaranteed availability with min 2 instances across 3 AZs."
+  },
+  {
+    "q": 18,
+    "answer": "Rule R3 prohibits adding in-memory session cache: all services require statelessness to enable horizontal scaling. JWKS-LRU cache is exception for cryptographic key lookup, not session data."
+  },
+  {
+    "q": 19,
+    "answer": "30-day backup retention exceeds RPO (1 hour) and RTO (4 hours) targets. 1-hour RPO ensures data loss < 1 hour; 4-hour RTO enables recovery in us-west2 failover within 4 hours."
+  },
+  {
+    "q": 20,
+    "answer": "Connection string changed to require sslmode=verify-full with global-bundle certificate validation (RDS 15.4 upgrade from 14.9)."
+  },
+  {
+    "q": 21,
+    "answer": "tax_lots table columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at."
+  },
+  {
+    "q": 22,
+    "answer": "MFA affects login flow by adding TOTP verification step: handlePostLogin > Argon2id password verify > MFA-TOTP prompt > user enters code from 10-code single-use backup > RS256 access token (15m) + refresh token (7d)."
+  },
+  {
+    "q": 23,
+    "answer": "10 single-use recovery codes are generated during MFA setup. When a code is used, it becomes invalid. If all codes depleted, user must re-enable MFA with new QR code."
+  },
+  {
+    "q": 24,
+    "answer": "Webhook retry policy: exponential backoff with 5 attempts over 24 hours. Soft limit: 10 notifications/hour per webhook."
+  },
+  {
+    "q": 25,
+    "answer": "Security posture: At rest—PII encrypted with AES256-GCM per tenant. Passwords hashed with Argon2id (64M/3/4). In transit—mTLS via Envoy between services, sslmode=verify-full to RDS with global SSL bundle, RS256-JWKS for API auth. Key rotation every 90 days. Secrets stored externally (NOT IN CONTEXT: specific secret manager)."
+  },
+  {
+    "q": 26,
+    "answer": "Full login lifecycle: Request > API Gateway (rate limit 1000/min/IP) > ALB > Lambda-JWKS-claims (validates auth context) > handlePostLogin route > Argon2id password verification > MFA-TOTP prompt > 10 recovery codes validated (single-use) > RS256 access token issued (15m expiry) > RS256 refresh token issued (7d expiry, rotate on use) > Response with tokens via mTLS > Client stores in secure storage."
+  },
+  {
+    "q": 27,
+    "answer": "New Billing Service (Rust): Must follow handle{Verb}{Resource} pattern, use RFC7807 error responses with traceId, integrate with Auth Service for RS256-JWKS token validation, implement connection pooling (pool20), participate in Envoy mTLS service mesh, use Pino-JSON-AsyncLocal logging, support ClaudeCode-review in CI/CD, deploy to ECS-Fargate (min 2 instances, 3 AZs), must handle 1MB ALB payload limit."
+  },
+  {
+    "q": 28,
+    "answer": "1500 req/min from single IP: ALB rate limiter rejects after 1000 req/min (Rule R2), returns 429 Too Many Requests. Subsequent requests dropped at ALB > not reaching app-rate limiter > not consuming container resources > blue-green deployment unaffected."
+  },
+  {
+    "q": 29,
+    "answer": "JWT signing key dependencies: Auth Service (generates/rotates RS256) > JWKS endpoint (publishes public key) > Lambda-JWKS (validates tokens) > API Gateway (claims extraction) > all services (Auth, Portfolio, Notification validate via JWKS) > LRU cache (1000/5min) > fallback to local private key if JWKS down."
+  },
+  {
+    "q": 30,
+    "answer": "Deployment pipeline: Commit > GitHub Actions (lint > testcontainers > unit tests > build Docker image) > ECR push > ECS task definition update > blue-green deployment via ALB target group swap > zero-downtime cutover > ClaudeCode-review gate before production > Spot-ONLY batch jobs for async tasks > RTO 4 hours with us-west2 failover if us-east-1 primary fails."
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "The algorithm used is Argon2id for side-channel protection. Specific parameters (memory, iterations, parallelism) are NOT IN CONTEXT."
+  },
+  {
+    "q": 2,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 3,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 4,
+    "answer": "An RDS-upgrade was recently performed, but specific database versions are NOT IN CONTEXT."
+  },
+  {
+    "q": 5,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen for its side-channel resistance (side-channel protection)."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle is used because it provides zero dependencies (zero-deps)."
+  },
+  {
+    "q": 8,
+    "answer": "They verify tokens using RS256 and the shared JWKS endpoint (all-svc-JWKS)."
+  },
+  {
+    "q": 9,
+    "answer": "Rate limiting is done at the ALB to provide pre-container protection (pre-container)."
+  },
+  {
+    "q": 10,
+    "answer": "The chain involves HTTP-API (gw-schema), Lambda-JWKS, ALB, the Portfolio service (FastAPI), and the RBAC-middleware."
+  },
+  {
+    "q": 11,
+    "answer": "All services are affected (all-svc-JWKS). New validations fail, but there is an LRU-cache-grace period for existing validation context."
+  },
+  {
+    "q": 12,
+    "answer": "Real-time functionality depends on WebSockets, which are scheduled for Q3 (next: WebSocket-Q3). Alerting is currently handled by the Notification service (Go/Chi, SES+SNS+FCM)."
+  },
+  {
+    "q": 13,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 14,
+    "answer": "Webhooks were recently added to the system (added: webhooks) and would likely be integrated into the existing notify service architecture (Go/Chi)."
+  },
+  {
+    "q": 15,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 16,
+    "answer": "A known bug (bug: Celery-mem) exists during tax-lot processing, but the specific interaction with the connection pool is NOT IN CONTEXT."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot is restricted to batch processes only (Spot-batch-only); Auth is a core service running on standard ECS-Fargate."
+  },
+  {
+    "q": 18,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 19,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 20,
+    "answer": "The upgrade likely required enabling 'sslmode-verify-full' for the database connection security."
+  },
+  {
+    "q": 21,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 22,
+    "answer": "MFA (specifically MFA-TOTP) is a required step in the flow after Argon2id hashing but before RS256 tokens are issued."
+  },
+  {
+    "q": 23,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 24,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 25,
+    "answer": "At rest: AES256GCM for tenant data and Argon2id for credentials. In transit: Envoy-mTLS for internal traffic and sslmode-verify-full for database connections."
+  },
+  {
+    "q": 26,
+    "answer": "The lifecycle is: HTTP-API (gw-schema) -> Lambda-JWKS -> ALB -> handlePost -> Argon2id -> MFA-TOTP -> RS256-tokens."
+  },
+  {
+    "q": 27,
+    "answer": "It must follow the handle{V}{R} style, use RFC7807 for errors, Pino-JSON for logging, testcontainers for testing, and integrate with the RS256-JWKS auth and Envoy-mTLS infra."
+  },
+  {
+    "q": 28,
+    "answer": "The ALB-rate layer would handle rate limiting before it reaches the container. The HTTP-API Gateway also performs schema validation (gw-schema)."
+  },
+  {
+    "q": 29,
+    "answer": "The Auth Service (signs), the Portfolio and Notification Services (verify), and the Lambda-JWKS (provides public keys)."
+  },
+  {
+    "q": 30,
+    "answer": "GHA (GitHub Actions) -> ClaudeCode-review -> ECR -> ECS-blue-green deployment."
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: You need to add a dropdown field to a form schema. The options are \"Yes\", \"No\", and \"N/A\". Write the correct JSON for the options array. What happens if you use the wrong format?",
+    "answer": "CORRECT FORMAT: {\"options\": [{\"label\": \"Yes\", \"value\": \"yes\"}, {\"label\": \"No\", \"value\": \"no\"}, {\"label\": \"N/A\", \"value\": \"na\"}]}. WRONG FORMAT (array of strings like [\"Yes\", \"No\", \"N/A\"]) causes React crashes. Always use {label, value} objects. Use normalizeEnumOptions() utility from @/types/schema when handling enum options in components."
+  },
+  {
+    "question": "Q2: A colleague suggests building a PDF parser to extract form data from USDA paper forms. Another suggests creating custom inputTypes like \"currency\" and \"percentage\". What do you tell them?",
+    "answer": "REJECT BOTH APPROACHES - they are dead approaches abandoned in this project. PDF parser achieved only 60% accuracy. Custom inputTypes broke schemas. SUPPORTED inputTypes ONLY: text, textarea, date, number, email, tel, acknowledgment, signature. For currency/percentage: use number inputType with appropriate Tailwind styling or custom CSS in schema. Core principle: UI IS the schema - forms ARE the UI, not extracted from PDFs."
+  },
+  {
+    "question": "Q3: You added a new element type to UniversalFormRenderer on the web side. It works in the browser. Is the task done?",
+    "answer": "NO. Critical rule: UI/PDF PARITY is mandatory. You MUST ALSO: (1) Add CSS in universal-html-template.ts getStyles(), (2) Add render function in renderFormField(), (3) Update FormField type in pdf-template-generator.ts, (4) Test PDF generation to ensure field renders identically. Any UI/PDF disconnect is a CRITICAL BUG. Task is only complete when both renderers handle the element identically."
+  },
+  {
+    "question": "Q4: You need to build a new producer dashboard page. What is the very first thing you must do before writing any code?",
+    "answer": "SEARCH FIRST for existing patterns. Match existing page patterns. Read apps/web/CLAUDE.md for UI patterns. The first step is pattern discovery, not implementation. Examples: Review existing dashboard pages, check DashboardHeader vs PageHeader usage, verify StatsCard requirements (subtitle REQUIRED, variant must be info/success/warning/organic NOT default). This prevents duplicate code and maintains consistency."
+  },
+  {
+    "question": "Q5: You write console.log(\"🚀 Successfully processed submission!\") in a Fastify route. What is wrong?",
+    "answer": "CRITICAL VIOLATION OF RULE 11: No emojis in console.log/warn/error. This is unprofessional and was removed in Session 120. Also violates 'NO SLOP IN CODE' rule - no enthusiastic comments, no AI-isms. Professional logs only. Correct: console.log('Successfully processed submission') or use standard logging without emojis or exclamation marks."
+  },
+  {
+    "question": "Q6: Describe the monorepo structure. What are the apps and packages, what port does each service run on, and what is the package manager?",
+    "answer": "APPS: (1) apps/web - Next.js 16, React 19, port 3000, (2) apps/api - Fastify, TypeScript, port 4000. PACKAGES: (1) packages/database - Prisma 7, PostgreSQL, (2) packages/sdk - TypeScript, auto-generated from OpenAPI spec. PACKAGE MANAGER: pnpm. Start: pnpm dev (starts web:3000 and api:4000). Seed database: pnpm --filter database seed"
+  },
+  {
+    "question": "Q7: Explain what schema-driven architecture means in this project. Trace how a single JSON schema flows through the system.",
+    "answer": "SCHEMA-DRIVEN: JSON schemas ARE the UI. Core concept: Forms ARE the UI. Flow: (1) JSON schema in packages/database/prisma/seeds/form-schemas/*.json defines form structure, (2) Schema stored in FormTemplate model via seed, (3) Client fetches schema for FormInstance, (4) UniversalFormRenderer.tsx renders schema in UI (apps/web), (5) Same schema sent to API for PDF generation, (6) json-schema-loader.ts transforms schema for PDF, (7) universal-html-template.ts renders HTML, (8) Puppeteer generates PDF. Single schema drives BOTH UI and PDF rendering. This ensures UI/PDF parity."
+  },
+  {
+    "question": "Q8: What are the two authentication methods supported by the API? When would you use each?",
+    "answer": "JWT (JSON Web Token) and API Key. JWT: User sessions via Authorization: Bearer <token>. Use for user-initiated requests (login, form submission, interactive sessions). API Key: Service-to-service authentication via X-API-Key: certaxiom_live_... header. Use for server-to-server integrations, webhooks, developer portal access. Both methods supported in middleware/auth.ts and SDK (Configuration class accepts accessToken or apiKey)."
+  },
+  {
+    "question": "Q9: List the form series. What does each letter represent and how do they relate to OSP scopes?",
+    "answer": "FORM SERIES (59 total): G-Series (17 forms) = Grower scope, H-Series (14 forms) = Handler scope, L-Series (14 forms) = Livestock scope, V-Series (2 forms) = Miscellaneous/Vendor, Common (7 forms) = Shared across scopes, plus templates. ARCHITECTURE: Single-OSP Multi-Scope - not one-scope-per-OSP. Users select scope (Grower/Handler/Livestock) via dropdown; same OSP instance, different form visibility based on selected scope. G/H/L series map to OSP Multi-Scope selector architecture."
+  },
+  {
+    "question": "Q10: What is the relationship between the PM repo and the source code repo? Why are they separate?",
+    "answer": "PM REPO (mmostagirbhuiyan/certaxiom-pm): Contains GitHub project board, issues, sprint tracking. No source code. Non-technical stakeholders (Kim, Violet, Michael, CEO) have write access to provide feedback. SOURCE REPO (mmostagirbhuiyan/certaxiom): Contains application code. Technical only. SEPARATION REASON: (1) Non-technical stakeholders can comment on issues without code access, (2) Prevents accidental code changes, (3) Enables Kim/Violet/Michael to review specs independently, (4) Issues are AUTHORITATIVE for task tracking. Use /pm command to sync sprint markdown specs to GitHub issues."
+  },
+  {
+    "question": "Q11: You need a list page with counts at the top and a detail/edit page. Which header component for each? What are the StatsCard requirements?",
+    "answer": "LIST PAGE: DashboardHeader (with StatsCards). DETAIL/EDIT PAGE: PageHeader (without StatsCards). StatsCard REQUIREMENTS: (1) title and value are required, (2) subtitle REQUIRED (prevents uneven heights), (3) variant MUST be one of: info|success|warning|organic (NOT default - default is gray, unprofessional), (4) icon optional (h-5 w-5 sizing). Example: <StatsCard title=\"Total Items\" value={count} subtitle=\"All items\" icon={<Icon />} variant=\"info\" />"
+  },
+  {
+    "question": "Q12: How do you embed a data table inside a card component? What CSS classes are required?",
+    "answer": "CSS CLASSES REQUIRED: <Card><CardContent className=\"!p-0\"><EnterpriseDataTable className=\"border-0 bg-transparent shadow-none rounded-none\" /></CardContent></Card>. Critical: (1) CardContent: !p-0 removes padding, (2) EnterpriseDataTable: border-0 removes table borders, bg-transparent removes background, shadow-none removes shadow, rounded-none removes border radius. This makes table flush with card, seamless appearance. Without these classes, table appears boxed inside card."
+  },
+  {
+    "question": "Q13: You need to add a new API route for bulk-deleting materials. Describe the exact steps including what you must NOT skip.",
+    "answer": "STEPS: (1) Create file src/routes/entities/bulk-delete-materials.ts, (2) Implement handler with JWT auth middleware (do NOT skip - bypass breaks security), (3) Add OpenAPI schema for Swagger docs (@fastify/swagger annotations - do NOT skip - breaks SDK generation), (4) Register route in src/index.ts or domain index file, (5) Wrap Prisma errors in ApiError (do NOT return raw Prisma errors), (6) Regenerate SDK: pnpm --filter sdk generate after route is live. SDK regeneration MUST NOT be skipped or SDK will be out of sync."
+  },
+  {
+    "question": "Q14: Describe the seed data execution order and idempotency guarantee. How do you run seeds with expanded test data?",
+    "answer": "EXECUTION ORDER: 00-cleanup.ts → 01-tenants.ts → 02-users.ts (with passkeys) → 03-organizations.ts → 04-form-templates.ts → 05-osp-scenarios.ts → 07-enhanced-workflows.ts → 08-13-*.ts (Phase 61 expanded data). IDEMPOTENCY: All seeds use upsert patterns - safe to run multiple times. Existing records skipped (logged), new records created, no duplicates. EXPANDED TEST DATA: pnpm --filter database seed -- --phase61. SCENARIO TAGS (Phase 61): pnpm --filter database seed -- --tags=perf:* (performance), --tags=cert:* (certification lifecycle), --tags=api:pagination. Run pnpm --filter database seed -- --list to see all available tags."
+  },
+  {
+    "question": "Q15: What is the testing philosophy? Write an example of a BAD test and a GOOD test for a Fastify route.",
+    "answer": "PHILOSOPHY: 'Test behavior, not implementation.' Question: 'If I rewrote this function differently but kept the same behavior, would tests pass?' BAD TEST: expect(source).toContain('fastify.post'); expect(mockPrisma.findFirst).toHaveBeenCalledWith(...); (static analysis, mock assertions, tests implementation). GOOD TEST: const response = await app.inject({method: 'POST', url: '/api/...'}); expect(response.statusCode).toBe(201); (tests actual output, behavior). Templates: wizard-rules.test.ts, json-schema-loader.test.ts, passkey.test.ts"
+  },
+  {
+    "question": "Q16: Trace the complete submission workflow from creation to approval. Include the branch path for requested changes.",
+    "answer": "STATES: DRAFT → SUBMITTED → ASSIGNED → IN_REVIEW → APPROVED or REJECTED. BRANCH PATH (REQUESTED CHANGES): DRAFT → SUBMITTED → ASSIGNED → IN_REVIEW → REQUEST_CHANGES → (back to SUBMITTED). After request_changes, form returns to SUBMITTED state. Producer can edit and resubmit. Reviewer can then move through ASSIGNED → IN_REVIEW → APPROVED/REJECTED. State machine implemented in services/workflow/submission-workflow.service.ts (apps/api)."
+  },
+  {
+    "question": "Q17: Trace the complete PDF generation flow from client request to rendered PDF. Name every file involved.",
+    "answer": "FLOW: (1) Client requests PDF → routes/forms/pdf.ts (apps/api), (2) Service loads FormInstance → pdf-generation.service.ts, (3) Schema fetched from FormTemplate, (4) Schema transformed → json-schema-loader.ts, (5) HTML rendered → universal-html-template.ts (Meridian fonts + Tailwind styles), (6) Puppeteer generates PDF. FILES INVOLVED: apps/api/src/routes/forms/pdf.ts, apps/api/src/services/pdf/pdf-generation.service.ts, apps/api/src/services/pdf/json-schema-loader.ts, apps/api/src/pdf-templates/universal-html-template.ts, apps/api/src/pdf-templates/pdf-template-generator.ts, docs/fonts/ (Meridian fonts bundled), docs/header.tex (PDF config). Both UI (UniversalFormRenderer.tsx) and PDF renderer must handle same elements identically."
+  },
+  {
+    "question": "Q18: The API team added 3 new endpoints. What is the exact sequence to regenerate the SDK?",
+    "answer": "SEQUENCE: (1) Ensure API is running with updated OpenAPI spec: pnpm dev, (2) Verify new endpoints have OpenAPI annotations in routes (do NOT skip - breaks generation), (3) Regenerate SDK: pnpm --filter sdk generate (reads OpenAPI spec from running API), (4) Build SDK: pnpm --filter sdk build, (5) Optional: Regenerate Python SDK: pnpm --filter sdk-python generate (same OpenAPI spec, Python target). After regeneration, SDK types will reflect new endpoints. Do NOT manually edit SDK files in packages/sdk/src/ - they are auto-generated."
+  },
+  {
+    "question": "Q19: You are running /sprint 3 but gh CLI is unavailable. What happens? What do you do when back on local?",
+    "answer": "WHEN GH UNAVAILABLE: /sprint command logs actions to .claude/sprint-ledger.json instead of GitHub. Work continues normally, nothing blocked. WHEN BACK ON LOCAL: Next local /sprint run auto-flushes the ledger - synchronizes all logged actions to GitHub Issues automatically. Never skip work because GitHub is unreachable. This is the SPRINT LEDGER feature that enables offline capability for web agents."
+  },
+  {
+    "question": "Q20: Walk through sprint execution from planning to PR. What constraints must an agent follow?",
+    "answer": "SPRINT EXECUTION: (1) Read CLAUDE.md Session State, identify task from GitHub Issues (e.g., #53), (2) Create feature branch: git checkout -b task/issue-num, (3) Plan scope - check task spec in gh issue view <num> -R mmostagirbhuiyan/certaxiom-pm, (4) Implement using slash commands (/feature, /fix, /ui, /api, /schema), (5) Write tests (behavior, not implementation), (6) Update TASKS.md (files modified, test URLs, acceptance criteria), (7) Create PR. CONSTRAINTS: (1) One PR per task - no scope creep, (2) Do NOT refactor outside scope, (3) Use GitHub issue numbers (#53) NOT arbitrary local numbering, (4) BLOCKED escape valve if task unclear or conflicts, (5) Recurring patterns: implement once, replicate (e.g., 'material list cross-reference' identical across 4+ Grower forms)."
+  },
+  {
+    "question": "Q21: You need to add a new Equipment column to a form dataTable. Trace every file and package that must change.",
+    "answer": "FILES THAT MUST CHANGE: (1) packages/database/prisma/seeds/form-schemas/*.json - update dataTable entityType or fields, (2) packages/database/prisma/migrations/*.sql - if Equipment model schema changes, (3) apps/api/src/services/pdf/json-schema-loader.ts - ensure schema transforms include Equipment field, (4) apps/api/src/pdf-templates/universal-html-template.ts - add CSS/render for Equipment column, (5) apps/web/src/components/forms/UniversalFormRenderer.tsx - add Equipment column render logic, (6) packages/database/prisma/schema.prisma - if Equipment entity definition changes, (7) Run migration: pnpm --filter database db:migrate, (8) Regenerate SDK: pnpm --filter sdk generate. CRITICAL: UI and PDF renderers must both handle Equipment identically (UI/PDF PARITY)."
+  },
+  {
+    "question": "Q22: A schema change adds a new field to the Organization model. List every downstream effect across the monorepo.",
+    "answer": "DOWNSTREAM EFFECTS: (1) packages/database/prisma/schema.prisma - add field, (2) pnpm --filter database db:migrate - create migration, (3) packages/database/prisma/seeds/03-organizations.ts - update seed data to include new field, (4) apps/api/src/routes/organizations/*.ts - routes may need updates to expose field, (5) apps/api Swagger/OpenAPI spec - auto-generated, includes new field, (6) packages/sdk - regenerate: pnpm --filter sdk generate (includes new field in Organization model), (7) apps/web/src/types/schema.ts - TypeScript types update (if used in UI), (8) apps/web organization pages - may need UI updates to display/edit field, (9) Form schemas that reference Organization - may need updates if field affects form logic. All downstream effects ripple because schema-driven architecture propagates changes throughout system."
+  },
+  {
+    "question": "Q23: What are the three DataTable types and how does each store its data?",
+    "answer": "THREE TYPES: (1) ENTITY: entityType: \"Material\", entityFilter: {...} - references database entity, data stored in Material table, loaded dynamically, (2) FIXED ROWS: fixedRows: [...] - static rows defined in schema, data saved to FormInstance.data JSON field, allows add/remove (4 default, dynamic hybrid), (3) JSON: fieldId: \"...\" - custom table data, saved directly to FormInstance.data JSON field as JSON blob, flexible structure. Each type has different storage location: database entity table, FormInstance.data JSON, or FormInstance.data JSON. See README.md for DataTable full spec."
+  },
+  {
+    "question": "Q24: Explain the Single-OSP Multi-Scope architecture. How do the G, H, and L series map to it?",
+    "answer": "ARCHITECTURE: Single OSP instance with Multi-Scope selector dropdown (Grower/Handler/Livestock). NOT one-scope-per-OSP. Users select scope after creating OSP; same OSP shows different forms based on selected scope. MAPPING: G-Series (17 forms) = Grower scope forms (crops, soil, inputs), H-Series (14 forms) = Handler scope forms (processing, storage), L-Series (14 forms) = Livestock scope forms (animal care, feed, health). V-Series (2) + Common (7) = Vendor and shared forms across all scopes. This eliminates duplicate OSPs and supports multi-activity certification (farm + processing in one OSP)."
+  },
+  {
+    "question": "Q25: How does the webhook system work across the API and SDK layers?",
+    "answer": "API LAYER: Webhook model in Prisma schema stores subscriptions. API routes in routes/webhooks/*.ts handle CRUD operations. When form state changes (SUBMITTED, APPROVED, etc.), API triggers webhook event by sending HTTP POST to subscriber's configured URL. SDK LAYER: WebhooksApi class auto-generated from OpenAPI spec. Developers import and use: const api = new WebhooksApi(config); const webhooks = await api.listWebhooks(); await api.createWebhook({url, events: ['form.submitted']}). SDK abstracts HTTP details - developers use TypeScript methods. Webhooks enable real-time event notifications to external systems."
+  },
+  {
+    "question": "Q26: A subQuestion has a fieldId but no explicit type property. What happens if you only check element.type === \"question\"?",
+    "answer": "BUG: The element is skipped/not rendered because the check fails. subQuestions without explicit type are valid - they are nested questions referenced by fieldId. CRITICAL RULE (Rule 10): Check BOTH conditions: if (element.type === \"question\" || (!element.type && element.fieldId)). This pattern must be used in BOTH UniversalFormRenderer.tsx (UI) and universal-html-template.ts (PDF). Failure to check both conditions causes UI/PDF disconnect - CRITICAL BUG. Pattern is required for any nested question field structure."
+  },
+  {
+    "question": "Q27: You want to clear the database and re-seed. You run DELETE FROM on all tables. What breaks and what should you do instead?",
+    "answer": "BREAKS: (1) Foreign key constraints - deleting parent tables before children fails, (2) Idempotency - direct deletes can't be undone, (3) Passkey data - user passkeys may get corrupted. CORRECT APPROACH: Use seed system designed for this. packages/database/prisma/seeds/00-cleanup.ts is passkey-safe DB cleanup. Run: pnpm --filter database seed. This executes cleanup in correct order, respects foreign keys, maintains idempotency. For full reset with expanded data: pnpm --filter database seed -- --phase61. Never use raw DELETE FROM - seed system handles proper cleanup order."
+  },
+  {
+    "question": "Q28: You add bg-background to a div inside AppShell. The page looks different. Why?",
+    "answer": "BUG: bg-background inside AppShell BLOCKS the gradient background. AppShell has gradient styling; adding bg-background (solid color) overrides it, breaking visual design. RULE 12 in web/CLAUDE.md: Do NOT add bg-background inside AppShell. Container already has background. Result: Page loses gradient, looks flat and unprofessional. Solution: Remove bg-background class from div. If need to style content, use transparent or no background class."
+  },
+  {
+    "question": "Q29: You complete 3 sprint tasks but gh CLI is unavailable. You document in TASKS.md and move on. What is wrong?",
+    "answer": "INCOMPLETE: Documenting ONLY in TASKS.md is insufficient. TASKS.md is for SESSION DOCUMENTATION ONLY. GitHub Issues are AUTHORITATIVE for task tracking (Rule 13). CORRECT APPROACH: (1) Document work in TASKS.md (files modified, test URLs, acceptance criteria) for session reference, (2) Use SPRINT LEDGER: /sprint command auto-logs to .claude/sprint-ledger.json when gh CLI unavailable, (3) When back on local: next /sprint run auto-flushes ledger to GitHub Issues, (4) Create PR with GitHub issue references (#task-num). Never skip GitHub logging - ledger ensures offline capability and proper task tracking."
+  },
+  {
+    "question": "Q30: You edit openapitools.json in the SDK package, commit, and two days later the SDK is broken. What did you forget?",
+    "answer": "FORGOT: Regenerate the SDK after editing openapitools.json. SDK RULE (Rule 12 in sdk/CLAUDE.md): Do NOT manually edit openapitools.json without testing regeneration. After any openapitools.json change: (1) Edit config, (2) pnpm --filter sdk generate (regenerates from OpenAPI spec), (3) pnpm --filter sdk build (builds generated code), (4) Test SDK works: import types, verify new features. Forgetting regeneration causes SDK to be out of sync with config for 2 days - breaks downstream users. Always regenerate immediately after config changes."
+  }
+]

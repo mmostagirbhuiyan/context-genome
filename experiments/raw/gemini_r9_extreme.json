@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id. Parameters are NOT IN CONTEXT"
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "side-channel"
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "zero-deps"
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "all-svc-JWKS"
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "pre-container"
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q11: What happens if the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "fail+issue-continues,LRU-cache-grace. all-svc-JWKS are affected."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "Spot-batch-only"
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "gw-schema>Lambda-JWKS>ALB>handlePost>Argon2id>MFA-TOTP>RS256-tokens"
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "AES256GCM-tenant,Argon2id-prod,mTLS,sslmode-verify-full"
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "gw-schema>Lambda-JWKS>ALB>handlePost>Argon2id>MFA-TOTP>RS256-tokens"
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "style:handle{V}{R},RFC7807,testcontainers,Pino-JSON"
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "ALB-rate(pre-container)"
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "all-svc-JWKS, Lambda-JWKS"
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "deploy:GHA>ECR>ECS-blue-green,ClaudeCode-review,Spot-batch-only"
+  }
+]

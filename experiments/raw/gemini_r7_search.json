@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "Argon2id with parameters 64MB memory, 3 iterations, and 4 parallelism."
+  },
+  {
+    "q": 2,
+    "answer": "The refresh token has a 7-day expiration period and a rotate-on-use policy."
+  },
+  {
+    "q": 3,
+    "answer": "9200"
+  },
+  {
+    "q": 4,
+    "answer": "The database is currently running RDS-PG 15.4, upgraded from 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "5000 burst and 2000 steady."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen over bcrypt for its side-channel resistance."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle is used for its zero runtime dependencies and SQL-like TypeScript experience."
+  },
+  {
+    "q": 8,
+    "answer": "They verify auth tokens by validating the JWT via the JWKS (JSON Web Key Set) endpoint."
+  },
+  {
+    "q": 9,
+    "answer": "Rate limiting is done at the ALB to mitigate DDoS attacks before they reach the application containers."
+  },
+  {
+    "q": 10,
+    "answer": "The chain involves the API Gateway (schema validation), Lambda-authorizer (JWT validation and claims injection), VPCLink, ALB, and finally the Portfolio Service (RBAC middleware)."
+  },
+  {
+    "q": 11,
+    "answer": "If the JWKS endpoint goes down, all downstream auth fails for the services and gateway. Token issuance continues as the private key is local. There is a 5-minute TTL grace period provided by the 1000-entry LRU cache."
+  },
+  {
+    "q": 12,
+    "answer": "It depends on both the notify-service and the gateway WebSocket API; its status is 'Planned' for Q3."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, it was resolved by using Unix timestamps instead of Date objects."
+  },
+  {
+    "q": 14,
+    "answer": "By registering webhooks via POST /api/v1/notifications/webhooks/register; the system supports exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "q": 15,
+    "answer": "100 connections (5 instances * 20 connections per instance)."
+  },
+  {
+    "q": 16,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot is used ONLY for batch jobs (like portfolio-recalc and digest) and not for always-on services like Auth due to the risk of interruption."
+  },
+  {
+    "q": 18,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 19,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 20,
+    "answer": "The upgrade required changing the sslmode to verify-full and using global-bundle.pem."
+  },
+  {
+    "q": 21,
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "q": 22,
+    "answer": "If enabled, MFA (TOTP) is verified after the initial Argon2id password verification before tokens are issued."
+  },
+  {
+    "q": 23,
+    "answer": "10 recovery codes are generated; they are single-use and are permanently consumed when used."
+  },
+  {
+    "q": 24,
+    "answer": "Exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "q": 25,
+    "answer": "At rest: Passwords use Argon2id, PII uses AES-256-GCM with per-tenant keys, and secrets rotate every 90 days. In transit: mTLS via AppMesh/Envoy and RDS connections use sslmode=verify-full with global-bundle.pem."
+  },
+  {
+    "q": 26,
+    "answer": "1. Gateway validates schema. 2. Lambda-authorizer validates JWT via JWKS and injects claims. 3. VPCLink passes to ALB (1000/min/IP limit). 4. Auth Service handlePostLogin executes. 5. Argon2id password verification. 6. MFA TOTP verification. 7. RS256 access and refresh tokens are issued."
+  },
+  {
+    "q": 27,
+    "answer": "The service must follow the handle{Verb}{Resource} naming convention, use RFC7807 for error details, Pino-compatible structured JSON logging, and adhere to constraints like the 20-connection pool limit and 1MB payload limit."
+  },
+  {
+    "q": 28,
+    "answer": "The ALB throttles the single IP to 1000 req/min, dropping 500 requests before they reach the Auth Service."
+  },
+  {
+    "q": 29,
+    "answer": "The Auth Service (uses the private key for signing), and the Portfolio Service, Notification Service, and Gateway Lambda-authorizer (all use the public key/JWKS for validation)."
+  },
+  {
+    "q": 30,
+    "answer": "The pipeline uses GitHub Actions (lint > typecheck > test > build > ECR > ECS), requires a Claude Code review before merge, and uses a blue-green ALB target switch for zero-downtime deployment."
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id is used. OWASP-recommended minimum parameters are not explicitly specified in the genome, but modern OWASP standards recommend: iterations=2, memory=19MiB (19456 KiB), parallelism=1 for interactive authentication."
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "Refresh tokens expire after 7 days. The rotation policy involves: refresh tokens are rotated on use, with each refresh request issuing a new refresh token while invalidating the old one to prevent token replay attacks."
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "Port 9200. The Notification Service is a Go/Chi service running on port 9200."
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "PostgreSQL 15.4 is currently running. It was upgraded from PostgreSQL 14.9. This is a major version upgrade which required SSL bundle changes."
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "5000 requests per second burst capacity and 2000 requests per second steady-state. Additionally, ALB enforces 1000 requests per minute per IP address for the auth service."
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "Argon2id was chosen because it represents modern hashing advantage over bcrypt. Argon2id is resistant to GPU cracking attacks, offers memory-hardness properties, and meets current OWASP password storage guidelines more comprehensively than bcrypt."
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "Drizzle was chosen due to known tradeoffs with Prisma. Drizzle provides better type safety, more granular control over queries, better performance for complex queries, and stronger TypeScript integration without runtime schema compilation."
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "Both services verify tokens using the Lambda-JWKS endpoint. The flow is: gateway schema validates > Lambda-JWKS extracts and validates claims > services receive validated claims. Services trust claims that have passed JWKS validation and use the traceId from RFC7807 responses for auditing."
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "ALB-based rate limiting provides edge-layer DDoS protection before requests reach the application. This conserves application resources, prevents slowloris attacks, and ensures consistent rate limiting across all backend instances without requiring application-level coordination."
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "Chain: Client > ALB (rate limit check) > Gateway (schema validation) > Lambda-JWKS (extract claims including roles) > Portfolio Service (validates RBAC rules against role claim) > PostgreSQL (query role definitions if needed). The RBAC system validates roles against permissions before Celery processes the rebalance task."
+  },
+  {
+    "question": "Q11: What happens if the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "If JWKS goes down, all token validation fails. Services affected: Auth, Portfolio, Notification. All fail because every service depends on JWKS for claims validation. The issue continues because private key is local only. Grace period: LRU cache maintains last 1000 tokens for 5 minutes, providing brief resilience. Beyond 5 minutes, authentication is completely blocked."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "Real-time portfolio alerting depends on WebSocket connections for push notifications. Status: Planned for Q3. Currently, real-time alerting is not implemented; notifications are delivered asynchronously via the Notification Service using webhooks and SNS/SES/FCM."
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "Yes, the bug has been resolved. The fix was to ensure all timestamps use unix-ts (unix timestamp integers) instead of Date objects. This eliminates timezone-dependent expiry calculations and ensures consistent token expiry validation across all regions including UTC+13 and UTC+14."
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "Implementation: Register webhook endpoint via POST /api/v1/notifications/webhooks/register with expiration timestamp. Auth Service publishes events (login, MFA setup, token refresh) to SNS. Notification Service subscribes, formats events as RFC7807 JSON with traceId, and delivers to webhook with exponential backoff (5 attempts over 24 hours). Client implements signature verification using HMAC."
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "Maximum 100 connections. Pool size is 20 per instance × 5 instances = 100. This is the connection pool limit for the Auth Service fleet. RDS must support at least 100 connections for Auth Service alone, plus connections from Portfolio and Notification services."
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "Tax-lot processing uses Celery/Redis with unbounded memory (active bug). During processing, Database connections are held in the pool. If Celery tasks accumulate in memory without completion, pool connections may be blocked, causing connection exhaustion and degraded auth performance. Fix requires implementing task completion guarantees and memory limits on Celery worker processes."
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "No, Fargate Spot cannot be used for Auth Service. Constraint: 'Spot-batch-only' deployment policy restricts Spot instances to batch workloads. Auth Service requires on-demand instances because authentication is critical path; interruptions would block user login and violate SLA targets (RTO 4h, RPO 1h)."
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "The JWKS-LRU-leak doctrine. The resolved bug 'JWKS-LRU-leak(1000/5min)' established that in-memory caches create state leaks across instances. The constraint requires stateless design: only the LRU token cache (1000 tokens/5 min) is permitted for disaster recovery. Additional session caches would violate horizontal scalability and multi-AZ consistency requirements."
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "RPO (Recovery Point Objective) is 1 hour: backups protect against data loss up to 1 hour old. RTO (Recovery Time Objective) is 4 hours: backups in uswest2 enable recovery within 4 hours. 30-day retention provides long-term disaster recovery and compliance archival beyond RTO, supporting forensic analysis and legal holds."
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "The upgrade from PG 14.9 to 15.4 required SSL bundle changes. Connection strings must specify 'sslmode' parameter. PostgreSQL 15 requires explicit sslmode configuration (e.g., sslmode=require or sslmode=verify-full) in the connection string and updated CA certificate bundles for mTLS with Envoy."
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "Columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at. This schema tracks individual security purchase lots for tax reporting, supporting cost basis calculations and wash-sale detection for Portfolio Service."
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "MFA flow: POST /api/v1/auth/mfa/setup generates QR code for TOTP registration. During login: after Argon2id password verification, if MFA is enabled, client must verify TOTP code. Upon verification, user receives access token (15min) + refresh token (7day-rotate). TOTP codes are single-use and consumed immediately."
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "10 single-use recovery codes are generated during MFA setup. Each code can be used once to gain access if TOTP device is unavailable. Upon consumption, the code is marked as used and cannot be reused. Users must regenerate recovery codes periodically for continued backup access."
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "Exponential backoff with 5 attempts over 24 hours. First attempt is immediate, followed by exponentially increasing delays. After 5 failures within 24 hours, the webhook is marked failed. The Notification Service maintains retry state and logs all attempts with traceId for debugging."
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "At rest: Passwords hashed with Argon2id (OWASP minimum). MFA secrets encrypted with AES256-GCM per tenant. Private keys stored locally on Auth Service, rotated on 90-day cycle. Database credentials in secrets manager. In transit: All traffic over mTLS via Envoy service mesh. ALB terminates TLS 1.3. JWKS tokens (RS256) signed with private key, verified via Lambda endpoint. RDS connections require sslmode=require with CA certificate verification. Cross-service communication authenticated via JWT claims. Webhook payloads signed with HMAC-SHA256."
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "1. Client POST /auth/login (email, password) via HTTPS to ALB. 2. ALB rate limit check (1000/min/IP). 3. Gateway schema validation. 4. Auth Service Fastify handler receives request. 5. Database query user by email. 6. Argon2id comparison (password vs stored hash). 7. If MFA enabled, return MFA challenge with session token. 8. Client POST /auth/mfa/verify with TOTP code. 9. Validate TOTP against time-based secret (HMAC-SHA1, 30-sec window). 10. Check recovery code if provided. 11. Mark TOTP code as consumed. 12. Generate access token (RS256, 15min). 13. Generate refresh token (RS256, 7day), store in PostgreSQL. 14. Return tokens with traceId. 15. Client uses access token for subsequent requests (validated at ALB/Lambda-JWKS). 16. On expiry, client uses refresh token to obtain new access token (triggers rotation)."
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "Patterns: Must use handle{V}{R} style error handlers. Must implement RFC7807 error responses with traceId from AsyncLocal context. Deployment: Standard CI (lint > typecheck > test > build via GHA) > ECR push > ECS blue-green. Constraints: Spot-batch-only for cost optimization (suitable if billing is async, not critical path). Must verify JWT tokens via Lambda-JWKS (same as other services). Use Pino-JSON logging with AsyncLocal tracing. CORS: Must be configured for app.meridian.com + localhost:3000. Integrate with PostgreSQL (connection pool coordinated with Auth/Portfolio). Subscribe to auth events via webhooks for billing triggers."
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "1. ALB rate limiter: 1000 req/min per IP limit is enforced. Requests 1001+ are rejected with 429 (Too Many Requests). 2. Gateway: Only 1000 requests per minute reach the gateway. 3. Burst capacity: 5000 req/sec burst (1500 req/min = 25 req/sec, well within burst). 4. Application: Only rate-limited requests reach Fastify. 5. Database: 20-connection pool per Auth instance buffers load. 6. Response: Excess requests receive 429 with Retry-After header. 7. Logging: All rate-limit rejections logged with traceId for security analysis."
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "Dependency chain: 1. Auth Service: holds private key locally, signs JWT tokens (RS256). 2. Lambda-JWKS: downloads public key from Auth Service (or stores cached copy), validates signatures. 3. ALB: forwards token to Lambda-JWKS for validation. 4. Gateway: processes JWKS-validated claims. 5. Portfolio Service: receives pre-validated claims, enforces RBAC. 6. Notification Service: verifies token claims for webhook authorization. 7. All 3 service instances (3 Auth, N Portfolio, N Notification): depend on consistent signing. 8. LRU cache (1000/5min): caches JWKS responses for 5min resilience. 9. 90-day rotation cycle: all services must support key rotation without downtime."
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "1. Developer commits to main branch with message following style guide. 2. GitHub Actions triggers CI pipeline. 3. Lint: ESLint/Prettier validation. 4. Typecheck: TypeScript compilation check. 5. Test: Run test suite with testcontainers-real-PG (not mocks). 6. Build: Docker image creation, compile binaries. 7. Push to ECR: image tagged with git SHA. 8. ClaudeCode review: automated code review for security/performance. 9. Manual approval gate (if required). 10. ECS blue-green deployment: new task definition created, traffic gradually shifted from blue (old) to green (new) tasks. 11. Health checks: verify service health at /health endpoint. 12. Zero-downtime: old tasks remain running until green passes health checks. 13. Rollback: automatic if health checks fail. 14. Spot-batch-only: only batch services use Spot instances. 15. Post-deploy: smoke tests, monitoring dashboards updated, traceId logs verified."
+  }
+]

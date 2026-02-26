@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id with 64MB memory cost, 3 iterations, and 4 parallelism. Used in production for side-channel resistance."
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "Refresh tokens expire after 7 days and rotate on use."
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "9200"
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "Currently PostgreSQL 15.4, upgraded from 14.9."
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "5000 requests/minute burst rate, 2000 requests/minute steady state, with ALB limit of 1000 requests/minute per IP."
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "For side-channel resistance in password hashing operations."
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "Drizzle offers zero dependencies for database operations."
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "All services depend on JWKS endpoint for token verification. Portfolio Service runs on Py/FastAPI and Notification Service runs on Go/Chi, both consuming RS256-signed JWTs from the Lambda-JWKS endpoint."
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "Pre-container rate limiting at ALB prevents malicious traffic from reaching individual service containers, reducing load and improving infrastructure efficiency."
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "ALB validates request against rate limits, passes to ECS-Fargate Portfolio container, which uses RBAC-middleware (added feature) to check user roles, and validates JWT against JWKS endpoint via Lambda-JWKS."
+  },
+  {
+    "question": "Q11: What happens if the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "All three services (auth, portfolio, notify) are affected. Down=fail+issue-continues with LRU-cache-grace providing fallback. JWKS LRU cache holds 1000 entries for 5 minutes."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "NOT IN CONTEXT"
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "Yes, resolved by using unix timestamps instead of Date objects. All times are stored and compared in UTC."
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "Use POST/api/v1/notifications/webhooks/register endpoint. Webhooks support exponential backoff with 5 retries over 24 hours. Notification Service sends via SES, SNS, or FCM with 10 per user per hour soft limit (admin override available)."
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "100 connections. Connection pool is 20 per instance, and 5 instances × 20 = 100 total."
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "NOT IN CONTEXT. Celery memory issue is noted as a current bug but the interaction with the 20-connection pool per instance is not documented."
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "No. Auth Service is critical for the gateway flow (gw-schema>Lambda-JWKS>ALB>handlePost>Argon2id>MFA-TOTP>RS256-tokens). Spot-batch-only deployment policy restricts Spot instances to batch workloads only."
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "Stateless authentication design using RS256 JWTs. All services validate tokens via JWKS, eliminating need for server-side session storage."
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "RPO (Recovery Point Objective) is 1 hour and RTO (Recovery Time Objective) is 4 hours. 30-day backup retention exceeds the recovery window and provides long-term compliance and disaster recovery across us-west2 region."
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "sslmode changed to verify-full with global-bundle.pem certificate for PG15.4 upgrade from 14.9."
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at"
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "MFA-TOTP is added to the authentication flow: gw-schema>Lambda-JWKS>ALB>handlePost>Argon2id>MFA-TOTP>RS256-tokens. Users must complete TOTP verification before receiving JWT tokens."
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "10 recovery codes are generated per MFA setup (POST/api/v1/auth/mfa/setup). They are single-use and permanently consumed upon use."
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "Exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "At rest: AES256-GCM encryption per tenant, Argon2id hashing in production (64MB, 3 iterations, 4 parallelism), 90-day secret rotation. In transit: mTLS between services via Envoy, sslmode=verify-full for database, RS256 JWT signing with JWKS, CORS restricted to app.meridian.com+localhost:3000, ALB rate limiting, 1MB payload limit."
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "1) ALB receives request, applies 1000 req/min/IP rate limit 2) Gateway validates schema 3) Lambda-JWKS consulted 4) handlePost processes credentials 5) Argon2id verifies password against db 6) MFA-TOTP prompt sent, user provides code 7) TOTP validated 8) RS256 tokens generated (access 15min, refresh 7day) 9) Client receives tokens 10) Subsequent requests validated against JWKS LRU cache (1000/5min)"
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "Use handle{V}{R} response pattern, RFC7807 error format, JWT validation via Lambda-JWKS, Envoy mTLS for inter-service communication, ECS-Fargate deployment via GHA>ECR>ECS blue-green, connection pool 20/instance to RDS, RS256 token verification, rate limiting at ALB layer."
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "1) ALB rate limit blocks after 1000 req/min/IP (remaining 500 rejected) 2) Requests that pass ALB queued for Fargate containers 3) Auth Service (TS/Fastify) processes valid requests: Argon2id hashing limited to 64MB memory (3 iterations, 4 parallelism) per request, preventing memory exhaustion 4) Database connection pool (20/instance) queues additional requests 5) CloudWatch alerts on drop rate and latency"
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "Lambda-JWKS (source of truth, RS256 key), Auth Service (generates tokens), Portfolio Service (validates tokens via JWKS), Notification Service (validates tokens via JWKS), RDS-PG (stores key metadata), Envoy mTLS (uses derived certificates), ALB (forwards authenticated requests), ECS-Fargate containers (all three services depend on key for validation), LRU cache (holds JWKS for 5min grace period)."
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "1) Developer commits code (ClaudeCode-review) 2) GHA pipeline triggered on main branch 3) Build: services containerized and pushed to ECR 4) Infrastructure: ECS blue-green deployment across 3 AZs 5) Database migrations applied (PG15.4 with sslmode=verify-full) 6) Spot-batch-only instances for batch tasks, on-demand for production services 7) Envoy mTLS certificates validated 8) ALB health checks pass before traffic routing 9) Secrets rotated every 90 days 10) Monitoring via Pino-JSON logs, testcontainers for integration tests 11) Rollback available via blue-green deployment"
+  }
+]

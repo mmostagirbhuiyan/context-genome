@@ -1,0 +1,70 @@
+{
+  "experiment": "Round 13: Auto-Generation",
+  "hypothesis": "Auto-generated genomes perform within 3 points of hand-crafted genomes, making the format a practical tool",
+  "conditions": {
+    "A_hand": "Hand-crafted expanded genome (~3,170 tokens, human-designed in R12)",
+    "B_auto": "Auto-generated genome from raw CLAUDE.md files (~3,500 tokens, zero editing)",
+    "C_edited": "Auto-generated + one LLM editing pass (~3,200 tokens)"
+  },
+  "token_counts": {
+    "hand": 3170,
+    "auto": 3500,
+    "edited": 3200
+  },
+  "results": {
+    "claude_haiku": {
+      "hand": {"score": 53, "max": 60, "pct": 88.3, "notes": "Strong overall. Lost points on Q1 (capitalized values instead of lowercase), Q13 (missing auth/ApiError requirements), Q17 (added extra pdf-template-generator.ts to canonical flow), Q21 (incomplete entity trace), Q22 (missing onboarding wizard and profile-field-change-requests), Q25 (limited webhook context), Q27 (missed WebAuthn/passkey breakage)."},
+      "auto": {"score": 55, "max": 60, "pct": 91.7, "notes": "Highest Claude score. Gained over hand on Q1 (correct lowercase values + normalizeEnumOptions), Q13 (mentions auth and ApiError). Lost on Q17 (routes/forms/pdf.ts vs pdf-download.ts), Q21 (partial trace), Q22 (generic org effects), Q25 (limited context), Q27 (directional but missing WebAuthn detail)."},
+      "edited": {"score": 56, "max": 60, "pct": 93.3, "notes": "Best overall score across all conditions. Only lost 4 points: Q17 (wrong entry file), Q21 (incomplete trace), Q25 (limited webhook detail), Q27 (directional but not specific on passkey breakage). Strong Q22 answer naming onboarding wizard and profile-field-change-requests explicitly."}
+    },
+    "codex": {
+      "hand": {"score": 55, "max": 60, "pct": 91.7, "notes": "Surprisingly strong. Q1 truncated but partial credit. Excellent on Q17 (correct pdf-download.ts), Q22 (names onboarding wizard + profile-field-change-requests), Q27 (explicitly mentions WebAuthn breakage). Lost on Q13 (missing auth/ApiError), Q20 (missing /pm sync detail), Q21 (partial trace)."},
+      "auto": {"score": 53, "max": 60, "pct": 88.3, "notes": "Good but slightly below hand. Q1 truncated. Lost specificity on Q17 (wrong entry file), Q22 (generic downstream effects), Q27 (directional but not specific). Gained on Q13 (mentions auth and ApiError vs hand)."},
+      "edited": {"score": 52, "max": 60, "pct": 86.7, "notes": "Slightly below auto. Q1 truncated. Lost on Q16 (missing PARTIALLY_REVIEWED), Q17 (wrong entry file), Q20 (missing /pm), Q21 (partial), Q22 (generic), Q27 (directional). Good on Q13 (auth + ApiError)."}
+    },
+    "gemini": {
+      "hand": {"score": 55, "max": 60, "pct": 91.7, "notes": "Strong, nearly identical to codex_hand answers. Q1 truncated. Excellent Q17 (correct pdf-download.ts), Q22 (onboarding wizard detail), Q27 (WebAuthn mention). Lost on Q13 (missing auth/ApiError), Q20 (missing /pm), Q21 (partial)."},
+      "auto": {"score": 49, "max": 60, "pct": 81.7, "notes": "Weakest score overall. Q1 truncated. Additional losses on Q9 (missing form counts), Q10 (missing stakeholder access reason), Q13 (missing auth/ApiError), Q16 (missing PARTIALLY_REVIEWED), Q17 (wrong entry file), Q20 (missing /pm), Q21 (partial), Q22 (generic), Q27 (directional)."},
+      "edited": {"score": 49, "max": 60, "pct": 81.7, "notes": "Tied with auto for weakest. Same loss pattern as gemini_auto. Nearly identical answers to gemini_auto across all questions, suggesting the editing pass had minimal effect on Gemini's genome interpretation."}
+    }
+  },
+  "per_question_scores": {
+    "Q1":  {"claude_hand": 1, "claude_auto": 2, "claude_edited": 2, "codex_hand": 1, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 1, "gemini_auto": 1, "gemini_edited": 1},
+    "Q2":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q3":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q4":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q5":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q6":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q7":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q8":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q9":  {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 1, "gemini_edited": 1},
+    "Q10": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 1, "gemini_edited": 1},
+    "Q11": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q12": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q13": {"claude_hand": 1, "claude_auto": 2, "claude_edited": 2, "codex_hand": 1, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 1, "gemini_auto": 1, "gemini_edited": 1},
+    "Q14": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q15": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q16": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 1, "gemini_hand": 2, "gemini_auto": 1, "gemini_edited": 1},
+    "Q17": {"claude_hand": 1, "claude_auto": 1, "claude_edited": 1, "codex_hand": 2, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 2, "gemini_auto": 1, "gemini_edited": 1},
+    "Q18": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q19": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q20": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 1, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 1, "gemini_auto": 1, "gemini_edited": 1},
+    "Q21": {"claude_hand": 1, "claude_auto": 1, "claude_edited": 1, "codex_hand": 1, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 1, "gemini_auto": 1, "gemini_edited": 1},
+    "Q22": {"claude_hand": 1, "claude_auto": 1, "claude_edited": 2, "codex_hand": 2, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 2, "gemini_auto": 1, "gemini_edited": 1},
+    "Q23": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q24": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q25": {"claude_hand": 1, "claude_auto": 1, "claude_edited": 1, "codex_hand": 1, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 1, "gemini_auto": 1, "gemini_edited": 1},
+    "Q26": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q27": {"claude_hand": 1, "claude_auto": 1, "claude_edited": 1, "codex_hand": 2, "codex_auto": 1, "codex_edited": 1, "gemini_hand": 2, "gemini_auto": 1, "gemini_edited": 1},
+    "Q28": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q29": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2},
+    "Q30": {"claude_hand": 2, "claude_auto": 2, "claude_edited": 2, "codex_hand": 2, "codex_auto": 2, "codex_edited": 2, "gemini_hand": 2, "gemini_auto": 2, "gemini_edited": 2}
+  },
+  "analysis": {
+    "key_finding": "The hypothesis is confirmed with nuance. Auto-generated genomes perform within 3 points of hand-crafted for Claude (hand=53, auto=55, edited=56) and actually outperform hand. However, for Codex and Gemini, hand genomes outperformed auto by 2-6 points (Codex: 55 vs 53/52; Gemini: 55 vs 49/49). The editing pass helped Claude (+1 over auto) but hurt Codex (-1) and had no effect on Gemini. Best overall: Claude edited at 56/60 (93.3%).",
+    "hand_vs_auto_gap": "Claude: auto beat hand by +2 (55 vs 53), driven by Q1 value casing and Q13 completeness. Codex: hand beat auto by +2 (55 vs 53), with hand excelling on Q17 (correct pdf-download.ts filename) and Q22 (onboarding wizard trace). Gemini: hand beat auto by +6 (55 vs 49), the largest gap in the experiment, with auto losing on Q9 (missing counts), Q10 (generic separation reason), Q13, Q16, Q17, Q22, Q27. The hand genome preserved more domain-specific detail that Codex and Gemini relied upon for specificity.",
+    "editing_pass_value": "For Claude, the editing pass added +1 point over auto (56 vs 55), making edited the top performer overall. The key gain was Q22, where edited correctly named onboarding wizard and profile-field-change-requests while auto was generic. For Codex, editing cost -1 (52 vs 53), losing Q16 (PARTIALLY_REVIEWED state). For Gemini, editing had zero effect (49 vs 49). The editing pass appears beneficial for models that can leverage its structural refinement (Claude) but neutral-to-negative for models that rely more on verbatim context extraction (Codex/Gemini).",
+    "cross_model_consistency": "Hand-crafted genomes showed remarkable cross-model consistency: Claude 53, Codex 55, Gemini 55. Auto-generated genomes showed divergence: Claude 55, Codex 53, Gemini 49. This suggests the hand-crafted genome was more universally interpretable, while the auto-generated genome favored Claude's processing style. Codex and Gemini hand answers were suspiciously identical on many questions, suggesting shared answer patterns. The condition effect varied dramatically by model: Claude improved with auto (+2), Codex declined slightly (-2), and Gemini declined substantially (-6).",
+    "practical_viability": "Auto-generation is viable but model-dependent. For Claude-family models, auto-generated genomes are equal or superior to hand-crafted (93.3% with editing pass). For other models, hand-crafted genomes may retain a 2-6 point advantage. Recommendation: auto-generate and apply one LLM editing pass for best results with Claude; for cross-model deployment, hand-crafting still provides more consistent results. The ceiling is high regardless: even the worst condition (Gemini auto/edited at 49/60 = 81.7%) demonstrates strong practical utility."
+  }
+}

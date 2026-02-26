@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "Argon2id is used with a memory cost of 64MB, 3 iterations, and a parallelism factor of 4."
+  },
+  {
+    "q": 2,
+    "answer": "Refresh tokens expire in 7 days and rotate on every use."
+  },
+  {
+    "q": 3,
+    "answer": "The Notification Service runs on port 9200."
+  },
+  {
+    "q": 4,
+    "answer": "The database is currently running RDS PostgreSQL 15.4, having been upgraded from 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "API Gateway throttling limits are 5000 req/s burst and 2000 req/s steady state."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen for its resistance to side-channel attacks compared to bcrypt."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle ORM is used because it has no runtime dependencies and produces SQL-like TypeScript."
+  },
+  {
+    "q": 8,
+    "answer": "They verify RS256-signed JWTs using the JWKS endpoint located at /.well-known/jwks.json."
+  },
+  {
+    "q": 9,
+    "answer": "ALB-level rate limiting is used to protect against DDoS attacks before requests reach the service containers."
+  },
+  {
+    "q": 10,
+    "answer": "The chain involves the API Gateway (where a custom authorizer Lambda validates the JWT and injects claims) and the Portfolio Service itself, which also verifies the token via the JWKS endpoint."
+  },
+  {
+    "q": 11,
+    "answer": "If the JWKS endpoint goes down, services relying on it (Portfolio, Notification, API Gateway) will fail to verify tokens once their LRU cache expires (5-minute TTL). There is no mentioned grace period beyond the cache TTL."
+  },
+  {
+    "q": 12,
+    "answer": "Real-time portfolio alerting depends on the API Gateway WebSocket API; it is currently on the Q3 roadmap."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, it was fixed by switching all expiry calculations to use Unix timestamps instead of Date objects."
+  },
+  {
+    "q": 14,
+    "answer": "Register the enterprise client via POST /api/v1/notifications/webhooks/register; the system handles delivery with exponential backoff retries over 5 attempts and 24 hours."
+  },
+  {
+    "q": 15,
+    "answer": "With 20 connections per instance and 5 instances, the maximum is 100 simultaneous database connections."
+  },
+  {
+    "q": 16,
+    "answer": "The connection pool is limited to 20 per instance, while the Celery worker memory issue is an independent unbounded growth problem currently under investigation during large recalculations."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot is only for non-critical batch workloads; Auth Service requires always-on availability to meet zero-downtime deployment requirements."
+  },
+  {
+    "q": 18,
+    "answer": "The requirement for stateless horizontal scaling prohibits in-memory session caches."
+  },
+  {
+    "q": 19,
+    "answer": "The 30-day retention provides the data source for meeting the RPO (Recovery Point Objective) of 1 hour and RTO (Recovery Time Objective) of 4 hours during disaster recovery."
+  },
+  {
+    "q": 20,
+    "answer": "The upgrade required adding '?sslmode=verify-full&sslrootcert=global-bundle.pem' to the connection string."
+  },
+  {
+    "q": 21,
+    "answer": "The columns are id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "q": 22,
+    "answer": "When enabled, MFA is required during the login flow; setup involves a QR code URI and the generation of recovery codes."
+  },
+  {
+    "q": 23,
+    "answer": "10 single-use recovery codes are generated; they are permanently consumed upon use."
+  },
+  {
+    "q": 24,
+    "answer": "The policy is exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "q": 25,
+    "answer": "At rest: PII is encrypted via AES-256-GCM with per-tenant keys, and secrets are in AWS Secrets Manager with 90-day rotation. In transit: RS256 JWTs, mTLS via App Mesh/Envoy, and RDS connections use verify-full SSL mode."
+  },
+  {
+    "q": 26,
+    "answer": "Request hits API Gateway -> Custom Authorizer validates initial token -> Auth Service verifies credentials -> Auth Service checks MFA status -> User provides TOTP/Recovery Code -> Auth Service issues new RS256 JWT and refresh token."
+  },
+  {
+    "q": 27,
+    "answer": "It must use RS256 JWT validation via JWKS, implement mTLS via App Mesh, use structured JSON logging, support blue-green deployments, and undergo Claude Code review."
+  },
+  {
+    "q": 28,
+    "answer": "The ALB rate limit (1000 req/min) will drop 500 requests; the remaining 1000 pass to the Auth Service containers, provided they don't exceed API Gateway's 2000 req/s steady-state limit."
+  },
+  {
+    "q": 29,
+    "answer": "The Auth Service (for signing), and the Portfolio Service, Notification Service, and API Gateway Custom Authorizer (for verification via JWKS)."
+  },
+  {
+    "q": 30,
+    "answer": "The pipeline includes linting, type-checking, testing, building the image, pushing to ECR, and a blue-green deployment to ECS, with a mandatory Claude Code review before merging to main."
+  }
+]

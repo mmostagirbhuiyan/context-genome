@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "Argon2id is used with 64MB memory, 3 iterations, and 4 degree of parallelism."
+  },
+  {
+    "q": 2,
+    "answer": "The refresh token expiration period is 7 days with a rotate-on-use policy."
+  },
+  {
+    "q": 3,
+    "answer": "9200."
+  },
+  {
+    "q": 4,
+    "answer": "The database is currently running version 15.4, having been upgraded from version 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "5000 burst and 2000 steady."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen over bcrypt for its side-channel resistance."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle is used because it has zero runtime dependencies and provides a SQL-like TypeScript experience."
+  },
+  {
+    "q": 8,
+    "answer": "Both services (and all services in the system) verify auth tokens via JWKS located at /.well-known/jwks.json."
+  },
+  {
+    "q": 9,
+    "answer": "Rate limiting is done at the ALB to stop DDoS attacks before they reach the application containers."
+  },
+  {
+    "q": 10,
+    "answer": "The chain involves the Gateway (schema validation), the Lambda-authorizer (JWT validation via JWKS and claims injection), VPCLink, the ALB, and the Portfolio Service's RBAC middleware (role hierarchy)."
+  },
+  {
+    "q": 11,
+    "answer": "If the JWKS endpoint goes down, all downstream authentication fails, though token issuance continues because the private key is local. There is a grace period provided by an LRU cache with 1000 entries and a 5-minute TTL."
+  },
+  {
+    "q": 12,
+    "answer": "Real-time portfolio alerting depends on both the Notification Service and a Gateway WebSocket API; it is currently planned for Q3."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, it was resolved by using Unix timestamps instead of Date objects for token expiry."
+  },
+  {
+    "q": 14,
+    "answer": "Webhooks are implemented via POST /api/v1/notifications/webhooks/register, with an exponential backoff policy of 5 attempts over 24 hours."
+  },
+  {
+    "q": 15,
+    "answer": "100 (5 instances multiplied by a pool of 20 connections per instance)."
+  },
+  {
+    "q": 16,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot is not used for the Auth Service because it is an always-on service; Spot is reserved for batch jobs (portfolio-recalc, digest) due to the risk of interruption."
+  },
+  {
+    "q": 18,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 19,
+    "answer": "The 30-day backup retention supports the Disaster Recovery strategy, which includes an RPO of 1 hour and an RTO of 4 hours with replication to us-west-2."
+  },
+  {
+    "q": 20,
+    "answer": "The upgrade required changing the sslmode to verify-full and using global-bundle.pem."
+  },
+  {
+    "q": 21,
+    "answer": "The columns are id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "q": 22,
+    "answer": "If MFA is enabled, the flow requires TOTP verification or the use of a recovery code after handlePostLogin and Argon2id verification."
+  },
+  {
+    "q": 23,
+    "answer": "10 recovery codes are generated; they are single-use and permanently consumed upon use."
+  },
+  {
+    "q": 24,
+    "answer": "The policy is 5 attempts over 24 hours with exponential backoff."
+  },
+  {
+    "q": 25,
+    "answer": "At rest: PII uses AES-256-GCM with per-tenant keys, and passwords use Argon2id (64MB/3iter/4par). In transit: mTLS via Envoy and RDS connections use sslmode=verify-full with global-bundle.pem."
+  },
+  {
+    "q": 26,
+    "answer": "Gateway (schema validation) -> Lambda-authorizer (JWKS/claims) -> Auth Service (handlePostLogin, Argon2id verify, MFA/TOTP check) -> Issuance of RS256 access (15min) and refresh (7day) tokens."
+  },
+  {
+    "q": 27,
+    "answer": "Constraints include a 20-connection pool per instance, 1MB payload limit, mTLS via Envoy, and auth via JWKS. Patterns include handle{Verb}{Resource} naming, RFC7807 error details, Pino logging, AsyncLocalStorage request IDs, real PG testing with testcontainers, and Claude Code review."
+  },
+  {
+    "q": 28,
+    "answer": "The request passes the Gateway (within 5000 burst/2000 steady limits) but is throttled at the ALB layer, which has a limit of 1000/min/IP."
+  },
+  {
+    "q": 29,
+    "answer": "The Auth Service (private key local for issuance), the JWKS endpoint, the Gateway Lambda-authorizer, and every downstream service (Portfolio, Notification, etc.) that validates tokens."
+  },
+  {
+    "q": 30,
+    "answer": "The pipeline consists of GitHub Actions (lint, typecheck, test, build, ECR, ECS) with a Claude Code review before merge, followed by a zero-downtime blue-green ALB target switch."
+  }
+]

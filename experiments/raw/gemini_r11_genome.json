@@ -1,0 +1,102 @@
+[
+  {
+    "question": "Q3: You added a new element type to UniversalFormRenderer on the web side. It works in the browser. Is the task done?",
+    "answer": "No. Due to UI/PDF PARITY (Rule R10), you must also update the PDF generation side by adding getStyles(), renderFormField(), and the FormField type in pdf-template-generator.ts to match the UI renderer."
+  },
+  {
+    "question": "Q4: You need to build a new producer dashboard page. What is the very first thing you must do before writing any code?",
+    "answer": "The very first thing you must do is SEARCH FIRST to identify and match existing UI patterns (Rule R8)."
+  },
+  {
+    "question": "Q6: Describe the monorepo structure. What are the apps and packages, what port does each service run on, and what is the package manager?",
+    "answer": "The monorepo uses pnpm and Turborepo. Apps: apps/web (Next.js, port 3000) and apps/api (Fastify, port 4000). Packages: packages/database (Prisma7/PostgreSQL), packages/sdk (TS SDK), and packages/sdk-python (Python SDK)."
+  },
+  {
+    "question": "Q7: Explain what schema-driven architecture means in this project. Trace how a single JSON schema flows through the system.",
+    "answer": "Schema-driven means the JSON schema defines both the UI and the PDF. A single schema flows into UniversalFormRenderer.tsx for the web UI and into universal-html-template.ts for PDF generation via Puppeteer."
+  },
+  {
+    "question": "Q8: What are the two authentication methods supported by the API? When would you use each?",
+    "answer": "The API supports JWT (Authorization: Bearer) for user sessions and API Keys (X-API-Key: certaxiom_live_...) for programmatic/external service access."
+  },
+  {
+    "question": "Q9: List the form series. What does each letter represent and how do they relate to OSP scopes?",
+    "answer": "The series are G (Grower), H (Handler), and L (Livestock), which represent the different OSP scopes. There are also V and Common series."
+  },
+  {
+    "question": "Q10: What is the relationship between the PM repo and the source code repo? Why are they separate?",
+    "answer": "The PM repo (certaxiom-pm) contains authoritative GitHub Issues and allows non-tech stakeholders write access. They are separate to keep technical source code distinct from project management context."
+  },
+  {
+    "question": "Q11: You need a list page with counts at the top and a detail/edit page. Which header component for each? What are the StatsCard requirements?",
+    "answer": "Use DashboardHeader (with StatsCards) for the list page and PageHeader (without StatsCards) for the detail page. StatsCards require a subtitle to prevent uneven heights and a colored variant (info|success|warning|organic)."
+  },
+  {
+    "question": "Q12: How do you embed a data table inside a card component? What CSS classes are required?",
+    "answer": "Place an EnterpriseDataTable inside CardContent with the !p-0 utility class. The table requires the classes: border-0 bg-transparent shadow-none rounded-none."
+  },
+  {
+    "question": "Q13: You need to add a new API route for bulk-deleting materials. Describe the exact steps including what you must NOT skip.",
+    "answer": "Create the file in src/routes/[domain]/, register it in index.ts, and add the OpenAPI schema. You must NOT skip the OpenAPI schema as it breaks the SDK generation."
+  },
+  {
+    "question": "Q14: Describe the seed data execution order and idempotency guarantee. How do you run seeds with expanded test data?",
+    "answer": "Order: 00-cleanup -> 01-tenants -> 02-users -> 03-orgs -> 04-templates -> 05-osp -> 07-workflows -> 08-13 (phase61). Idempotency is guaranteed by using upsert. Use the --phase61 flag for expanded test data."
+  },
+  {
+    "question": "Q16: Trace the complete submission workflow from creation to approval. Include the branch path for requested changes.",
+    "answer": "DRAFT -> SUBMITTED -> ASSIGNED -> IN_REVIEW -> APPROVED. The branch path is: IN_REVIEW -> REQUEST_CHANGES -> SUBMITTED (looping back to review)."
+  },
+  {
+    "question": "Q17: Trace the complete PDF generation flow from client request to rendered PDF. Name every file involved.",
+    "answer": "routes/forms/pdf.ts -> pdf-generation.service.ts -> json-schema-loader.ts -> universal-html-template.ts -> Puppeteer."
+  },
+  {
+    "question": "Q18: The API team added 3 new endpoints. What is the exact sequence to regenerate the SDK?",
+    "answer": "1. Ensure the API is running (pnpm dev). 2. Run 'pnpm --filter sdk generate'. 3. Run the build command."
+  },
+  {
+    "question": "Q19: You are running /sprint 3 but gh CLI is unavailable. What happens? What do you do when back on local?",
+    "answer": "Sprint progress is recorded in .claude/sprint-ledger.json. The ledger will auto-flush the next time you run a /sprint command when the CLI is available."
+  },
+  {
+    "question": "Q20: Walk through sprint execution from planning to PR. What constraints must an agent follow?",
+    "answer": "Execute one PR per task, prioritize discovery, and use 'BLOCKED escape' if stuck. Constraints include updating TASKS.md (R1), Session State (R2), and README/CLAUDE/TASKS (R7)."
+  },
+  {
+    "question": "Q21: You need to add a new Equipment column to a form dataTable. Trace every file and package that must change.",
+    "answer": "Changes are needed in: packages/database (schema/seeds), apps/api (OpenAPI schema), and apps/web (UniversalFormRenderer and the specific form schema)."
+  },
+  {
+    "question": "Q22: A schema change adds a new field to the Organization model. List every downstream effect across the monorepo.",
+    "answer": "Downstream effects: Prisma schema/migration update, seed script updates, API OpenAPI schema update, TS and Python SDK regeneration, and UI/form component updates in apps/web."
+  },
+  {
+    "question": "Q23: What are the three DataTable types and how does each store its data?",
+    "answer": "1. Entity: Stores data in linked entity models. 2. FixedRows: Stores data in FormInstance.data using a predefined row set. 3. JSON: Stores data as a JSON blob in FormInstance.data under a fieldId."
+  },
+  {
+    "question": "Q24: Explain the Single-OSP Multi-Scope architecture. How do the G, H, and L series map to it?",
+    "answer": "It is a single Organic System Plan that can cover multiple scopes simultaneously. G (Grower), H (Handler), and L (Livestock) series map to these specific scopes within the single plan."
+  },
+  {
+    "question": "Q25: How does the webhook system work across the API and SDK layers?",
+    "answer": "The API provides public V1 endpoints for webhook management. These endpoints are documented in the OpenAPI spec, which is used to automatically generate corresponding methods in the SDK."
+  },
+  {
+    "question": "Q27: You want to clear the database and re-seed. You run DELETE FROM on all tables. What breaks and what should you do instead?",
+    "answer": "This can break constraints and the passkey cleanup. Instead, use 'pnpm --filter database seed', which uses idempotent upserts and includes a safe cleanup step (00-cleanup)."
+  },
+  {
+    "question": "Q28: You add bg-background to a div inside AppShell. The page looks different. Why?",
+    "answer": "The bg-background utility blocks the background gradient of the AppShell, which is a prohibited UI pattern."
+  },
+  {
+    "question": "Q29: You complete 3 sprint tasks but gh CLI is unavailable. You document in TASKS.md and move on. What is wrong?",
+    "answer": "You failed to document in .claude/sprint-ledger.json (Rule R14) and did not update the README and CLAUDE docs as required by Rule R7."
+  },
+  {
+    "question": "Q30: You edit openapitools.json in the SDK package, commit, and two days later the SDK is broken. What did you forget?",
+    "answer": "You forgot to test the SDK regeneration (pnpm generate -> build) after modifying openapitools.json."
+  }
+]

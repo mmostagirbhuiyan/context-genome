@@ -1,0 +1,106 @@
+[
+  {
+    "question": "Q3: You added a new element type to UniversalFormRenderer on the web side. It works in the browser. Is the task done?",
+    "answer": "No, the task is not done. According to Rule 10 (UI/PDF PARITY) and API CLAUDE.md, any UI/PDF disconnect is a critical bug. You must also update the PDF renderer in apps/api (specifically universal-html-template.ts, json-schema-loader.ts, and pdf-template-generator.ts) to handle the new element type."
+  },
+  {
+    "question": "Q4: You need to build a new producer dashboard page. What is the very first thing you must do before writing any code?",
+    "answer": "The very first thing you must do is SEARCH FIRST to match existing UI patterns, as mandated by Rule 8 in ROOT CLAUDE.md."
+  },
+  {
+    "question": "Q6: Describe the monorepo structure. What are the apps and packages, what port does each service run on, and what is the package manager?",
+    "answer": "The project is a pnpm monorepo using Turborepo. It contains two apps: 'web' (running on port 3000) and 'api' (running on port 4000). It also includes 'database', 'sdk', and 'sdk-python' packages."
+  },
+  {
+    "question": "Q7: Explain what schema-driven architecture means in this project. Trace how a single JSON schema flows through the system.",
+    "answer": "Schema-driven architecture means a single JSON schema drives both the UI and PDF generation. A schema is loaded from packages/database; in the UI, UniversalFormRenderer renders it. For PDFs, the flow is: request -> load instance -> json-schema-loader.ts (transform) -> universal-html-template.ts (HTML rendering) -> Puppeteer (PDF generation)."
+  },
+  {
+    "question": "Q8: What are the two authentication methods supported by the API? When would you use each?",
+    "answer": "The two methods are JWT and API Key. Use JWT for user sessions (passed via Authorization: Bearer <token>) and use an API Key for service-to-service communication (passed via X-API-Key)."
+  },
+  {
+    "question": "Q9: List the form series. What does each letter represent and how do they relate to OSP scopes?",
+    "answer": "The series are G (Grower), H (Handler), L (Livestock), V (Templates), and Common. G, H, and L represent the OSP scopes (Grower, Handler, and Livestock), which are selectable within a single OSP architecture."
+  },
+  {
+    "question": "Q10: What is the relationship between the PM repo and the source code repo? Why are they separate?",
+    "answer": "The source code is in 'certaxiom' and tasks/issues are in 'certaxiom-pm'. They are separate so that non-technical stakeholders (SME reviewers and the CEO) have write access to the PM repo without being exposed to or compromising the technical source code."
+  },
+  {
+    "question": "Q11: You need a list page with counts at the top and a detail/edit page. Which header component for each? What are the StatsCard requirements?",
+    "answer": "Use DashboardHeader for the list page (as it includes StatsCards) and PageHeader for the detail/edit page. StatsCards MUST include a title, value, a subtitle (to prevent uneven heights), an icon, and a colored variant (e.g., info, success, warning, or organic; NOT 'default')."
+  },
+  {
+    "question": "Q12: How do you embed a data table inside a card component? What CSS classes are required?",
+    "answer": "Wrap EnterpriseDataTable in CardContent with the '!p-0' class. The table itself requires the classes 'border-0 bg-transparent shadow-none rounded-none' to match the design system."
+  },
+  {
+    "question": "Q13: You need to add a new API route for bulk-deleting materials. Describe the exact steps including what you must NOT skip.",
+    "answer": "1. Create the route file in src/routes/entities/. 2. Register it in the API index. 3. Add OpenAPI annotations for Swagger docs. You must NOT skip the OpenAPI annotations, as this breaks SDK generation."
+  },
+  {
+    "question": "Q14: Describe the seed data execution order and idempotency guarantee. How do you run seeds with expanded test data?",
+    "answer": "Seeds run in order: cleanup, tenants, users, organizations, form-templates, and then OSP scenarios. All seeds use upsert patterns to ensure idempotency (skipping existing records). To run seeds with expanded data, use 'pnpm --filter database seed -- --phase61'."
+  },
+  {
+    "question": "Q15: What is the testing philosophy? Write an example of a BAD test and a GOOD test for a Fastify route.",
+    "answer": "The philosophy is to test behavior, not implementation. A BAD test uses static analysis: expect(source).toContain('fastify.post'). A GOOD test checks actual outputs: const response = await app.inject({ method: 'POST', url: '/api/...' }); expect(response.statusCode).toBe(201)."
+  },
+  {
+    "question": "Q16: Trace the complete submission workflow from creation to approval. Include the branch path for requested changes.",
+    "answer": "The workflow is: DRAFT -> SUBMITTED -> ASSIGNED -> IN_REVIEW. From IN_REVIEW, it can go to APPROVED/REJECTED, or it can branch to REQUEST_CHANGES, which returns it to the SUBMITTED state."
+  },
+  {
+    "question": "Q17: Trace the complete PDF generation flow from client request to rendered PDF. Name every file involved.",
+    "answer": "1. Request to routes/forms/pdf.ts. 2. Instance loaded in pdf-generation.service.ts. 3. Schema transformed in json-schema-loader.ts. 4. HTML rendered in universal-html-template.ts (using types from pdf-template-generator.ts). 5. Puppeteer generates the final PDF."
+  },
+  {
+    "question": "Q18: The API team added 3 new endpoints. What is the exact sequence to regenerate the SDK?",
+    "answer": "1. Ensure the API is running (pnpm dev). 2. Run 'pnpm --filter sdk generate' to generate the SDK from the OpenAPI spec. 3. Run 'pnpm --filter sdk build' to build the package."
+  },
+  {
+    "question": "Q19: You are running /sprint 3 but gh CLI is unavailable. What happens? What do you do when back on local?",
+    "answer": "Actions are logged to .claude/sprint-ledger.json. Once back on local with the gh CLI available, the next run of the /sprint command will automatically flush these logs to GitHub."
+  },
+  {
+    "question": "Q20: Walk through sprint execution from planning to PR. What constraints must an agent follow?",
+    "answer": "Execution follows Research -> Strategy -> Plan -> Act -> Validate. Constraints include: discovery before implementation, one PR per task, no scope creep, no refactoring outside scope, and using the BLOCKED escape valve if a task is unclear."
+  },
+  {
+    "question": "Q21: You need to add a new Equipment column to a form dataTable. Trace every file and package that must change.",
+    "answer": "Changes are required in: 1. packages/database/prisma/seeds/form-schemas/ (JSON schema). 2. apps/web/src/components/forms/UniversalFormRenderer.tsx (UI). 3. apps/api/src/services/pdf/json-schema-loader.ts (PDF data transform). 4. apps/api/src/pdf-templates/universal-html-template.ts (PDF HTML)."
+  },
+  {
+    "question": "Q22: A schema change adds a new field to the Organization model. List every downstream effect across the monorepo.",
+    "answer": "1. prisma/schema.prisma is updated. 2. A migration is generated. 3. Seed data is updated. 4. The SDK is regenerated ('pnpm --filter sdk generate'). 5. Frontend components and types in 'apps/web' that use the SDK model must be updated."
+  },
+  {
+    "question": "Q23: What are the three DataTable types and how does each store its data?",
+    "answer": "1. Entity: saves to dedicated DB models (e.g., Material) via entityType. 2. Fixed Rows: saves static rows to FormInstance.data. 3. JSON: saves data to FormInstance.data using a specified fieldId."
+  },
+  {
+    "question": "Q24: Explain the Single-OSP Multi-Scope architecture. How do the G, H, and L series map to it?",
+    "answer": "CertAxiom uses a single OSP containing a multi-scope selector (Grower, Handler, Livestock) rather than separate OSP forms per scope. The G, H, and L series forms are scoped components that are enabled/disabled based on this selector."
+  },
+  {
+    "question": "Q25: How does the webhook system work across the API and SDK layers?",
+    "answer": "The API manages webhooks via routes in src/routes/webhooks/ and provides a public v1 API. The SDK package automatically generates TypeScript classes and models from these routes' OpenAPI annotations to allow programmatic subscription and handling."
+  },
+  {
+    "question": "Q27: You want to clear the database and re-seed. You run DELETE FROM on all tables. What breaks and what should you do instead?",
+    "answer": "Manual deletion can break passkey and user integrity. Instead, you should run 'pnpm --filter database seed', which uses the 00-cleanup.ts script designed for a Passkey-safe database cleanup."
+  },
+  {
+    "question": "Q28: You add bg-background to a div inside AppShell. The page looks different. Why?",
+    "answer": "Adding bg-background inside the AppShell blocks the background gradient of the Meridian Design System, causing the UI to lose its intended visual polish."
+  },
+  {
+    "question": "Q29: You complete 3 sprint tasks but gh CLI is unavailable. You document in TASKS.md and move on. What is wrong?",
+    "answer": "TASKS.md is for session documentation only; GitHub Issues are the authoritative source for task tracking (Rule 13). You must use the /sprint command to log work to the ledger so it can be synced to GitHub later."
+  },
+  {
+    "question": "Q30: You edit openapitools.json in the SDK package, commit, and two days later the SDK is broken. What did you forget?",
+    "answer": "You forgot to test the regeneration after changing the configuration, and you likely forgot to actually run the 'generate' and 'build' commands to ensure the SDK remained functional."
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "Argon2id is used for password hashing. Parameters: Memory cost 64MB, iterations 3, parallelism 4. Chosen over bcrypt for resistance to side-channel attacks."
+  },
+  {
+    "q": 2,
+    "answer": "Refresh tokens expire in 7 days and rotate on every use. This prevents token reuse attacks while maintaining reasonable session duration for users."
+  },
+  {
+    "q": 3,
+    "answer": "The Notification Service runs on port 9200."
+  },
+  {
+    "q": 4,
+    "answer": "PostgreSQL 15.4 is currently running. It was upgraded from version 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "API Gateway throttle limits are 5000 req/s burst and 2000 req/s steady state."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen over bcrypt for its superior resistance to side-channel attacks, making it a more secure choice for protecting sensitive password credentials."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle is used instead of Prisma because it has no runtime dependencies and produces SQL-like TypeScript, providing more explicit control and better performance for the Auth Service requirements."
+  },
+  {
+    "q": 8,
+    "answer": "Both Portfolio and Notification services verify auth tokens by making requests to the Auth Service's JWKS endpoint (/.well-known/jwks.json) to obtain public keys for RS256 JWT validation."
+  },
+  {
+    "q": 9,
+    "answer": "Rate limiting is done at the ALB level rather than in application code to protect against DDoS attacks before requests consume container resources. Current limit: 1000 req/min per IP."
+  },
+  {
+    "q": 10,
+    "answer": "The chain involves: Portfolio Service receives request -> validates JWT via JWKS endpoint -> uses role claims in JWT to determine authorization -> executes rebalance if role permits. The Auth Service issued the JWT with role hierarchy claims."
+  },
+  {
+    "q": 11,
+    "answer": "If the JWKS endpoint goes down, Portfolio and Notification services cannot validate new tokens. However, tokens with cached JWKS keys (cached with 5-minute TTL, max 1000 entries) can still be validated during the grace period. After TTL expiration, new token validations fail."
+  },
+  {
+    "q": 12,
+    "answer": "Real-time portfolio alerting depends on WebSocket API functionality. Current status: planned for Q3 roadmap. It depends on implementation in the Notification Service and AWS API Gateway WebSocket API support."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, the UTC+14 token expiry bug has been fixed. The fix involved changing all expiry calculations to use Unix timestamps instead of Date objects, eliminating timezone-related premature expiry issues."
+  },
+  {
+    "q": 14,
+    "answer": "Implement webhook notifications by registering a webhook endpoint via the Notification Service's POST /api/v1/notifications/webhooks/register endpoint. Configure retry policy: exponential backoff with 5 attempts over 24 hours. Auth events would trigger webhook deliveries to registered enterprise endpoints."
+  },
+  {
+    "q": 15,
+    "answer": "Maximum simultaneous database connections across 5 Auth Service instances: 5 instances × 20 connections per instance = 100 total connections."
+  },
+  {
+    "q": 16,
+    "answer": "The Celery memory issue is separate from connection pool management. During large portfolio recalculations, Celery worker memory grows unbounded. The connection pool (20 per instance) manages database access but doesn't directly cause the memory leak; the issue lies in task memory management during recalculation processing."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot cannot be used for Auth Service. It is not an always-on service, but the system requirement for zero-downtime deployments and consistent availability conflicts with Spot's interruption risk. Spot is reserved only for non-critical batch workloads like portfolio recalculation and notification digest."
+  },
+  {
+    "q": 18,
+    "answer": "Stateless auth architecture prohibits adding an in-memory session cache. The system must support stateless horizontal scaling; JWT carries all claims including role hierarchy, and sessions would create state coupling that breaks the scaling model."
+  },
+  {
+    "q": 19,
+    "answer": "The 30-day backup retention supports the RPO of 1 hour and RTO of 4 hours by providing sufficient recovery data. If data corruption or loss occurs, backups within the 30-day window enable recovery within the 4-hour RTO target."
+  },
+  {
+    "q": 20,
+    "answer": "The connection string now requires: ?sslmode=verify-full&sslrootcert=global-bundle.pem"
+  },
+  {
+    "q": 21,
+    "answer": "The tax_lots table columns are: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at."
+  },
+  {
+    "q": 22,
+    "answer": "MFA affects the login flow by adding an MFA setup phase: POST /api/v1/auth/mfa/setup returns QR code URI. MFA is required on login when enabled for the user. 10 single-use recovery codes are generated during setup for account recovery."
+  },
+  {
+    "q": 23,
+    "answer": "10 single-use recovery codes are generated at MFA setup. When a code is used, it is permanently consumed and cannot be reused, providing one-time backup access if the authenticator device is lost."
+  },
+  {
+    "q": 24,
+    "answer": "Webhook retry policy: exponential backoff with maximum 5 attempts over a 24-hour window."
+  },
+  {
+    "q": 25,
+    "answer": "Security posture for credential data: At rest: all PII fields encrypted using AES-256-GCM with per-tenant keys. Passwords hashed with Argon2id (64MB, 3 iterations, parallelism 4). In transit: mTLS between services via AWS App Mesh/Envoy sidecars. JWT tokens use RS256 signing with public key distribution via JWKS. Secrets Manager rotates all secrets every 90 days. Access tokens expire in 15 minutes; refresh tokens rotate on every use with 7-day expiration."
+  },
+  {
+    "q": 26,
+    "answer": "Full login lifecycle with MFA: 1) Client sends credentials to POST /api/v1/auth/login. 2) Auth Service validates password (Argon2id comparison). 3) If MFA enabled, returns 403 with MFA challenge. 4) Client obtains TOTP from authenticator. 5) Client sends TOTP to POST /api/v1/auth/mfa/verify. 6) Auth Service validates TOTP. 7) Auth Service generates JWT (RS256 signed) with role claims and issues access + refresh tokens. 8) Tokens returned to client. 9) Refresh tokens stored in secure HTTP-only cookie. 10) Role claims in JWT enable RBAC at service level via JWKS validation."
+  },
+  {
+    "q": 27,
+    "answer": "A new Billing Service in Rust should follow established patterns: 1) Use RS256 JWT validation via JWKS endpoint for auth. 2) Communicate with Auth Service via JWT verification. 3) Use structured JSON logging (compatible with Pino output format). 4) Implement RFC 7807 Problem Details error responses with traceId extension. 5) Use testcontainers for integration tests against real PostgreSQL. 6) Implement stateless design for horizontal scaling. 7) Run on ECS Fargate in us-east-1 with App Mesh mTLS. 8) Minimum 2 tasks across availability zones. 9) Follow naming conventions if applicable (e.g., for route handlers). 10) Use AWS Secrets Manager for credential rotation."
+  },
+  {
+    "q": 28,
+    "answer": "1500 req/min from single IP attempting to hit Auth Service: 1) ALB rate limiting enforces 1000 req/min per IP limit, rejecting 500 requests. 2) API Gateway throttling (2000 req/s steady state) is not a bottleneck here. 3) Dropped requests return rate limit error (429 Too Many Requests). 4) Legitimate traffic (up to 1000 req/min) proceeds to Auth Service containers. 5) DDoS protection achieved before consuming container resources."
+  },
+  {
+    "q": 29,
+    "answer": "Components dependent on JWT signing key: 1) Auth Service generates and signs tokens with RS256 private key. 2) API Gateway custom authorizer validates JWT using public key from JWKS endpoint. 3) Portfolio Service validates JWT via JWKS endpoint before processing requests. 4) Notification Service validates JWT via JWKS endpoint before processing requests. 5) All consuming services cache JWKS public keys (1000 entries, 5-minute TTL). 6) Key is stored in AWS Secrets Manager with automatic 90-day rotation."
+  },
+  {
+    "q": 30,
+    "answer": "Complete deployment pipeline: 1) Developer commits to feature branch, opens PR. 2) GitHub Actions triggered: lint, type-check, test, build Docker image. 3) Code review by Claude Code required before merge. 4) Upon approval and merge to main, build image pushed to ECR. 5) ECS deployment triggered via GitHub Actions. 6) Blue-green deployment with ALB target group switching (zero-downtime). 7) New task set deployed to Fargate (minimum 2 tasks across AZs). 8) Health checks pass before ALB switches traffic. 9) Monitoring via Datadog APM. 10) RDS Multi-AZ handles database layer with automated backups retained 30 days. 11) Secrets rotated via AWS Secrets Manager (90-day cycle). 12) Cross-region replication to us-west-2 for disaster recovery (RPO 1 hour, RTO 4 hours)."
+  }
+]

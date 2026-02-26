@@ -1,0 +1,61 @@
+{
+  "experiment": "Round 8: Attention Anchors (Muqatta'at Experiment)",
+  "hypothesis": "Non-semantic anchor tokens at structural boundaries improve LLM reconstruction by providing attention landmarks",
+  "conditions": {
+    "semantic_labels": "ROOTS/RULES/STATE/PATTERNS (current genome)",
+    "no_labels": "All labels stripped, flat content",
+    "arbitrary_anchors": ":::/~~~/^^^/*** as section dividers",
+    "muqattaat_anchors": "ALM/YS/HM/NQ as unique section identifiers"
+  },
+  "summary_by_model": {
+    "claude": {"semantic": "52/60", "no_labels": "56/60", "arbitrary": "52/60", "muqattaat": "54/60"},
+    "codex": {"semantic": "49/60", "no_labels": "50/60", "arbitrary": "53/60", "muqattaat": "55/60"},
+    "gemini": {"semantic": "48/60", "no_labels": "51/60", "arbitrary": "51/60", "muqattaat": "46/60"}
+  },
+  "by_category_claude": {
+    "direct_recall_q1_q5": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "decision_rationale_q6_q9": {"semantic": "8/8", "no_labels": "8/8", "arbitrary": "8/8", "muqattaat": "8/8"},
+    "cross_service_q10_q14": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "constraints_q15_q19": {"semantic": "5/10", "no_labels": "7/10", "arbitrary": "6/10", "muqattaat": "7/10"},
+    "recent_changes_q20_q24": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "synthesis_q25_q30": {"semantic": "9/12", "no_labels": "11/12", "arbitrary": "8/12", "muqattaat": "9/12"}
+  },
+  "by_category_codex": {
+    "direct_recall_q1_q5": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "decision_rationale_q6_q9": {"semantic": "7/8", "no_labels": "7/8", "arbitrary": "8/8", "muqattaat": "8/8"},
+    "cross_service_q10_q14": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "constraints_q15_q19": {"semantic": "5/10", "no_labels": "5/10", "arbitrary": "6/10", "muqattaat": "8/10"},
+    "recent_changes_q20_q24": {"semantic": "9/10", "no_labels": "9/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "synthesis_q25_q30": {"semantic": "8/12", "no_labels": "9/12", "arbitrary": "9/12", "muqattaat": "9/12"}
+  },
+  "by_category_gemini": {
+    "direct_recall_q1_q5": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "decision_rationale_q6_q9": {"semantic": "8/8", "no_labels": "7/8", "arbitrary": "7/8", "muqattaat": "7/8"},
+    "cross_service_q10_q14": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "6/10"},
+    "constraints_q15_q19": {"semantic": "4/10", "no_labels": "6/10", "arbitrary": "6/10", "muqattaat": "6/10"},
+    "recent_changes_q20_q24": {"semantic": "10/10", "no_labels": "10/10", "arbitrary": "10/10", "muqattaat": "10/10"},
+    "synthesis_q25_q30": {"semantic": "6/12", "no_labels": "8/12", "arbitrary": "8/12", "muqattaat": "7/12"}
+  },
+  "anchor_effect": {
+    "labels_vs_no_labels_avg": "-2.67 (semantic labels scored LOWER than no labels)",
+    "arbitrary_vs_no_labels_avg": "-0.33 (arbitrary dividers negligible difference from no labels)",
+    "muqattaat_vs_arbitrary_avg": "-0.33 (unique anchors negligible difference from generic dividers)",
+    "muqattaat_vs_semantic_avg": "+2.00 (non-semantic anchors slightly outperform semantic labels on average)",
+    "best_condition_per_model": {"claude": "no_labels (56)", "codex": "muqattaat (55)", "gemini": "no_labels/arbitrary (51 tie)"}
+  },
+  "details": [
+    {"model": "claude", "condition": "semantic", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,0,1,2,2,2,2,2,2,2,1,2,1,1], "total": "52/60"},
+    {"model": "claude", "condition": "no_labels", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,1,2,2,2,2,2,2,2,2,2,2,1,2], "total": "56/60"},
+    {"model": "claude", "condition": "arbitrary", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,0,2,2,2,2,2,2,2,1,1,2,1,1], "total": "52/60"},
+    {"model": "claude", "condition": "muqattaat", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,1,2,2,2,2,2,2,2,2,1,1,1,2], "total": "54/60"},
+    {"model": "codex", "condition": "semantic", "scores": [2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,0,2,0,1,2,2,1,2,2,2,2,1,1,1,1], "total": "49/60"},
+    {"model": "codex", "condition": "no_labels", "scores": [2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,0,2,0,1,2,2,1,2,2,2,2,1,2,1,1], "total": "50/60"},
+    {"model": "codex", "condition": "arbitrary", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,0,2,2,2,2,2,2,2,2,1,2,1,1], "total": "53/60"},
+    {"model": "codex", "condition": "muqattaat", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,1,2,2,2,2,2,2,2,2,1,2,1,1], "total": "55/60"},
+    {"model": "gemini", "condition": "semantic", "scores": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,0,0,2,2,2,2,2,1,1,1,1,1,1], "total": "48/60"},
+    {"model": "gemini", "condition": "no_labels", "scores": [2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,0,2,0,2,2,2,2,2,2,2,2,1,1,1,1], "total": "51/60"},
+    {"model": "gemini", "condition": "arbitrary", "scores": [2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,0,2,0,2,2,2,2,2,2,1,2,1,2,1,1], "total": "51/60"},
+    {"model": "gemini", "condition": "muqattaat", "scores": [2,2,2,2,2,2,2,1,2,1,1,2,2,0,2,0,2,0,2,2,2,2,2,2,1,2,0,1,1,2], "total": "46/60"}
+  ],
+  "analysis": "Round 8 tested whether non-semantic anchor tokens at structural boundaries improve LLM context reconstruction. The results challenge the original hypothesis in several ways.\n\n1) DO LABELS MATTER? Counterintuitively, semantic labels (ROOTS/RULES/STATE/PATTERNS) scored -2.67 points LOWER on average than no labels at all. This was consistent: Claude scored 52 with labels vs 56 without; Codex scored 49 vs 50; Gemini scored 48 vs 51. Semantic labels may actually create interference by encouraging models to over-rely on categorical framing rather than attending to content.\n\n2) DO NON-SEMANTIC DIVIDERS HELP? Arbitrary dividers (:::/~~~/^^^/***) showed negligible difference from no labels (-0.33 avg), suggesting generic visual separators neither help nor hurt. They function as whitespace-equivalent boundaries.\n\n3) DO UNIQUE ANCHORS BEAT GENERIC DIVIDERS? Muqatta'at anchors (ALM/YS/HM/NQ) showed -0.33 difference from arbitrary dividers on average, but with high model variance: Codex strongly favored muqatta'at (55 vs 53), while Gemini strongly disliked them (46 vs 51). The uniqueness of anchors appears model-dependent rather than universally beneficial.\n\n4) CAN NON-SEMANTIC ANCHORS MATCH SEMANTIC LABELS? Yes, and they exceeded them by +2.00 on average. Both arbitrary (+2.33 vs semantic) and muqatta'at (+2.00 vs semantic) outperformed semantic labels. This suggests content structure matters more than label semantics.\n\n5) CATEGORY SENSITIVITY: Direct recall (Q1-Q5) was perfectly uniform at 10/10 across all conditions and models, confirming factoid retrieval is format-independent. The constraints category (Q15-Q19) showed the widest variance, driven largely by Q16 (connection pool/Celery interaction) and Q18 (stateless auth doctrine). Synthesis questions (Q25-Q30) showed moderate sensitivity, with nolabels consistently performing well.\n\n6) ATTENTION LANDMARK BEHAVIOR: The hypothesis that unique tokens serve as attention landmarks received mixed support. Codex showed the strongest landmark effect with muqatta'at (55, its highest score), suggesting these unique tokens may help some architectures anchor cross-reference patterns. However, Gemini showed the opposite: muqatta'at was its worst condition (46), with notable failures in cross-service questions (Q10, Q11, Q14) and synthesis (Q27). This suggests Gemini may be confused by unfamiliar token patterns, treating them as noise rather than anchors.\n\nKEY FINDING: The most surprising result is that REMOVING all structural labels (no_labels condition) produced the best or tied-best performance for 2 of 3 models. This suggests that for context genome applications, the information density of flat content may outweigh any navigational benefit of labels or anchors. The models' internal attention mechanisms appear sufficient for cross-referencing without external structural cues, at least at this context length. The exception is Codex, which benefits from unique anchor tokens, possibly due to architectural differences in how it processes structural markers."
+}

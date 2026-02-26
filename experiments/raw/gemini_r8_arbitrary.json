@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id with parameters 64MB memory, 3 iterations, and 4 parallelism."
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "The refresh token expires in 7 days and follows a rotate-on-use policy."
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "9200"
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "Currently running RDS-PG 15.4, upgraded from 14.9."
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "5000 burst and 2000 steady."
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "For side-channel resistance."
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "It has zero runtime dependencies and provides SQL-like TypeScript."
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "They validate tokens via JWKS from /.well-known/jwks.json."
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "To block DDoS attacks before they reach the containers."
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "The HTTP API gateway validates the schema, a Lambda authorizer validates the JWT via JWKS and injects claims, then it passes through VPCLink to the ALB, then through AppMesh/Envoy (mTLS) to the service which uses RBAC middleware."
+  },
+  {
+    "question": "Q11: What happens if the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "All downstream auth fails, but token issuance continues. All services and the gateway authorizer are affected. There is a 5-minute TTL grace period provided by an LRU cache with 1000 entries."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "It depends on both the notify-service and the gateway WebSocket API; it is currently planned for Q3."
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "Yes, it was resolved by using Unix timestamps instead of Date objects."
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "By registering via POST /api/v1/notifications/webhooks/register, which uses exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "100 connections total (20 connections per instance)."
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "No, because Fargate Spot carries an interrupt risk and is only for batch jobs, not always-on services."
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "The context specifies a 30-day backup retention and separate DR targets of RPO 1h and RTO 4h with replication to us-west-2, but does not explicitly state the functional relationship between them."
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "The sslmode was updated to verify-full and the global-bundle.pem was required."
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "After Argon2id password verification, MFA is checked if enabled (using TOTP or recovery codes) before issuing RS256 access and refresh tokens."
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "10 recovery codes are generated; they are single-use and permanently consumed upon use."
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "Exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "At rest: PII uses AES-256-GCM with per-tenant keys, and passwords use Argon2id (64MB/3iter/4par). In transit: mTLS via Envoy and sslmode=verify-full with global-bundle.pem for RDS connections."
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "The request hits the gateway for schema validation, then the Auth Service for handlePostLogin. Password verification uses Argon2id, followed by an MFA check (TOTP/recovery). Finally, RS256 access (15min) and refresh (7day) tokens are issued."
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "Naming: handle{Verb}{Resource}; Errors: RFC7807 Problem Details with traceId; Logging: Pino-style structured JSON; Testing: real Postgres via testcontainers (no mocking DB)."
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "The Gateway (2000 steady limit) allows the traffic, but the ALB rate limit (1000/min/IP) will throttle the excess requests from that specific IP."
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "The Auth service uses the private key for signing tokens. The Gateway Lambda authorizer and all downstream services (Auth, Portfolio, Notify) depend on the corresponding public key fetched via JWKS for verification."
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "GitHub Actions (lint, typecheck, test, build, ECR, ECS), Claude Code review before merge, and blue-green ALB target switching for zero-downtime deployment."
+  }
+]

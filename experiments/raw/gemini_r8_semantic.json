@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id is used with parameters 64MB memory, 3 iterations, and 4 degrees of parallelism."
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "The refresh token expiration is 7 days with a rotate-on-use policy."
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "9200."
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "The current version is RDS-PG 15.4, which was upgraded from version 14.9."
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "5000 burst and 2000 steady."
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "For side-channel resistance."
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "Drizzle was chosen because it has zero runtime dependencies and offers a SQL-like TypeScript experience."
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "Every service, including Portfolio and Notification, validates tokens via JWKS, with the Gateway Lambda authorizer injecting claims."
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "To handle DDoS attacks before they reach the application containers."
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "Gateway (schema validation) -> Lambda-authorizer (JWKS/claims-inject) -> VPCLink -> ALB -> Portfolio Service (RBAC middleware)."
+  },
+  {
+    "question": "Q11: What happens if the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "All downstream auth fails but issuance continues (private key local). There is a 5-minute TTL grace period from a 1000-entry LRU cache."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "It depends on both the Notification service and the Gateway WebSocket API; it is currently planned for Q3."
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "Yes, it was resolved by using Unix timestamps instead of Date objects."
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "By registering webhooks at POST /api/v1/notifications/webhooks/register; the system uses exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "100 connections (based on a pool of 20 per instance)."
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "No, Fargate Spot is only for batch jobs like portfolio-recalc and digest because of the interrupt risk."
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "The upgrade required setting sslmode=verify-full and using the global-bundle.pem."
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "If enabled, MFA (TOTP or recovery codes) is verified during the post-login process before access and refresh tokens are issued."
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "10 recovery codes are generated; they are single-use and permanently consumed upon use."
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "Exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "At rest: AES-256-GCM (per-tenant keys) for PII and Argon2id for passwords. In transit: mTLS via Envoy and sslmode=verify-full for RDS. Secrets rotate every 90 days."
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "Gateway validates schema -> ALB -> Auth Service handlePostLogin -> Argon2id verify -> MFA (TOTP/Recovery) -> issue RS256 access and refresh tokens."
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "Patterns: handle{Verb}{Resource} naming, RFC7807 errors, real PG testing, Pino JSON logging, and Claude Code review. Constraints: 20-connection pool/instance and 1MB ALB payload limit."
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "The request hits the ALB, which rate limits it because it exceeds the 1000/min/IP limit."
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "Only the Auth Service depends on the signing (private) key, as issuance continues locally while other services verify via JWKS."
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "GitHub Actions (lint > typecheck > test > build > ECR > ECS) followed by Claude Code review before merge, and a zero-downtime blue-green ALB target switch."
+  }
+]

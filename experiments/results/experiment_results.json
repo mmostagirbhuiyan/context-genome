@@ -1,0 +1,239 @@
+{
+  "summary": {
+    "conventional_total": "19/20",
+    "quranic_total": "19/20",
+    "delta": "+0",
+    "conventional_pct": "95%",
+    "quranic_pct": "95%"
+  },
+  "by_category": {
+    "direct_recall": {"conventional": "4/4", "quranic": "4/4"},
+    "decision_rationale": {"conventional": "3/3", "quranic": "3/3"},
+    "constraints": {"conventional": "3/3", "quranic": "3/3"},
+    "current_state": {"conventional": "3/3", "quranic": "3/3"},
+    "conventions": {"conventional": "3/3", "quranic": "3/3"},
+    "cross_referencing": {"conventional": "3/4", "quranic": "3/4"}
+  },
+  "details": [
+    {
+      "q": 1,
+      "question": "What signing algorithm does the auth service use for JWT?",
+      "expected": "RS256",
+      "conv_answer": "RS256",
+      "conv_score": 1,
+      "conv_reason": "Exact match.",
+      "qur_answer": "RS256 (RSA Signature with SHA-256)",
+      "qur_score": 1,
+      "qur_reason": "Correct with elaboration."
+    },
+    {
+      "q": 2,
+      "question": "What ORM is used and why was it chosen over the alternative?",
+      "expected": "Drizzle ORM, chosen over Prisma because zero runtime dependencies and SQL-like TypeScript",
+      "conv_answer": "Drizzle ORM. It was chosen over Prisma because it has no runtime dependencies and produces SQL-like TypeScript.",
+      "conv_score": 1,
+      "conv_reason": "Names Drizzle, names Prisma as the alternative, and correctly states both rationale points.",
+      "qur_answer": "Drizzle ORM was chosen over Prisma because it has zero runtime dependencies and produces SQL-like TypeScript output.",
+      "qur_score": 1,
+      "qur_reason": "Names Drizzle, names Prisma as the alternative, and correctly states both rationale points."
+    },
+    {
+      "q": 3,
+      "question": "What port does the service run on?",
+      "expected": "3847",
+      "conv_answer": "3847",
+      "conv_score": 1,
+      "conv_reason": "Exact match.",
+      "qur_answer": "3847",
+      "qur_score": 1,
+      "qur_reason": "Exact match."
+    },
+    {
+      "q": 4,
+      "question": "What is the API prefix?",
+      "expected": "/api/v1/auth",
+      "conv_answer": "/api/v1/auth",
+      "conv_score": 1,
+      "conv_reason": "Exact match.",
+      "qur_answer": "/api/v1/auth",
+      "qur_score": 1,
+      "qur_reason": "Exact match."
+    },
+    {
+      "q": 5,
+      "question": "Why was RS256 chosen instead of HS256?",
+      "expected": "Multiple services need to verify tokens without sharing secrets",
+      "conv_answer": "RS256 was chosen because multiple services need to verify tokens without sharing secrets. With RS256, services can verify using the public key without needing access to the private key.",
+      "conv_score": 1,
+      "conv_reason": "Captures both key facts: multiple services verifying tokens and no need to share secrets.",
+      "qur_answer": "RS256 was chosen because multiple services need to verify tokens. Using a shared secret (as HS256 requires) would create coupling between services. RS256 allows the public key to be distributed to any service that needs to verify tokens, without sharing the private signing key.",
+      "qur_score": 1,
+      "qur_reason": "Captures both key facts: multiple services verifying tokens and no need to share secrets, with additional correct detail."
+    },
+    {
+      "q": 6,
+      "question": "Why are sessions not used for authentication?",
+      "expected": "System must support stateless horizontal scaling",
+      "conv_answer": "Sessions are not used because the system must support stateless horizontal scaling. Stateless auth allows any container instance to handle any request without shared session state.",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies stateless horizontal scaling as the reason.",
+      "qur_answer": "Sessions are not used because stateless horizontal scaling is required. Server-side session state would prevent this. Instead, the JWT carries all claims, making each request self-contained and stateless.",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies stateless horizontal scaling as the reason."
+    },
+    {
+      "q": 7,
+      "question": "Why is rate limiting at ALB level instead of application level?",
+      "expected": "To protect against DDoS before requests hit containers",
+      "conv_answer": "Rate limiting is at the ALB level to protect against DDoS before requests hit the containers, meaning malicious traffic is blocked upstream before consuming container resources.",
+      "conv_score": 1,
+      "conv_reason": "Correctly states DDoS protection before requests reach containers.",
+      "qur_answer": "Rate limiting is at the ALB level because DDoS protection must occur before requests reach the containers. Handling it at the application level would mean malicious traffic already reaches and burdens the containers.",
+      "qur_score": 1,
+      "qur_reason": "Correctly states DDoS protection before requests reach containers."
+    },
+    {
+      "q": 8,
+      "question": "What is the maximum token lifetime?",
+      "expected": "15 minutes",
+      "conv_answer": "15 minutes (all tokens expire within 15 minutes).",
+      "conv_score": 1,
+      "conv_reason": "Exact match with correct qualifier.",
+      "qur_answer": "15 minutes maximum. No exceptions.",
+      "qur_score": 1,
+      "qur_reason": "Exact match."
+    },
+    {
+      "q": 9,
+      "question": "How many database connections per container instance?",
+      "expected": "20",
+      "conv_answer": "20 connections per container instance.",
+      "conv_score": 1,
+      "conv_reason": "Correct number stated.",
+      "qur_answer": "20 connections per container instance, managed by Drizzle ORM.",
+      "qur_score": 1,
+      "qur_reason": "Correct number stated with accurate additional detail."
+    },
+    {
+      "q": 10,
+      "question": "What deployment strategy is required?",
+      "expected": "Zero downtime, blue-green with ALB target group switching",
+      "conv_answer": "Zero downtime deployments are required, achieved via blue-green deployments with ALB target group switching.",
+      "conv_score": 1,
+      "conv_reason": "All three key facts present: zero downtime, blue-green, ALB target group switching.",
+      "qur_answer": "Zero downtime deployment is required, implemented via blue-green switching at ALB target groups. No maintenance windows are permitted.",
+      "qur_score": 1,
+      "qur_reason": "All three key facts present: zero downtime, blue-green, ALB target groups."
+    },
+    {
+      "q": 11,
+      "question": "What is currently being built?",
+      "expected": "RBAC middleware",
+      "conv_answer": "RBAC (Role-Based Access Control) middleware is currently being built, specifically role hierarchy resolution.",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies RBAC middleware.",
+      "qur_answer": "RBAC (Role-Based Access Control) middleware is currently being built.",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies RBAC middleware."
+    },
+    {
+      "q": 12,
+      "question": "What comes after the current work?",
+      "expected": "Role hierarchy resolution, then integration tests with API gateway",
+      "conv_answer": "Integration tests with the API gateway come after completing role hierarchy resolution.",
+      "conv_score": 1,
+      "conv_reason": "Mentions both role hierarchy resolution and integration tests with API gateway in the correct sequence.",
+      "qur_answer": "Role hierarchy resolution comes after the current RBAC middleware work. After that, integration tests with the API gateway are planned.",
+      "qur_score": 1,
+      "qur_reason": "Explicitly states both steps in the correct sequence."
+    },
+    {
+      "q": 13,
+      "question": "What bug was recently fixed and how?",
+      "expected": "Refresh token race condition, fixed with database-level advisory locks",
+      "conv_answer": "A refresh token race condition was fixed — it occurred when two tabs sent refresh requests simultaneously. The fix was database-level advisory locks.",
+      "conv_score": 1,
+      "conv_reason": "Names the race condition bug and the advisory locks fix correctly.",
+      "qur_answer": "A refresh token race condition was recently fixed. The scenario was two browser tabs performing a simultaneous refresh. It was resolved using database-level advisory locks.",
+      "qur_score": 1,
+      "qur_reason": "Names the race condition bug and the advisory locks fix correctly."
+    },
+    {
+      "q": 14,
+      "question": "What naming pattern do route handlers follow? Give an example.",
+      "expected": "handle{Verb}{Resource}, e.g. handlePostLogin, handleGetProfile",
+      "conv_answer": "Route handlers follow the handle{Verb}{Resource} pattern. Examples given in the context: handlePostLogin, handleGetProfile.",
+      "conv_score": 1,
+      "conv_reason": "Correct pattern and both expected examples provided.",
+      "qur_answer": "Route handlers follow the pattern handle{Verb}{Resource}. For example, handlePostLogin processes login requests and handleGetProfile retrieves a user's profile.",
+      "qur_score": 1,
+      "qur_reason": "Correct pattern and both expected examples provided."
+    },
+    {
+      "q": 15,
+      "question": "How is the database tested?",
+      "expected": "Integration tests against real PostgreSQL via testcontainers, no mocking",
+      "conv_answer": "The database is tested using integration tests against a real PostgreSQL instance via testcontainers. The database layer is not mocked.",
+      "conv_score": 1,
+      "conv_reason": "All three key facts: integration tests, real PostgreSQL, testcontainers, no mocking.",
+      "qur_answer": "The database is tested using integration tests against a real PostgreSQL instance via testcontainers. Database mocking is explicitly forbidden.",
+      "qur_score": 1,
+      "qur_reason": "All three key facts: integration tests, real PostgreSQL, testcontainers, no mocking."
+    },
+    {
+      "q": 16,
+      "question": "Who reviews code before merge?",
+      "expected": "Claude Code",
+      "conv_answer": "Claude Code reviews code before merge to main. The project is a solo developer effort with Claude Code as the code reviewer.",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies Claude Code as the reviewer.",
+      "qur_answer": "Claude Code reviews code before it is merged to main.",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies Claude Code as the reviewer."
+    },
+    {
+      "q": 17,
+      "question": "If a new microservice needs to verify auth tokens, what approach would be used and why?",
+      "expected": "RS256 public key verification, chosen specifically so services can verify without shared secrets",
+      "conv_answer": "The new microservice would use RS256 asymmetric verification — it can verify tokens using the public key without needing the private key or sharing any secrets. This was the explicit reason RS256 was chosen over HS256.",
+      "conv_score": 1,
+      "conv_reason": "Correctly states RS256 public key verification and the rationale of no shared secrets, linking back to the original design decision.",
+      "qur_answer": "The new microservice would use RS256 public key verification. Per doctrine D1, RS256 was chosen specifically because multiple services need to verify tokens. The public key can be distributed to any verifying service without sharing the private signing key, avoiding coupling between services.",
+      "qur_score": 1,
+      "qur_reason": "Correctly states RS256 public key verification and the rationale of no shared secrets, with explicit back-reference to the design decision."
+    },
+    {
+      "q": 18,
+      "question": "Could you add a session store to speed up auth checks?",
+      "expected": "No, architecture explicitly rejected sessions for stateless horizontal scaling",
+      "conv_answer": "No. A core architectural constraint is stateless auth to support stateless horizontal scaling. Adding a session store would violate this constraint and introduce shared state between instances.",
+      "conv_score": 1,
+      "conv_reason": "Correctly answers No and cites stateless horizontal scaling as the explicit architectural constraint.",
+      "qur_answer": "No. Doctrine D2 explicitly rejects sessions and any server-side session state. The requirement for stateless horizontal scaling is a governing doctrine, meaning no session store can be added regardless of potential performance benefits.",
+      "qur_score": 1,
+      "qur_reason": "Correctly answers No and cites stateless horizontal scaling as the explicit architectural constraint."
+    },
+    {
+      "q": 19,
+      "question": "If the connection pool is exhausted, can it be increased?",
+      "expected": "20 per instance limit, but can scale horizontally with zero downtime blue-green deployment",
+      "conv_answer": "NOT IN CONTEXT. The context states the pool is limited to 20 connections per container instance but does not specify whether or why this limit can or cannot be increased.",
+      "conv_score": 0,
+      "conv_reason": "Correctly notes the 20-connection limit but does not mention horizontal scaling as the alternative approach, which is the key architectural answer per the expected response.",
+      "qur_answer": "The boundary B2 sets the connection pool at exactly 20 connections per container instance, managed by Drizzle ORM. The context states this as a fixed boundary with no mention of it being adjustable. Based solely on the context, the answer is NOT IN CONTEXT for whether it can be increased — the context only defines 20 as the boundary, not whether it is a hard limit or configurable.",
+      "qur_score": 0,
+      "qur_reason": "Correctly notes the 20-connection limit and frames it as a fixed boundary, but does not mention horizontal scaling as the alternative approach, which is the key architectural answer per the expected response."
+    },
+    {
+      "q": 20,
+      "question": "What database access pattern should new endpoints follow?",
+      "expected": "Drizzle ORM SQL-like syntax, tested with real PostgreSQL via testcontainers, no mocking",
+      "conv_answer": "New endpoints should use Drizzle ORM for database access (the chosen ORM), follow the handle{Verb}{Resource} naming convention for route handlers, and be tested with integration tests against a real PostgreSQL instance via testcontainers (no mocking of the database layer).",
+      "conv_score": 1,
+      "conv_reason": "Covers Drizzle ORM, testcontainers with real PostgreSQL, and no mocking. The SQL-like syntax point is implied by naming Drizzle ORM.",
+      "qur_answer": "New endpoints should use Drizzle ORM with the SQL-like syntax that motivated its selection over Prisma (doctrine D3 and the patterns section). Route handlers must follow the handle{Verb}{Resource} naming convention, and any database testing must use testcontainers with a real PostgreSQL instance — no mocking.",
+      "qur_score": 1,
+      "qur_reason": "Explicitly mentions SQL-like syntax, Drizzle ORM, testcontainers with real PostgreSQL, and no mocking — all key expected facts."
+    }
+  ]
+}

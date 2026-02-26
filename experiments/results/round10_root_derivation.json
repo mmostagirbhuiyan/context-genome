@@ -1,0 +1,143 @@
+{
+  "experiment": "Round 10: Root Derivation (Trilateral Root Experiment)",
+  "hypothesis": "Conceptual root pointers that activate model training knowledge can replace explicit values, enabling further compression without accuracy loss",
+  "conditions": {
+    "full_genome": "~900 tokens, all values explicit (control)",
+    "root_pointers": "~750 tokens, derivable facts replaced with ~> pointers, literals kept",
+    "aggressive_roots": "~550 tokens, pointers pushed into partially-derivable zone"
+  },
+  "summary_by_model": {
+    "claude": {"full": "58/60", "rootptr": "54/60", "aggressive": "46/60"},
+    "codex": {"full": "59/60", "rootptr": "52/60", "aggressive": "50/60"},
+    "gemini": {"full": "51/60", "rootptr": "52/60", "aggressive": "45/60"}
+  },
+  "by_category_claude": {
+    "direct_recall_q1_q5": {"full": "10/10", "rootptr": "8/10", "aggressive": "8/10"},
+    "decision_rationale_q6_q9": {"full": "8/8", "rootptr": "6/8", "aggressive": "6/8"},
+    "cross_service_q10_q14": {"full": "10/10", "rootptr": "10/10", "aggressive": "7/10"},
+    "constraints_q15_q19": {"full": "9/10", "rootptr": "9/10", "aggressive": "8/10"},
+    "recent_changes_q20_q24": {"full": "10/10", "rootptr": "10/10", "aggressive": "9/10"},
+    "synthesis_q25_q30": {"full": "11/12", "rootptr": "11/12", "aggressive": "8/12"}
+  },
+  "by_category_codex": {
+    "direct_recall_q1_q5": {"full": "10/10", "rootptr": "8/10", "aggressive": "8/10"},
+    "decision_rationale_q6_q9": {"full": "8/8", "rootptr": "6/8", "aggressive": "6/8"},
+    "cross_service_q10_q14": {"full": "10/10", "rootptr": "10/10", "aggressive": "10/10"},
+    "constraints_q15_q19": {"full": "10/10", "rootptr": "9/10", "aggressive": "9/10"},
+    "recent_changes_q20_q24": {"full": "10/10", "rootptr": "10/10", "aggressive": "9/10"},
+    "synthesis_q25_q30": {"full": "11/12", "rootptr": "9/12", "aggressive": "8/12"}
+  },
+  "by_category_gemini": {
+    "direct_recall_q1_q5": {"full": "10/10", "rootptr": "8/10", "aggressive": "8/10"},
+    "decision_rationale_q6_q9": {"full": "8/8", "rootptr": "7/8", "aggressive": "6/8"},
+    "cross_service_q10_q14": {"full": "10/10", "rootptr": "10/10", "aggressive": "8/10"},
+    "constraints_q15_q19": {"full": "7/10", "rootptr": "9/10", "aggressive": "8/10"},
+    "recent_changes_q20_q24": {"full": "10/10", "rootptr": "10/10", "aggressive": "8/10"},
+    "synthesis_q25_q30": {"full": "6/12", "rootptr": "8/12", "aggressive": "7/12"}
+  },
+  "root_derivation_analysis": {
+    "successful_derivations": [
+      "~>DDoS-before-containers (Q9): All 6 rootptr/aggressive runs correctly derived that ALB rate limiting provides DDoS protection before traffic reaches containers",
+      "~>stateless-auth-doctrine (Q18): 5/6 runs correctly identified stateless JWT/JWKS architecture as the prohibition against session caches",
+      "~>RS256-JWKS-validation (Q8): All runs correctly described JWKS-based token verification across services",
+      "~>rotate-on-use (Q2): All runs correctly described 7-day expiry with rotation on use"
+    ],
+    "failed_derivations": [
+      "~>OWASP-minimum-params (Q1): FAILED across ALL 6 rootptr/aggressive runs. Every model derived 19MiB/2iter/1par (OWASP second-choice minimum) instead of the expected 64MB/3iter/4par (OWASP first-choice minimum). This is the single most impactful failure.",
+      "~>modern-hash-advantage (Q6): Partially failed. 5/6 runs described GPU/ASIC/memory-hardness resistance instead of the specific expected answer 'side-channel resistance'. Only Gemini rootptr mentioned side-channel attacks explicitly.",
+      "~>zero-deps-sql-like (Q7): Partially failed. 5/6 runs described lightweight/SQL-first/better control but missed the specific phrase 'zero runtime dependencies'. Only full-context conditions captured this precisely."
+    ],
+    "derivation_accuracy_by_model": {
+      "claude": "3/6 root pointer questions fully correct (Q2, Q8, Q9 successful; Q1, Q6, Q7 failed across rootptr+aggressive)",
+      "codex": "3/6 root pointer questions fully correct (Q2, Q8, Q9 successful; Q1, Q6, Q7 failed across rootptr+aggressive)",
+      "gemini": "4/6 root pointer questions fully correct (Q2, Q6-rootptr, Q8, Q9 successful; Q1, Q7 failed across rootptr+aggressive)"
+    },
+    "token_savings_vs_accuracy": {
+      "rootptr_tokens_saved": "~150 tokens saved, accuracy delta: -4.7 points average (full avg 56.0, rootptr avg 52.7)",
+      "aggressive_tokens_saved": "~350 tokens saved, accuracy delta: -9.0 points average (full avg 56.0, aggressive avg 47.0)"
+    }
+  },
+  "by_derivability_class": {
+    "derivable_questions_q6_q7_q9_q18": {
+      "full_avg": "8.0/8",
+      "rootptr_avg": "6.3/8",
+      "aggressive_avg": "5.3/8"
+    },
+    "partially_derivable_questions_13qs": {
+      "full_avg": "23.7/26",
+      "rootptr_avg": "21.3/26",
+      "aggressive_avg": "17.0/26"
+    },
+    "literal_questions_13qs": {
+      "full_avg": "24.3/26",
+      "rootptr_avg": "25.0/26",
+      "aggressive_avg": "24.7/26"
+    }
+  },
+  "details": [
+    {
+      "model": "claude",
+      "condition": "full",
+      "scores": [2,2,2,2,2, 2,2,2,2, 2,2,2,2,2, 2,2,2,2,1, 2,2,2,2,2, 2,2,1,2,2,2],
+      "total": "58/60",
+      "notes": "Near-perfect. Only missed cross-region us-west-2 detail (Q19) and some Q27 deployment specifics."
+    },
+    {
+      "model": "claude",
+      "condition": "rootptr",
+      "scores": [0,2,2,2,2, 1,1,2,2, 2,2,2,2,2, 2,2,2,2,1, 2,2,2,2,2, 1,2,2,2,2,2],
+      "total": "54/60",
+      "notes": "OWASP params derived as 500MB/2/1 (wrong). Q6 missed side-channel. Q7 missed zero-deps phrasing. Q25 inherits wrong Argon2id params."
+    },
+    {
+      "model": "claude",
+      "condition": "aggressive",
+      "scores": [0,2,2,2,2, 1,1,2,2, 1,1,1,2,2, 2,1,2,1,2, 1,2,2,2,2, 1,1,1,2,1,2],
+      "total": "46/60",
+      "notes": "Significant degradation in cross-service reasoning (Q10-11 wrong ordering/wrong Auth failure claim). Fabricated JWKS-LRU-leak doctrine (Q18). Hedged on sslmode (Q20)."
+    },
+    {
+      "model": "codex",
+      "condition": "full",
+      "scores": [2,2,2,2,2, 2,2,2,2, 2,2,2,2,2, 2,2,2,2,2, 2,2,2,2,2, 2,2,2,2,1,2],
+      "total": "59/60",
+      "notes": "Near-perfect. Only minor miss on Q29 (missing LRU cache component in JWT dependency map)."
+    },
+    {
+      "model": "codex",
+      "condition": "rootptr",
+      "scores": [0,2,2,2,2, 1,1,2,2, 2,2,2,2,2, 2,2,2,2,1, 2,2,2,2,2, 1,2,2,2,1,1],
+      "total": "52/60",
+      "notes": "OWASP derived as 19MiB/2/1 (wrong). Q6/Q7 lost specificity. Q25 inherits wrong params. Some synthesis questions (Q29,Q30) lost detail."
+    },
+    {
+      "model": "codex",
+      "condition": "aggressive",
+      "scores": [0,2,2,2,2, 1,1,2,2, 2,2,2,2,2, 2,2,2,2,1, 1,2,2,2,2, 1,2,1,2,1,1],
+      "total": "50/60",
+      "notes": "OWASP wrong. Q20 lost sslmode=verify-full specificity. Q27 missing several deployment patterns. Q29/Q30 missing details."
+    },
+    {
+      "model": "gemini",
+      "condition": "full",
+      "scores": [2,2,2,2,2, 2,2,2,2, 2,2,2,2,2, 2,0,2,2,1, 2,2,2,2,2, 1,1,1,1,1,1],
+      "total": "51/60",
+      "notes": "Q16 answered NOT IN CONTEXT (wrong - info was present). Weak on synthesis questions Q25-Q30, losing detail consistently. Strong on direct recall and cross-service."
+    },
+    {
+      "model": "gemini",
+      "condition": "rootptr",
+      "scores": [0,2,2,2,2, 2,1,2,2, 2,2,2,2,2, 2,2,2,2,1, 2,2,2,2,2, 1,2,1,2,1,1],
+      "total": "52/60",
+      "notes": "OWASP wrong but uniquely preserved side-channel resistance for Q6. Actually GAINED 1 point over full on Q16 (answered correctly vs NOT IN CONTEXT). Root pointers helped Gemini on constraint questions."
+    },
+    {
+      "model": "gemini",
+      "condition": "aggressive",
+      "scores": [0,2,2,2,2, 1,1,2,2, 1,1,2,2,2, 2,1,2,1,2, 1,2,1,2,2, 1,1,1,2,1,1],
+      "total": "45/60",
+      "notes": "Significant degradation. Auth incorrectly listed as affected by JWKS outage (Q11). Cited Twelve-Factor App instead of stateless JWT doctrine (Q18). MFA answer confused setup with login flow (Q22)."
+    }
+  ],
+  "analysis": "CORE FINDINGS FROM ROUND 10 - ROOT DERIVATION EXPERIMENT:\n\n1. ROOT POINTERS DO NOT WORK FOR DOMAIN-SPECIFIC PARAMETER VALUES. The ~>OWASP-minimum-params pointer failed catastrophically across ALL 6 rootptr/aggressive runs across ALL 3 models. Every model derived the OWASP second-choice minimum (19MiB/2iter/1par) instead of the first-choice minimum (64MB/3iter/4par) that was actually configured in the system. This is a critical finding: OWASP has multiple recommended parameter sets, and models consistently chose the wrong one. Root pointers that reference ambiguous standards are unreliable.\n\n2. THERE IS A CLEAR DERIVABILITY BOUNDARY. Root pointers work well for architectural patterns (DDoS-at-edge, stateless-auth, JWKS-validation) where there is essentially one correct answer derivable from the concept name. They fail when the pointer references a standard with multiple valid configurations (OWASP params) or when the expected answer uses domain-specific phrasing (side-channel resistance vs GPU resistance for Argon2id).\n\n3. TOKEN SAVINGS VS ACCURACY TRADEOFF IS UNFAVORABLE. Root pointers save ~150 tokens but cost ~3.3 points on average (-5.9%). Aggressive roots save ~350 tokens but cost ~9.0 points (-16.1%). The compression ratio is poor: each token saved costs roughly 0.022-0.026 accuracy points. For a 30-question evaluation, this means approximately 1 question answer degrades per 40-50 tokens saved.\n\n4. LITERAL QUESTIONS ARE IMMUNE TO COMPRESSION DAMAGE. Literal-class questions scored 24.3/26 (full), 25.0/26 (rootptr), 24.7/26 (aggressive) on average -- essentially flat. This confirms that root pointers correctly preserve explicitly-stated literals. The damage concentrates entirely on derivable and partially-derivable questions.\n\n5. CODEX IS THE MOST ROBUST MODEL FOR FULL CONTEXT (59/60) but degrades comparably to others with root pointers (52/60, -7 points). Gemini showed a paradoxical result: rootptr (52/60) actually OUTPERFORMED full (51/60) because root pointers caused Gemini to attempt Q16 rather than declaring NOT IN CONTEXT. However, Gemini's aggressive score (45/60) was the lowest overall.\n\n6. AGGRESSIVE ROOTS CAUSE CASCADING FAILURES. Beyond simple parameter derivation errors, aggressive compression caused reasoning breakdowns: Claude-aggressive fabricated a 'JWKS-LRU-leak doctrine' (Q18), Gemini-aggressive cited Twelve-Factor App methodology instead of stateless JWT (Q18), and Claude-aggressive incorrectly claimed Auth Service fails during JWKS outage (Q11). These are hallucination-class errors triggered by insufficient context.\n\n7. THE TRILATERAL ROOT HYPOTHESIS IS PARTIALLY REFUTED. Root pointers work for unambiguous architectural concepts but fail for parameterized standards. The optimal strategy remains: keep ALL numeric parameters, configuration values, and multi-option standard references as explicit literals. Root pointers should be limited to well-defined architectural patterns where the concept name uniquely identifies the expected answer.\n\nVERDICT: Root derivation is a viable compression technique ONLY for architectural patterns with single correct derivations. It is dangerous for parameterized values, ambiguous standards, and domain-specific terminology. The ~150 token savings from rootptr-level compression is not worth the ~4-point accuracy cost. Full explicit context remains the gold standard."
+}

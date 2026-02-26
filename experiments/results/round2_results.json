@@ -1,0 +1,350 @@
+{
+  "summary": {
+    "conventional_score": "46/60",
+    "quranic_score": "47/60",
+    "conventional_pct": "77%",
+    "quranic_pct": "78%",
+    "delta": "+1",
+    "delta_pct": "+1%"
+  },
+  "by_category": {
+    "direct_recall_q1_q5": {"conventional": "8/10", "quranic": "9/10"},
+    "decision_rationale_q6_q9": {"conventional": "5/8", "quranic": "8/8"},
+    "cross_service_reasoning_q10_q14": {"conventional": "7/10", "quranic": "5/10"},
+    "constraint_interactions_q15_q19": {"conventional": "8/10", "quranic": "8/10"},
+    "recent_changes_q20_q24": {"conventional": "10/10", "quranic": "9/10"},
+    "synthesis_q25_q30": {"conventional": "8/12", "quranic": "8/12"}
+  },
+  "details": [
+    {
+      "q": 1,
+      "question": "What password hashing algorithm is used and what are its parameters?",
+      "expected": "Argon2id. Memory: 64MB, iterations: 3, parallelism: 4",
+      "conv_answer": "Argon2id with memory cost: 64MB, iterations: 3, parallelism: 4",
+      "conv_score": 2,
+      "conv_reason": "Complete and accurate. All parameters correctly identified.",
+      "qur_answer": "Argon2id with parameters: 64MB memory, 3 iterations, parallelism 4",
+      "qur_score": 2,
+      "qur_reason": "Complete and accurate. All parameters correctly identified."
+    },
+    {
+      "q": 2,
+      "question": "What is the refresh token expiration period?",
+      "expected": "7 days, rotates on every use",
+      "conv_answer": "7 days",
+      "conv_score": 1,
+      "conv_reason": "Correctly states 7 days but omits the key detail that the token rotates on every use.",
+      "qur_answer": "7 days, with rotation on every use",
+      "qur_score": 2,
+      "qur_reason": "Complete. Captures both the 7-day expiry and the rotation-on-use behavior."
+    },
+    {
+      "q": 3,
+      "question": "What port does the Notification Service run on?",
+      "expected": "9200",
+      "conv_answer": "9200",
+      "conv_score": 2,
+      "conv_reason": "Correct.",
+      "qur_answer": "Port 9200",
+      "qur_score": 2,
+      "qur_reason": "Correct."
+    },
+    {
+      "q": 4,
+      "question": "What database version is currently running?",
+      "expected": "PostgreSQL 15.4 (upgraded from 14.9)",
+      "conv_answer": "PostgreSQL 15.4",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies current version but omits the upgrade history from 14.9.",
+      "qur_answer": "PostgreSQL 15.4",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies current version but omits the upgrade history from 14.9."
+    },
+    {
+      "q": 5,
+      "question": "What are the API Gateway throttle limits?",
+      "expected": "5000 req/s burst, 2000 req/s steady state",
+      "conv_answer": "5000 req/s burst, 2000 req/s steady state",
+      "conv_score": 2,
+      "conv_reason": "Complete and exact match.",
+      "qur_answer": "5000 req/s burst, 2000 req/s steady",
+      "qur_score": 2,
+      "qur_reason": "Complete. Minor wording difference ('steady' vs 'steady state') does not affect accuracy."
+    },
+    {
+      "q": 6,
+      "question": "Why was Argon2id chosen over bcrypt?",
+      "expected": "Resistance to side-channel attacks",
+      "conv_answer": "Chosen for resistance to side-channel attacks compared to bcrypt",
+      "conv_score": 2,
+      "conv_reason": "Correct and complete.",
+      "qur_answer": "Argon2id is resistant to side-channel attacks, which bcrypt is not",
+      "qur_score": 2,
+      "qur_reason": "Correct and complete."
+    },
+    {
+      "q": 7,
+      "question": "Why is Drizzle used instead of Prisma?",
+      "expected": "Zero runtime dependencies, SQL-like TypeScript output",
+      "conv_answer": "No runtime dependencies, produces SQL-like TypeScript. Migration files co-located in /db/migrations",
+      "conv_score": 2,
+      "conv_reason": "Correct on both required reasons, adds useful extra detail about migration co-location.",
+      "qur_answer": "Drizzle ORM has zero runtime dependencies and is SQL-like TypeScript, making it suitable for the doctrine governing Auth Service database patterns [D3]",
+      "qur_score": 2,
+      "qur_reason": "Correct on both required reasons. Appropriate doctrine reference."
+    },
+    {
+      "q": 8,
+      "question": "How do the Portfolio and Notification services verify auth tokens?",
+      "expected": "Via RS256 JWKS endpoint at /.well-known/jwks.json hosted by Auth Service",
+      "conv_answer": "Both services verify JWTs using the Auth Service JWKS endpoint at /.well-known/jwks.json",
+      "conv_score": 1,
+      "conv_reason": "Correct endpoint and host service identified, but omits the RS256 algorithm detail.",
+      "qur_answer": "Both services validate tokens via RS256 JWKS endpoint at /.well-known/jwks.json on the Auth Service, which distributes the public key instead of using shared secrets",
+      "qur_score": 2,
+      "qur_reason": "Complete. Correctly includes RS256, the endpoint path, and the Auth Service as host."
+    },
+    {
+      "q": 9,
+      "question": "Why is rate limiting done at ALB instead of in application code?",
+      "expected": "DDoS protection must occur before requests reach containers",
+      "conv_answer": "NOT IN CONTEXT (the context states ALB-level rate limiting protects against DDoS and current limit is 1000 req/min per IP, but does not explain why this approach was chosen over application code)",
+      "conv_score": 0,
+      "conv_reason": "Agent explicitly states the answer is not in context. The expected answer (DDoS protection before containers) was present in the source material.",
+      "qur_answer": "DDoS protection before requests reach containers; rate limiting is applied at the ALB level (1000 req/min per IP) as part of doctrine D4",
+      "qur_score": 2,
+      "qur_reason": "Complete and correct. Captures the core rationale and adds doctrine reference."
+    },
+    {
+      "q": 10,
+      "question": "If the Portfolio Service needs to validate a user's role before allowing a rebalance operation, what chain of systems is involved?",
+      "expected": "Portfolio Service sends request with JWT. API Gateway Lambda authorizer validates JWT via JWKS endpoint on Auth Service, injects decoded claims (including role) into request context. Portfolio Service receives claims and checks role.",
+      "conv_answer": "Portfolio Service receives request → validates JWT using JWKS endpoint from Auth Service → extracts role claims from JWT → resolves role hierarchy to determine permissions → authorizes rebalance operation",
+      "conv_score": 1,
+      "conv_reason": "Describes the validation but misses the critical step of the API Gateway Lambda authorizer injecting claims into the request context before Portfolio Service sees them. Describes Portfolio Service doing the JWKS lookup itself rather than receiving pre-validated claims.",
+      "qur_answer": "User sends request to API Gateway → API Gateway custom authorizer Lambda decodes JWT and extracts role claims → Lambda adds role information to request context → Portfolio Service handler validates role from context against rebalance operation requirements → Role hierarchy resolution determines if role has permission",
+      "qur_score": 2,
+      "qur_reason": "Correctly identifies the API Gateway Lambda authorizer as the validation step that injects claims into context, with Portfolio Service receiving and checking those claims. Accurate chain."
+    },
+    {
+      "q": 11,
+      "question": "What would happen if the JWKS endpoint on the Auth Service goes down? Which services are affected and why?",
+      "expected": "Portfolio Service and Notification Service both validate JWTs via JWKS. If JWKS endpoint is down, neither can verify tokens. Auth Service itself uses RS256 signing key directly, so token issuance continues but no downstream service can validate.",
+      "conv_answer": "Portfolio Service and Notification Service are affected. Both services verify auth tokens using the JWKS endpoint. If it goes down, they cannot validate incoming JWTs and would be unable to authorize requests, causing service degradation or outage",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies affected services and explains why validation fails. Missing the key insight that Auth Service itself continues to issue tokens because it uses the private key directly, not the JWKS endpoint.",
+      "qur_answer": "Both Portfolio Service and Notification Service would be affected because they cannot validate incoming JWT tokens. This would cause authentication failures for all requests to these services that require token verification, effectively breaking inter-service communication and external API access",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies affected services and explains why validation fails. Also missing the key insight about Auth Service continuing to issue tokens since it uses the RS256 private key directly."
+    },
+    {
+      "q": 12,
+      "question": "The Notification Service wants to send a real-time alert when a portfolio threshold is breached. What infrastructure changes are needed based on the current roadmap?",
+      "expected": "Notification Service has WebSocket planned for Q3. This depends on WebSocket API in API Gateway (also planned). Portfolio threshold alerts already exist as non-real-time notifications. Real-time requires both WebSocket implementations to complete.",
+      "conv_answer": "WebSocket API implementation. The context states: 'WebSocket API planned for real-time features (depends on Notification Service WebSocket work)' and Notification Service roadmap includes 'real-time WebSocket notifications for portfolio changes (Q3 roadmap)'",
+      "conv_score": 2,
+      "conv_reason": "Correctly identifies both the Notification Service WebSocket work and the API Gateway WebSocket dependency. Accurately frames the mutual dependency.",
+      "qur_answer": "WebSocket support for real-time alerts. The context indicates this is on the Q3 roadmap for the Notification Service as a planned feature for real-time WebSocket portfolio change notifications",
+      "qur_score": 1,
+      "qur_reason": "Mentions Notification Service WebSocket but does not identify the API Gateway WebSocket dependency as a required infrastructure change. Incomplete."
+    },
+    {
+      "q": 13,
+      "question": "If a user reports that their auth tokens are expiring too quickly in the Pacific/Kiritimati timezone (UTC+14), has this been addressed? How?",
+      "expected": "Yes. A timezone bug caused premature expiry for UTC+13/+14 users. Fixed by using Unix timestamps for all expiry calculations instead of Date objects.",
+      "conv_answer": "Yes, this has been addressed. The fix: all expiry calculations now use Unix timestamps, never Date objects. This resolves the timezone bug that was causing premature expiry for UTC+13/+14 users",
+      "conv_score": 2,
+      "conv_reason": "Complete and accurate. Correctly identifies the fix and the affected timezones.",
+      "qur_answer": "NOT IN CONTEXT. The 15-minute access token expiration is global with no timezone-specific handling mentioned",
+      "qur_score": 0,
+      "qur_reason": "Completely incorrect. The fix was present in the source context. Agent B failed to retrieve this fact, claiming it was not in context."
+    },
+    {
+      "q": 14,
+      "question": "A new enterprise client wants webhook notifications for auth events (login, MFA setup). Which services need changes?",
+      "expected": "Auth Service already has MFA events. Notification Service has webhook channel. Need to: register webhook endpoint for the client, then configure Auth Service to emit events that Notification Service can forward via webhook.",
+      "conv_answer": "Notification Service needs changes to support auth event webhooks (currently only 'webhook delivery channel for enterprise clients' exists but specific auth event types not mentioned). The context does not explicitly state which other services require modifications",
+      "conv_score": 1,
+      "conv_reason": "Identifies Notification Service as needing changes but is vague about Auth Service involvement. Misses that Auth Service already has MFA events and would need configuration to emit events to Notification Service. Partial credit for identifying Notification Service.",
+      "qur_answer": "The Notification Service needs changes. A new webhook endpoint for auth events would need to be added, separate from or extending the existing POST /api/v1/notifications/webhooks/register endpoint. The Auth Service would need to call this new webhook registration or publish auth events",
+      "qur_score": 1,
+      "qur_reason": "Identifies both Notification Service and Auth Service involvement. However, misses that Auth Service already has MFA events and the change is configuring event emission rather than creating new capability. Partial."
+    },
+    {
+      "q": 15,
+      "question": "What is the maximum number of simultaneous database connections possible across the Auth Service if 5 container instances are running?",
+      "expected": "20 connections x 5 instances = 100 simultaneous connections",
+      "conv_answer": "100 connections (5 instances × 20 connections per instance)",
+      "conv_score": 2,
+      "conv_reason": "Complete and mathematically correct.",
+      "qur_answer": "100 connections maximum (20 connections per container instance × 5 instances). Drizzle ORM manages the connection pool per doctrine [D3]",
+      "qur_score": 2,
+      "qur_reason": "Complete and mathematically correct. Adds useful context about Drizzle managing the pool."
+    },
+    {
+      "q": 16,
+      "question": "If the Celery memory issue in Portfolio Service is caused by loading all tax lots into memory, and the system has 20 database connections per instance, what is the tension?",
+      "expected": "Loading all tax lots for large portfolios could exhaust the connection pool if queries are long-running, contributing to the memory issue. The 20-connection limit constrains how many concurrent large recalculations can run. Fargate Spot instances may be terminated mid-recalculation.",
+      "conv_answer": "The tension is between memory constraints during large tax-lot processing and the limited number of database connections (20 per instance). If Celery workers load all tax lots into memory to reduce database round-trips, this exacerbates the memory leak issue. If they use the connection pool efficiently to stream data, they may hit connection pool saturation under high load",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies the memory-connection tension. Misses the Fargate Spot interruption risk which is a third tension point in the expected answer.",
+      "qur_answer": "The tension is between connection availability and memory usage: loading all tax lots into a single task consumes unbounded memory while occupying one of 20 connections. If many Celery tasks attempt this, available connections become exhausted before all tax lots can be processed, creating a bottleneck",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies the memory-connection tension. Also misses the Fargate Spot interruption risk. Both agents score equally here."
+    },
+    {
+      "q": 17,
+      "question": "Can Fargate Spot be used for the Auth Service? Why or why not?",
+      "expected": "No. Auth Service requires zero downtime (blue-green deployment). Fargate Spot instances can be interrupted. Spot is only used for non-critical batch workloads like portfolio recalculation and digest generation.",
+      "conv_answer": "No. The context states 'Zero downtime deployments required (blue-green with ALB target group switching)' and 'Cost optimization: Fargate Spot for non-critical batch workloads'. Auth Service is critical and requires guaranteed availability, so Spot instances cannot be used",
+      "conv_score": 2,
+      "conv_reason": "Complete. Correctly identifies zero downtime requirement, Spot interruption risk, and the batch-only restriction.",
+      "qur_answer": "No. Fargate Spot is used only for batch workloads as a cost optimization (portfolio recalculation, digest generation). Auth Service is a stateless, synchronous critical service requiring consistent availability, not a batch process",
+      "qur_score": 2,
+      "qur_reason": "Complete. Identifies the Spot restriction to batch workloads and the Auth Service critical availability requirement. Correct examples given."
+    },
+    {
+      "q": 18,
+      "question": "If a developer wants to add an in-memory session cache to speed up auth, what project doctrine prohibits this and why?",
+      "expected": "D2: Sessions were rejected. System requires stateless horizontal scaling. No server-side session state allowed. JWT carries all claims.",
+      "conv_answer": "Stateless auth doctrine (no sessions). The context states: 'System must support stateless horizontal scaling. JWT carries all claims including role hierarchy.' In-memory session caches would violate horizontal scaling and would require session affinity/sticky sessions",
+      "conv_score": 2,
+      "conv_reason": "Correctly identifies the doctrine and reasoning. Mentions horizontal scaling and JWT claims requirement.",
+      "qur_answer": "Doctrine [D2] prohibits session stores and in-memory caches. The doctrine states 'Stateless auth, no sessions' and 'JWT carries all claims...Horizontal scaling without server-side state.' This ensures horizontal scaling and removes server affinity requirements",
+      "qur_score": 2,
+      "qur_reason": "Complete. Explicitly cites D2, explains the stateless requirement, and correctly connects to horizontal scaling."
+    },
+    {
+      "q": 19,
+      "question": "What is the relationship between the disaster recovery targets (RPO/RTO) and the database backup retention period?",
+      "expected": "RPO is 1 hour. Backups retained for 30 days. Cross-region replication to us-west-2. The 30-day retention provides point-in-time recovery far beyond the 1-hour RPO target. RTO is 4 hours.",
+      "conv_answer": "RPO (Recovery Point Objective) is 1 hour and backup retention is 30 days. RPO of 1 hour means data loss is acceptable up to 1 hour before failure. The 30-day retention ensures backups are available for recovery from incidents discovered within that window. These are independent constraints serving different purposes",
+      "conv_score": 1,
+      "conv_reason": "Identifies RPO and retention correctly. Missing RTO of 4 hours and cross-region replication to us-west-2. Characterizes them as independent constraints rather than complementary.",
+      "qur_answer": "The backup retention period (30 days) supports the RPO (Recovery Point Objective) of 1 hour by providing restore points within the retention window. The RTO (Recovery Time Objective) of 4 hours is a separate operational metric about restoration speed. A 30-day retention exceeds the 1-hour RPO requirement",
+      "qur_score": 1,
+      "qur_reason": "Correctly includes RTO of 4 hours which Agent A missed. Both agents miss the cross-region replication to us-west-2 detail."
+    },
+    {
+      "q": 20,
+      "question": "After the RDS upgrade to PostgreSQL 15.4, what connection string change is required?",
+      "expected": "Add ?sslmode=verify-full&sslrootcert=global-bundle.pem to connection string",
+      "conv_answer": "Added ?sslmode=verify-full&sslrootcert=global-bundle.pem to connection strings",
+      "conv_score": 2,
+      "conv_reason": "Exact match.",
+      "qur_answer": "The connection string must include ?sslmode=verify-full&sslrootcert=global-bundle.pem",
+      "qur_score": 2,
+      "qur_reason": "Exact match."
+    },
+    {
+      "q": 21,
+      "question": "What new table was added to the Portfolio Service and what are its columns?",
+      "expected": "tax_lots table with columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at",
+      "conv_answer": "tax_lots table with columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at",
+      "conv_score": 2,
+      "conv_reason": "Complete and exact match.",
+      "qur_answer": "tax_lots table with columns: id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at",
+      "qur_score": 2,
+      "qur_reason": "Complete and exact match."
+    },
+    {
+      "q": 22,
+      "question": "How does the new MFA feature affect the login flow?",
+      "expected": "When MFA is enabled for a user, login now requires MFA verification step after credential validation. POST /api/v1/auth/mfa/setup provides QR code URI for TOTP setup.",
+      "conv_answer": "MFA verification is required on login when enabled. Users set up TOTP via POST /api/v1/auth/mfa/setup which returns QR code URI. Login flow now requires MFA code validation before token issuance",
+      "conv_score": 2,
+      "conv_reason": "Complete. Covers conditional MFA verification, the setup endpoint, and QR code URI.",
+      "qur_answer": "MFA is optional and checked at login time. If enabled for a user, the login endpoint (handlePostLogin) verifies MFA before issuing tokens. New endpoint POST /api/v1/auth/mfa/setup generates a QR code URI for TOTP setup",
+      "qur_score": 2,
+      "qur_reason": "Complete. Accurately describes the conditional check, references handlePostLogin, and covers the setup endpoint."
+    },
+    {
+      "q": 23,
+      "question": "How many MFA recovery codes are generated and what happens when they are used?",
+      "expected": "10 single-use recovery codes generated at MFA setup. Each can be used once (single-use).",
+      "conv_answer": "10 single-use recovery codes are generated at MFA setup. When used, they are consumed and cannot be reused (single-use implies they are marked as used in the database)",
+      "conv_score": 2,
+      "conv_reason": "Complete. Correctly states 10 codes, single-use nature, and elaborates on the consumed-once behavior.",
+      "qur_answer": "10 single-use recovery codes are generated at setup. The context does not specify what happens when they are used, only that they are generated",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies 10 codes and labels them single-use, but then hedges by saying context does not specify what happens when used. The term 'single-use' itself answers the question; the agent failed to draw this obvious inference."
+    },
+    {
+      "q": 24,
+      "question": "What is the webhook retry policy for the Notification Service?",
+      "expected": "Exponential backoff, maximum 5 attempts over 24 hours",
+      "conv_answer": "Exponential backoff, maximum 5 attempts over 24 hours",
+      "conv_score": 2,
+      "conv_reason": "Exact match.",
+      "qur_answer": "Exponential backoff with a maximum of 5 attempts over 24 hours",
+      "qur_score": 2,
+      "qur_reason": "Exact match."
+    },
+    {
+      "q": 25,
+      "question": "A security audit asks: 'How is user credential data protected at rest and in transit?' Compile the answer from all relevant context.",
+      "expected": "At rest: PII encrypted with AES-256-GCM using per-tenant keys. Passwords hashed with Argon2id (64MB/3iter/4par). In transit: RDS requires sslmode=verify-full. Services communicate via App Mesh/Envoy (mTLS). Secrets rotated every 90 days.",
+      "conv_answer": "At rest: PII fields encrypted using AES-256-GCM with per-tenant keys. Passwords hashed with Argon2id before storage. In transit: JWT tokens signed with RS256 for signature verification. Connection strings use SSL with sslmode=verify-full&sslrootcert=global-bundle.pem. All secrets managed via AWS Secrets Manager with automatic 90-day rotation",
+      "conv_score": 1,
+      "conv_reason": "Covers AES-256-GCM, Argon2id, SSL connection strings, and 90-day rotation. Missing App Mesh/Envoy mTLS for inter-service communication. Argon2id parameters not specified.",
+      "qur_answer": "At rest: AES-256-GCM encryption with per-tenant keys. In transit: All inter-service communication uses RS256 JWT tokens verified via JWKS endpoint, no shared secrets. API Gateway enforces CORS. RDS PostgreSQL connection requires sslmode=verify-full. Passwords are hashed with Argon2id (64MB memory, 3 iterations, parallelism 4)",
+      "qur_score": 1,
+      "qur_reason": "Covers AES-256-GCM, Argon2id with full parameters, SSL connections. Missing App Mesh/Envoy mTLS and secrets rotation every 90 days. CORS mention is tangential to credential protection."
+    },
+    {
+      "q": 26,
+      "question": "Trace the complete request flow when a user logs in with MFA enabled, from API Gateway through to token issuance.",
+      "expected": "Request hits API Gateway. Custom authorizer Lambda validates JWT format. Request routed via VPC Link to ALB. ALB rate limiting checks (1000/min/IP). Hits Auth Service handlePostLogin. Credentials verified against Argon2id hash. MFA check triggered. TOTP code validated. RS256-signed access token (15 min) and refresh token (7 days) issued. Response returns through ALB, API Gateway to client.",
+      "conv_answer": "1) User sends credentials to API Gateway 2) Request validation schema validates payload 3) API Gateway routes to Auth Service via VPC Link 4) Auth Service handlePostLogin validates credentials and checks if MFA is enabled 5) If MFA enabled, Auth Service returns MFA challenge 6) User submits TOTP code 7) Auth Service validates TOTP against stored secret 8) Auth Service generates RS256-signed access token (15 min expiry) and refresh token (7 day expiry, rotated) 9) API Gateway returns tokens to client via custom authorizer context. Subsequent requests use access token validated via JWKS endpoint",
+      "conv_score": 1,
+      "conv_reason": "Good coverage of the core login flow. Missing ALB rate limiting check as a step, and the custom authorizer is placed at end rather than as entry validation. Does not explicitly mention Argon2id hash verification step.",
+      "qur_answer": "User submits credentials to API Gateway → API Gateway validates schema via custom validator (returns 400 if invalid) → Request reaches Auth Service handlePostLogin endpoint → Endpoint verifies username/password → If MFA enabled, returns MFA challenge (requires TOTP verification) → User submits TOTP code to MFA verification endpoint → Endpoint validates TOTP token and recovery codes → Auth Service issues JWT with RS256 signature containing role claims and all required information → API Gateway custom authorizer Lambda decodes JWT and extracts claims → Claims added to request context → User receives access token (15 min) and refresh token (7 days)",
+      "qur_score": 1,
+      "qur_reason": "Good flow coverage but also misses ALB rate limiting step and does not mention VPC Link routing. Custom authorizer is placed at end of flow which misrepresents when it runs (it validates the incoming request, not the outgoing token)."
+    },
+    {
+      "q": 27,
+      "question": "The team wants to add a fourth microservice (Billing Service in Rust). Based on established patterns and doctrines, what technology choices and constraints should it follow?",
+      "expected": "Should: verify auth via JWKS endpoint (D1), follow RFC 7807 errors (D6), deploy on ECS Fargate with zero downtime blue-green (B3), use real database in tests not mocks (D7), structured logging, GitHub Actions CI/CD, Datadog monitoring, min 2 tasks across 3 AZs, Secrets Manager for credentials.",
+      "conv_answer": "Technology choices: Language/framework following project patterns (TypeScript + Fastify for consistency, or Go/Python as secondary precedents); PostgreSQL on shared RDS cluster with separate schema; JWT RS256 token validation using shared JWKS endpoint. Constraints: Stateless design for horizontal scaling; no in-memory session caches; ALB-level rate limiting; zero downtime deployments with blue-green strategy; structured JSON logging via similar logging framework; error responses via RFC 7807 Problem Details with traceId; integration tests against real PostgreSQL; code review via Claude Code before merge. All communication with Auth Service via JWKS validation",
+      "conv_score": 2,
+      "conv_reason": "Comprehensive. Covers JWKS auth (D1), RFC 7807 errors (D6), blue-green deployment (B3), real DB testing (D7), structured logging, CI/CD, Secrets Manager implied. Minor gap: does not explicitly state min 2 tasks across 3 AZs or Datadog monitoring.",
+      "qur_answer": "Technology: async task processing requires either Go or Python (established in team); Go preferred based on Notification Service precedent. Database: PostgreSQL separate schema in shared RDS cluster. Authentication: RS256 JWT validation via JWKS endpoint [D1]. Error handling: RFC 7807 Problem Details with custom traceId extension [D6]. Logging: structured JSON via Pino or Go equivalent with AsyncLocalStorage/context propagation pattern. Testing: real PostgreSQL via testcontainers, no mocking [D7]. Deployment: ECS Fargate on us-east-1 three AZs, min 2 tasks, App Mesh with Envoy, CI/CD GitHub Actions pipeline. Rate limiting: ALB-level 1000 req/min per IP [D4]. Connection pool: 20 per instance",
+      "qur_score": 2,
+      "qur_reason": "Excellent coverage. Explicitly includes min 2 tasks, 3 AZs, App Mesh, doctrine references. Slightly misframes the language choice (question specifies Rust but agent says Go is preferred; should note Rust is acceptable with appropriate caveats). Overall very comprehensive."
+    },
+    {
+      "q": 28,
+      "question": "If the Auth Service handlePostLogin endpoint is receiving 1500 req/min from a single IP, what happens at each layer?",
+      "expected": "API Gateway: passes (under 5000 burst/2000 steady). ALB rate limiting: blocks at 1000 req/min per IP. Excess requests rejected before reaching Auth Service containers.",
+      "conv_answer": "1500 req/min = 25 req/s from single IP, which exceeds ALB rate limit of 1000 req/min per IP. ALB drops/rejects requests exceeding the limit before they reach Auth Service. Remaining requests hitting Auth Service would be distributed across container instances, but would still exceed the ALB limit and be rejected at ALB layer",
+      "conv_score": 1,
+      "conv_reason": "Correctly identifies ALB drops excess requests. Does not address the API Gateway layer explicitly (that 1500 req/min passes through API Gateway since it is under the 5000 burst threshold). Required to analyze all layers.",
+      "qur_answer": "At ALB layer: Request rate exceeds 1000 req/min per IP threshold → ALB rate limiting drops request (or throttles, context says 'rate limiting' at 1000 req/min) → request never reaches container. The request does not proceed to the Auth Service application code",
+      "qur_score": 1,
+      "qur_reason": "Correctly identifies ALB blocking behavior. Also does not address the API Gateway layer (that 1500 req/min passes through without issue since it is below the 5000/2000 threshold). Both agents miss the API Gateway layer analysis."
+    },
+    {
+      "q": 29,
+      "question": "A developer asks: 'Where are all the places in the system that depend on the JWT signing key?' List them.",
+      "expected": "Auth Service: holds private key, signs tokens. JWKS endpoint: serves public key. Portfolio Service: fetches JWKS to validate. Notification Service: fetches JWKS to validate. API Gateway: Lambda authorizer fetches JWKS to validate. Auth Service LRU cache: caches JWKS keys (max 1000, 5-min TTL).",
+      "conv_answer": "1) Auth Service: Issues tokens signed with private key at handlePostLogin and handlePostRefresh endpoints 2) Portfolio Service: Receives tokens from clients, validates signature against JWKS public key endpoint 3) Notification Service: Receives tokens from clients, validates signature against JWKS public key endpoint 4) API Gateway custom authorizer Lambda: Validates token signature against JWKS endpoint. The JWT signing key is stored in Auth Service (private key used for signing). Public key distributed via /.well-known/jwks.json endpoint consumed by Portfolio Service, Notification Service, and API Gateway",
+      "conv_score": 1,
+      "conv_reason": "Identifies Auth Service, Portfolio Service, Notification Service, and API Gateway Lambda. Missing the Auth Service LRU cache (max 1000, 5-min TTL) as a distinct dependency point.",
+      "qur_answer": "Auth Service: issues JWT with RS256 signature using the private key in POST /api/v1/auth/mfa/setup (QR code generation implicitly), handlePostLogin (token issuance). API Gateway: custom authorizer Lambda decodes JWT and verifies signature against public key from JWKS endpoint. Portfolio Service: validates JWT signature against public key. Notification Service: validates JWT signature. AWS Secrets Manager: stores and rotates the signing key every 90 days",
+      "qur_score": 1,
+      "qur_reason": "Identifies Auth Service, API Gateway Lambda, Portfolio Service, Notification Service, and Secrets Manager. Also missing the LRU cache. Correctly adds Secrets Manager. The MFA setup mention as using signing key is inaccurate (QR code uses TOTP secret, not JWT signing key)."
+    },
+    {
+      "q": 30,
+      "question": "Reconstruct the complete deployment pipeline from code commit to production traffic, including all quality gates.",
+      "expected": "Code commit to GitHub. GitHub Actions: lint, type-check, test (against real PostgreSQL via testcontainers), build Docker image, push to ECR. Deploy to ECS with blue-green target group switching on ALB for zero downtime. Code reviewed by Claude Code before merge. Monitoring via Datadog APM.",
+      "conv_answer": "1) Developer commits code to GitHub 2) GitHub Actions CI/CD pipeline triggers 3) Lint: Code style validation 4) Type-check: TypeScript type validation 5) Test: Integration tests against testcontainers PostgreSQL 6) Build image: Docker image creation with application code 7) Push to ECR: Image pushed to AWS Elastic Container Registry 8) Deploy to ECS: Blue-green deployment strategy - new task definition with image pushed to ECS service 9) ALB target group switching: Traffic gradually or atomically switched from blue to green tasks 10) Zero downtime achieved via maintaining old instances during deployment. Monitoring via Datadog APM validates deployment health. Rollback possible via reverting to previous task definition if errors detected",
+      "conv_score": 1,
+      "conv_reason": "Comprehensive coverage of pipeline stages. Missing the Claude Code review as a quality gate before merge. Otherwise complete.",
+      "qur_answer": "Developer commits code to GitHub → GitHub Actions CI/CD pipeline triggered: (1) Lint stage, (2) Type-check stage, (3) Test stage (real PostgreSQL via testcontainers, no mocking per [D7] and [B4]), (4) Build stage, (5) ECR push, (6) ECS deploy. If all gates pass: Blue-green deployment at ALB target groups for zero downtime [B3]. New tasks launched, health checks pass → traffic gradually shifted to green environment. Old blue tasks drained and terminated. Monitoring: Datadog APM continuously monitors token issuance rate, auth failure rate, p99 latency. If failures detected, deployment can be rolled back via ALB target group switch",
+      "qur_score": 1,
+      "qur_reason": "Comprehensive coverage with good doctrine references. Also missing Claude Code review as a quality gate. Both agents equally complete minus this one gate."
+    }
+  ]
+}

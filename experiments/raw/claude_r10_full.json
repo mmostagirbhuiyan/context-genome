@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: What password hashing algorithm is used and what are its parameters?",
+    "answer": "Argon2id with parameters: 64MB memory cost, 3 iterations, 4 parallelism factor."
+  },
+  {
+    "question": "Q2: What is the refresh token expiration period and rotation policy?",
+    "answer": "Refresh token expiration: 7 days. Rotation policy: rotate-on-use (issued new refresh token on each use)."
+  },
+  {
+    "question": "Q3: What port does the Notification Service run on?",
+    "answer": "Go/Chi Notification Service runs on port 9200."
+  },
+  {
+    "question": "Q4: What database version is currently running and what was it upgraded from?",
+    "answer": "Currently running PostgreSQL 15.4, upgraded from PostgreSQL 14.9."
+  },
+  {
+    "question": "Q5: What are the API Gateway throttle limits?",
+    "answer": "5000 burst limit, 2000 steady-state limit."
+  },
+  {
+    "question": "Q6: Why was Argon2id chosen over bcrypt?",
+    "answer": "Argon2id provides side-channel resistance that bcrypt does not, making it more secure against timing and memory-access attacks."
+  },
+  {
+    "question": "Q7: Why is Drizzle used instead of Prisma?",
+    "answer": "Drizzle has zero runtime dependencies and provides SQL-like TypeScript syntax, unlike Prisma which has runtime overhead."
+  },
+  {
+    "question": "Q8: How do the Portfolio and Notification services verify auth tokens?",
+    "answer": "Both services use the gateway Lambda authorizer which validates JWT via JWKS (/.well-known/jwks.json) endpoint and injects claims into the request."
+  },
+  {
+    "question": "Q9: Why is rate limiting done at ALB instead of in application code?",
+    "answer": "ALB-level rate limiting (1000/min/IP) stops DDoS attacks at the load balancer before traffic reaches containers, providing defense-in-depth."
+  },
+  {
+    "question": "Q10: If the Portfolio Service needs to validate a user's role before allowing a rebalance, what chain of systems is involved?",
+    "answer": "Request hits API Gateway -> Lambda authorizer validates JWT via JWKS and injects claims -> VPCLink/ALB routes to Portfolio Service (FastAPI:8100) -> RBAC middleware checks role from injected claims -> operation proceeds or is denied."
+  },
+  {
+    "question": "Q11: If the JWKS endpoint goes down? Which services are affected? Is there any grace period?",
+    "answer": "If JWKS down: all downstream services cannot validate new auth (Portfolio, Notification, etc.). Issuance continues using local private key. LRU cache provides 5min TTL with grace period for cached entries. All services relying on Lambda authorizer validation are affected."
+  },
+  {
+    "question": "Q12: What does real-time portfolio alerting depend on and what is its status?",
+    "answer": "Real-time portfolio alerts depend on WebSocket API at gateway + Notification Service (Go/Chi). Status: planned for Q3 (not yet implemented)."
+  },
+  {
+    "question": "Q13: Has the UTC+14 token expiry bug been fixed? How?",
+    "answer": "Yes, resolved by enforcing Unix timestamps (seconds since epoch) instead of Date objects for all token expiry calculations, ensuring UTC consistency across all timezones including UTC+13/+14."
+  },
+  {
+    "question": "Q14: How would you implement webhook notifications for auth events for an enterprise client?",
+    "answer": "Register webhook via POST /api/v1/notifications/webhooks/register. Auth service publishes events (login, MFA, etc.) to SNS. Notify Service consumes via SES/webhooks with exponential backoff (5 attempts/24h), signed HMAC payloads to enterprise endpoint."
+  },
+  {
+    "question": "Q15: Maximum simultaneous database connections across 5 Auth Service instances?",
+    "answer": "Pool size: 20/instance × 5 instances = 100 concurrent PostgreSQL connections maximum."
+  },
+  {
+    "question": "Q16: How does the connection pool interact with the Celery memory issue during tax-lot processing?",
+    "answer": "Portfolio service uses 20-conn pool. Celery worker processes large tax_lot batches; unbounded memory growth during large portfolio recalc is a current investigation (state: investigating). Connection pool constrains DB access but doesn't directly solve Celery memory unbounded growth."
+  },
+  {
+    "question": "Q17: Can Fargate Spot be used for Auth Service? Why or why not?",
+    "answer": "No. Auth Service is always-on critical path for all requests. Fargate Spot used ONLY for batch jobs (portfolio-recalc, digest) due to interrupt risk. Auth Service requires guaranteed availability."
+  },
+  {
+    "question": "Q18: What doctrine prohibits adding an in-memory session cache to Auth Service?",
+    "answer": "R3 establishes that all services validate via gateway Lambda + JWKS (stateless). In-memory cache would create state, violating stateless architecture and complicating multi-instance deployment. Session tokens are short-lived (15min access, 7day refresh rotate-on-use)."
+  },
+  {
+    "question": "Q19: How does the 30-day backup retention relate to RPO/RTO targets?",
+    "answer": "RPO (Recovery Point Objective): 1 hour - backups frequent enough to lose max 1hr data. RTO (Recovery Time Objective): 4 hours. 30-day retention provides window for point-in-time recovery beyond RTO, satisfying compliance and allowing delayed issue detection."
+  },
+  {
+    "question": "Q20: What connection string change did the RDS upgrade require?",
+    "answer": "RDS 14.9 > 15.4 upgrade required sslmode change from default to verify-full with global-bundle.pem certificate bundle for enhanced TLS validation."
+  },
+  {
+    "question": "Q21: What are the columns in the new tax_lots table?",
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, created_at. Used for wash-sale tax-loss harvesting calculations."
+  },
+  {
+    "question": "Q22: How does MFA affect the login flow?",
+    "answer": "After Argon2id password verify: if MFA enabled, API checks TOTP or generates recovery codes, user must complete MFA challenge before RS256 access+refresh tokens issued."
+  },
+  {
+    "question": "Q23: How many recovery codes are generated and what happens when used?",
+    "answer": "10 recovery codes generated per MFA setup. Each code is single-use and permanently consumed when used for authentication."
+  },
+  {
+    "question": "Q24: What is the webhook retry policy?",
+    "answer": "Exponential backoff with maximum 5 attempts over 24 hours for webhook delivery to external endpoints."
+  },
+  {
+    "question": "Q25: Compile the complete security posture for credential data at rest and in transit.",
+    "answer": "At rest: PII encrypted with AES-256-GCM per-tenant keys. Passwords hashed with Argon2id(64MB/3iter/4par), never stored plaintext. In transit: mTLS enforced via Envoy in AppMesh. RDS connection: sslmode=verify-full with global-bundle.pem post-upgrade. Secrets rotated every 90 days. All internal service-to-service communication encrypted."
+  },
+  {
+    "question": "Q26: Trace the full login request lifecycle with MFA enabled.",
+    "answer": "1. POST /api/v1/auth/login to Auth Service (Fastify:3847). 2. Gateway Lambda authorizer schema-validates request. 3. ALB rate-limit check (1000/min/IP). 4. Auth service receives; Argon2id password verify. 5. MFA enabled check; if yes: POST /api/v1/auth/mfa/setup returns QR URI or verify TOTP challenge. 6. If MFA satisfied: handlePostLogin issues RS256 access(15min) + refresh(7day rotate-on-use) via private key. 7. Client stores tokens. 8. Subsequent requests: gateway Lambda validates access token via JWKS, injects claims, routes to service."
+  },
+  {
+    "question": "Q27: A new Billing Service in Rust is being added. What patterns and constraints apply?",
+    "answer": "Patterns: handleVerb{Resource} naming (e.g., handleGetInvoice). RFC7807 Problem Details errors with traceId. Logging: structured JSON compatible with Pino. Auth: validate JWT via gateway Lambda + JWKS injection (not local validation). Constraints: payload ≤1MB, connection pool max 20/instance, mTLS via Envoy, CORS app.meridian.com+localhost:3000. Deployment: GitHub Actions CI/CD with Claude Code review before merge."
+  },
+  {
+    "question": "Q28: 1500 req/min from a single IP hits the Auth Service. What happens at each layer?",
+    "answer": "1. HTTP API Gateway receives. 2. VPCLink>ALB ALB rate limit (1000/min/IP) kicks in; 500 reqs/min dropped or 429'd. 3. Remaining 1000 req/min pass to gateway Lambda authorizer. 4. Auth Service (Fargate) receives ~1000 req/min. If sustained, causes CPU/memory contention but 3AZ min2 instances absorb load (no horizontal scaling visible in genome). Client likely receives 429 rate-limit responses at ALB."
+  },
+  {
+    "question": "Q29: Map all system components that depend on the JWT signing key.",
+    "answer": "JWT signing key (private, in Auth Service): signs access(15min) + refresh(7day) tokens on handlePostLogin. JWKS endpoint (Auth Service /.well-known/jwks.json): exposes public key. Gateway Lambda authorizer: validates JWT using public key from JWKS (cached LRU 1000/5min). Portfolio Service: accepts injected claims from Lambda (doesn't verify directly). Notification Service: accepts injected claims from Lambda. All services transitively depend; if key compromised or unavailable, entire auth system fails."
+  },
+  {
+    "question": "Q30: Describe the complete deployment pipeline from commit to production.",
+    "answer": "1. Commit to GitHub. 2. GitHub Actions triggered: lint > typecheck > test(testcontainers PG) > build Docker image. 3. Image pushed to ECR. 4. Claude Code reviews changes before merge approval. 5. Merge to main. 6. ECS task definition updated, Fargate pulls new image. 7. Blue-green deployment: new version spins up in parallel target group. 8. ALB switches traffic to green (new) after health checks pass. 9. Blue (old) terminates. Zero-downtime. Spot instances used only for batch (portfolio-recalc, digest), not Auth/Portfolio always-on."
+  }
+]

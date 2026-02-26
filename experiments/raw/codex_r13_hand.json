@@ -1,0 +1,122 @@
+[
+  {
+    "question": "Q1: You need to add a dropdown field to a form schema. The options are \"Yes\", \"No\", and \"N/A\". Write the correct JSON for the options array. What happens if you use the wrong format?",
+    "answer": "Use object options, not a string array: [{\"label\":\"Yes\",\"value\":\"yes\"},{\"label\":\"No\",\"value\":\"no\"},{\"label\":\"N/A\",\"value\":\"na\"}]. If you use mixed/incorrect enum format (for example [\"Yes\",\"No\",\"N/A\"]), normalizeEnumOptions is bypassed and React can crash."
+  },
+  {
+    "question": "Q2: A colleague suggests building a PDF parser to extract form data from USDA paper forms. Another suggests creating custom inputTypes like \"currency\" and \"percentage\". What do you tell them?",
+    "answer": "Both are rejected approaches in this codebase. PDF parsing was a dead approach (~60% accuracy), and custom inputTypes broke schemas. Only supported inputTypes are text, textarea, date, number, email, tel, acknowledgment, and signature."
+  },
+  {
+    "question": "Q3: You added a new element type to UniversalFormRenderer on the web side. It works in the browser. Is the task done?",
+    "answer": "No. UI/PDF parity is mandatory. You must also update PDF rendering paths (including universal-html-template.ts and pdf-template-generator.ts/getStyles+renderFormField logic) so one schema drives both UI and PDF."
+  },
+  {
+    "question": "Q4: You need to build a new producer dashboard page. What is the very first thing you must do before writing any code?",
+    "answer": "Search existing UI patterns first. UI work has a hard rule: pattern search before implementation."
+  },
+  {
+    "question": "Q5: You write console.log(\"🚀 Successfully processed submission!\") in a Fastify route. What is wrong?",
+    "answer": "Emoji logs are explicitly banned (no-slop rule). Use plain, professional logs without emoji/AI-style phrasing."
+  },
+  {
+    "question": "Q6: Describe the monorepo structure. What are the apps and packages, what port does each service run on, and what is the package manager?",
+    "answer": "Monorepo uses pnpm + Turborepo. Apps: apps/web (Next.js App Router, UniversalFormRenderer, shadcn/ui) on port 3000; apps/api (Fastify, PDF generation, submission workflow, Swagger at localhost:4000/docs) on port 4000. Packages: packages/database (Prisma 7 + PostgreSQL, migrations/seeds), packages/sdk (auto-generated TS SDK from OpenAPI; do not edit src/), packages/sdk-python (Python SDK from same spec)."
+  },
+  {
+    "question": "Q7: Explain what schema-driven architecture means in this project. Trace how a single JSON schema flows through the system.",
+    "answer": "Form schemas are the source of truth. JSON schema is seeded into FormTemplate (packages/database seeds), rendered in web by UniversalFormRenderer, captures data into FormInstance.data, and powers PDF output via routes/pdf-download.ts -> pdf-generator.ts -> json-schema-loader.ts -> universal-html-template.ts -> Puppeteer. One schema must drive both UI and PDF."
+  },
+  {
+    "question": "Q8: What are the two authentication methods supported by the API? When would you use each?",
+    "answer": "JWT bearer token (Authorization: Bearer ...) and API key (X-API-Key: certaxiom_live_...). Use JWT for authenticated product users/sessions; use API keys for integration/server-to-server access to public v1 APIs."
+  },
+  {
+    "question": "Q9: List the form series. What does each letter represent and how do they relate to OSP scopes?",
+    "answer": "Series: G, H, L, V, and Common. G maps to Grower scope, H to Handler, L to Livestock in the Single-OSP Multi-Scope model. V series exists (v2-0, v2-1) but its expansion is NOT IN CONTEXT. Common forms are shared/cross-scope."
+  },
+  {
+    "question": "Q10: What is the relationship between the PM repo and the source code repo? Why are they separate?",
+    "answer": "Source code lives in certaxiom; planning/issues live in certaxiom-pm. GitHub Issues in certaxiom-pm are authoritative, and that repo gives non-technical stakeholders write access without giving them codebase write access."
+  },
+  {
+    "question": "Q11: You need a list page with counts at the top and a detail/edit page. Which header component for each? What are the StatsCard requirements?",
+    "answer": "Use DashboardHeader for list pages with top counts; use PageHeader for detail/edit pages (no stats cards). StatsCard requires title, value, and subtitle (subtitle is mandatory to prevent uneven heights), plus icon and variant. Allowed variants: info, success, warning, organic; do not use default variant and do not omit subtitle."
+  },
+  {
+    "question": "Q12: How do you embed a data table inside a card component? What CSS classes are required?",
+    "answer": "Use: Card > CardContent with !p-0 > EnterpriseDataTable with classes border-0 bg-transparent shadow-none rounded-none."
+  },
+  {
+    "question": "Q13: You need to add a new API route for bulk-deleting materials. Describe the exact steps including what you must NOT skip.",
+    "answer": "Create/update route file under apps/api/src/routes/[domain]/ (materials domain), register it in the routes index.ts, add/extend OpenAPI schema, then regenerate SDK(s). Do not skip OpenAPI updates (SDK will break), do not bypass auth, and do not return raw Prisma errors (wrap with ApiError)."
+  },
+  {
+    "question": "Q14: Describe the seed data execution order and idempotency guarantee. How do you run seeds with expanded test data?",
+    "answer": "Seed order: 00-cleanup (passkey-safe) -> 01-tenants -> 02-users -> 03-orgs -> 04-templates (59) -> 05-osp -> 07-workflows -> 08-13 (phase61). Seeds are idempotent via upsert. For expanded seed data, run database seed with phase61 (command pattern in context: pnpm --filter database seed with --phase61)."
+  },
+  {
+    "question": "Q15: What is the testing philosophy? Write an example of a BAD test and a GOOD test for a Fastify route.",
+    "answer": "Philosophy: test behavior via real request/response (app.inject), not source text or mock internals. BAD: expect(source).toContain('fastify.post') or expect(mockPrisma...). GOOD: const response = await app.inject({ method: 'POST', url: '/api/...' }); expect(response.statusCode).toBe(201)."
+  },
+  {
+    "question": "Q16: Trace the complete submission workflow from creation to approval. Include the branch path for requested changes.",
+    "answer": "Main flow: DRAFT -> SUBMITTED -> ASSIGNED -> IN_REVIEW -> PARTIALLY_REVIEWED -> APPROVED or REJECTED. Branch loop: IN_REVIEW -> REQUEST_CHANGES -> SUBMITTED (then re-enters review flow)."
+  },
+  {
+    "question": "Q17: Trace the complete PDF generation flow from client request to rendered PDF. Name every file involved.",
+    "answer": "Client request -> routes/pdf-download.ts -> pdf-generator.ts -> json-schema-loader.ts -> universal-html-template.ts (under src/pdf-templates/) -> Puppeteer renders PDF. When adding field support, pdf-template-generator.ts must also be updated to match UI field behavior."
+  },
+  {
+    "question": "Q18: The API team added 3 new endpoints. What is the exact sequence to regenerate the SDK?",
+    "answer": "Start API so OpenAPI is current (pnpm dev with API running), run pnpm --filter sdk generate, then pnpm --filter sdk build. If Python SDK is used, also run pnpm --filter sdk-python generate."
+  },
+  {
+    "question": "Q19: You are running /sprint 3 but gh CLI is unavailable. What happens? What do you do when back on local?",
+    "answer": "Sprint commands fall back to offline logging in .claude/sprint-ledger.json. When GitHub access is restored locally, flush/sync those ledger entries to GitHub Issues (auto-flush on next run)."
+  },
+  {
+    "question": "Q20: Walk through sprint execution from planning to PR. What constraints must an agent follow?",
+    "answer": "Plan/spec sync goes through /pm into authoritative GitHub Issues (certaxiom-pm), then /sprint executes delegated work. Constraints: one PR per task, no scope creep, discovery first, use blocked escape when blocked, labels for tracking (not project field), and keep GitHub Issues as source of truth."
+  },
+  {
+    "question": "Q21: You need to add a new Equipment column to a form dataTable. Trace every file and package that must change.",
+    "answer": "Use the add-entity-type cross-cutting path: packages/database prisma schema + migration + seeds; apps/api entity route(s) and v1 route(s) for Equipment; register routes and OpenAPI; apps/web useEntityCRUD + producer Equipment page/table mapping; form schema JSON in packages/database/prisma/seeds/form-schemas using the relevant dataTable/entity mapping; entity-data-fetcher/entity-mapper updates; regenerate SDK(s). Exact existing Equipment route filename is NOT IN CONTEXT."
+  },
+  {
+    "question": "Q22: A schema change adds a new field to the Organization model. List every downstream effect across the monorepo.",
+    "answer": "Update Organization in Prisma schema and migration, adjust seeds/upserts, update API organization routes and OpenAPI types, regenerate SDK(s), update onboarding wizard and organization profile UI, and update profile-field-change-requests flow. This is the documented modify-org-profile trace: Organization model -> routes -> onboarding wizard -> profile-field-change-requests."
+  },
+  {
+    "question": "Q23: What are the three DataTable types and how does each store its data?",
+    "answer": "1) Entity table: { entityType, entityFilter } loads linked entity records from DB. 2) FixedRows table: { fixedRows:[...] } stores values in FormInstance.data. 3) JSON table: { fieldId:'...' } stores values in FormInstance.data."
+  },
+  {
+    "question": "Q24: Explain the Single-OSP Multi-Scope architecture. How do the G, H, and L series map to it?",
+    "answer": "One OSP can cover multiple certification scopes in a single application context. G-series forms map to Grower scope, H-series to Handler, L-series to Livestock. Pre-cert uses wizard-only flow across scopes; post-cert users access individual forms."
+  },
+  {
+    "question": "Q25: How does the webhook system work across the API and SDK layers?",
+    "answer": "API layer exposes webhook and API-key functionality in public v1 routes, with Webhook and ApiKey models in the database and API-key auth support. SDK layer gets webhook client methods from OpenAPI-generated packages (@certaxiom/sdk and sdk-python) after regeneration. Event delivery semantics/retry details are NOT IN CONTEXT."
+  },
+  {
+    "question": "Q26: A subQuestion has a fieldId but no explicit type property. What happens if you only check element.type === \"question\"?",
+    "answer": "You miss valid question elements that omit type and only have fieldId, causing UI/PDF mismatch or skipped rendering. Required guard is element.type === 'question' || (!element.type && element.fieldId)."
+  },
+  {
+    "question": "Q27: You want to clear the database and re-seed. You run DELETE FROM on all tables. What breaks and what should you do instead?",
+    "answer": "Manual blanket DELETE bypasses the documented passkey-safe cleanup and can break expected seed/state assumptions. Use the official seeded flow (00-cleanup -> ordered seeds with idempotent upserts) via the database seed commands, and do not delete migrations."
+  },
+  {
+    "question": "Q28: You add bg-background to a div inside AppShell. The page looks different. Why?",
+    "answer": "That class is explicitly disallowed inside AppShell because it blocks the shell gradient/background treatment."
+  },
+  {
+    "question": "Q29: You complete 3 sprint tasks but gh CLI is unavailable. You document in TASKS.md and move on. What is wrong?",
+    "answer": "GitHub Issues are authoritative, and offline fallback requires logging to .claude/sprint-ledger.json for later flush. TASKS.md alone is insufficient. You also still need normal end-of-session state updates."
+  },
+  {
+    "question": "Q30: You edit openapitools.json in the SDK package, commit, and two days later the SDK is broken. What did you forget?",
+    "answer": "You changed openapitools.json without validating regeneration/build. Required follow-up was to run SDK regenerate/build (and verify outputs) after the change."
+  }
+]

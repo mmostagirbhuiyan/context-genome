@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "Argon2id with 64MB memory, 3 iterations, and 4 degrees of parallelism."
+  },
+  {
+    "q": 2,
+    "answer": "7 days with a rotate-on-use policy."
+  },
+  {
+    "q": 3,
+    "answer": "9200"
+  },
+  {
+    "q": 4,
+    "answer": "The database is currently RDS-PG 15.4, upgraded from 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "5000 burst and 2000 steady."
+  },
+  {
+    "q": 6,
+    "answer": "For side-channel resistance."
+  },
+  {
+    "q": 7,
+    "answer": "It provides zero runtime dependencies and SQL-like TypeScript."
+  },
+  {
+    "q": 8,
+    "answer": "They validate tokens via the JWKS endpoint (/.well-known/jwks.json)."
+  },
+  {
+    "q": 9,
+    "answer": "To mitigate DDoS attacks before they reach the application containers."
+  },
+  {
+    "q": 10,
+    "answer": "The Gateway Lambda-authorizer (validates JWT via JWKS and injects claims) and the Portfolio Service's RBAC middleware (utilizing the role hierarchy)."
+  },
+  {
+    "q": 11,
+    "answer": "All downstream authentication fails, though issuance continues because the private key is local. There is a 5-minute TTL grace period provided by a bounded LRU cache with 1000 entries."
+  },
+  {
+    "q": 12,
+    "answer": "It depends on both the Notification Service and the Gateway WebSocket API; it is currently planned for Q3."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, it was resolved by using Unix timestamps instead of Date objects."
+  },
+  {
+    "q": 14,
+    "answer": "By registering via POST /api/v1/notifications/webhooks/register, which utilizes exponential backoff (5 attempts over 24 hours)."
+  },
+  {
+    "q": 15,
+    "answer": "100 (5 instances multiplied by the limit of 20 connections per instance)."
+  },
+  {
+    "q": 16,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 17,
+    "answer": "No, because Fargate Spot is only for batch processes due to interrupt risk; it is not for always-on services."
+  },
+  {
+    "q": 18,
+    "answer": "NOT IN CONTEXT."
+  },
+  {
+    "q": 19,
+    "answer": "While backups are retained for 30 days, the disaster recovery targets are RPO 1 hour and RTO 4 hours via replication to us-west-2."
+  },
+  {
+    "q": 20,
+    "answer": "The sslmode was changed to verify-full and it now requires global-bundle.pem."
+  },
+  {
+    "q": 21,
+    "answer": "id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "q": 22,
+    "answer": "After Argon2id verification, if enabled, it requires TOTP or one of 10 single-use recovery codes."
+  },
+  {
+    "q": 23,
+    "answer": "10 recovery codes are generated; they are single-use and permanently consumed upon use."
+  },
+  {
+    "q": 24,
+    "answer": "Exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "q": 25,
+    "answer": "At rest: PII is protected by AES-256-GCM with per-tenant keys, and passwords use Argon2id. In transit: mTLS via Envoy and RDS connections use sslmode=verify-full with global-bundle.pem. Secrets are rotated every 90 days."
+  },
+  {
+    "q": 26,
+    "answer": "The Gateway validates the schema; the Lambda-authorizer validates the JWT via JWKS and injects claims; the request passes VPCLink to the ALB; the Auth Service handlePostLogin verifies the password via Argon2id and checks MFA (TOTP/recovery code); finally, it issues RS256 access and refresh tokens."
+  },
+  {
+    "q": 27,
+    "answer": "Patterns: handle{Verb}{Resource} naming, RFC7807 error format, testcontainers for PG, Pino logging, and Claude Code review. Constraints: JWKS auth validation, 20 connections/instance pool, and 1MB ALB payload limit."
+  },
+  {
+    "q": 28,
+    "answer": "The request will be throttled at the ALB layer, which has a rate limit of 1000/min per IP."
+  },
+  {
+    "q": 29,
+    "answer": "The Auth Service (for issuance using the private key), the Gateway Lambda-authorizer (for validation via JWKS), and all downstream services like Portfolio and Notification (for validation via JWKS)."
+  },
+  {
+    "q": 30,
+    "answer": "GitHub Actions handles linting, typechecking, testing, building, and pushing to ECR/ECS. A Claude Code review is required before merging. Deployment is zero-downtime using a blue-green ALB target switch."
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "q": 1,
+    "answer": "The system uses Argon2id for password hashing with parameters: 64MB memory, 3 iterations, and a parallelism factor of 4 (64M/3/4)."
+  },
+  {
+    "q": 2,
+    "answer": "The refresh token has an expiration period of 7 days and follows a rotation policy (7d-rotate)."
+  },
+  {
+    "q": 3,
+    "answer": "The Notification Service runs on port 9200."
+  },
+  {
+    "q": 4,
+    "answer": "The database is currently running RDS-PG 15.4, having been upgraded from version 14.9."
+  },
+  {
+    "q": 5,
+    "answer": "The API Gateway throttle limits are 5000 requests for burst and 2000 requests per second for steady-state."
+  },
+  {
+    "q": 6,
+    "answer": "Argon2id was chosen over bcrypt to mitigate side-channel attacks."
+  },
+  {
+    "q": 7,
+    "answer": "Drizzle is used instead of Prisma to achieve a zero-dependency architecture (zero-deps)."
+  },
+  {
+    "q": 8,
+    "answer": "They verify auth tokens using RS256 via a JWKS endpoint, supported by an LRU cache (1000 entries/5 min) for resilience."
+  },
+  {
+    "q": 9,
+    "answer": "Rate limiting is implemented at the ALB to provide DDoS protection before traffic reaches the application containers."
+  },
+  {
+    "q": 10,
+    "answer": "The chain involves the API Gateway (schema validation), a Lambda for JWKS claims, VPC Link, the ALB, and finally the Portfolio Service which applies the RBAC role hierarchy."
+  },
+  {
+    "q": 11,
+    "answer": "If JWKS goes down, all services fail (all-fail). However, an LRU cache (1000/5min) provides a grace period, and token issuance continues if the private key is local."
+  },
+  {
+    "q": 12,
+    "answer": "Real-time alerting depends on WebSockets (planned for Q3) and is currently impacted by an investigation into unbounded memory usage in Celery."
+  },
+  {
+    "q": 13,
+    "answer": "Yes, it was fixed by transitioning to unix timestamps for expiration logic (tz-UTC13-14)."
+  },
+  {
+    "q": 14,
+    "answer": "Implementation would leverage the existing webhook system which supports exponential backoff with 5 attempts over 24 hours."
+  },
+  {
+    "q": 15,
+    "answer": "With a connection pool size of 20 per instance, 5 instances would allow a maximum of 100 simultaneous database connections."
+  },
+  {
+    "q": 16,
+    "answer": "While the connection pool limits DB pressure (pool size 20), tax-lot processing is currently facing performance issues due to 'unbounded memory' in Celery workers."
+  },
+  {
+    "q": 17,
+    "answer": "No, Fargate Spot is strictly reserved for batch processing (Spot-ONLY-batch) and not for critical services like Auth."
+  },
+  {
+    "q": 18,
+    "answer": "The requirement for blue-green deployments (zero-downtime) and stateless JWT-based authentication prohibits the use of local in-memory session caches."
+  },
+  {
+    "q": 19,
+    "answer": "The 30-day backups support the disaster recovery targets of a 1-hour Recovery Point Objective (RPO) and a 4-hour Recovery Time Objective (RTO) in us-west-2."
+  },
+  {
+    "q": 20,
+    "answer": "The upgrade required updating connection strings to use 'sslmode=verify-full' and a 'global-bundle' for certificate validation."
+  },
+  {
+    "q": 21,
+    "answer": "The columns are id, account_id, security_id, acquisition_date, cost_basis, quantity, adjusted, and created_at."
+  },
+  {
+    "q": 22,
+    "answer": "MFA adds a TOTP verification step after password validation (handlePostLogin) but before the access and refresh tokens are issued."
+  },
+  {
+    "q": 23,
+    "answer": "The system generates 10 single-use recovery codes."
+  },
+  {
+    "q": 24,
+    "answer": "The policy is exponential backoff with 5 attempts over a 24-hour window."
+  },
+  {
+    "q": 25,
+    "answer": "At rest, PII is encrypted with AES-256-GCM per tenant and passwords use Argon2id. In transit, Envoy mTLS and RDS sslmode=verify-full are mandated."
+  },
+  {
+    "q": 26,
+    "answer": "Lifecycle: Gateway (schema/claims) -> VPC Link -> ALB (IP limit 1000/min) -> Auth handlePostLogin (Argon2id) -> MFA-TOTP -> Issuance of tokens."
+  },
+  {
+    "q": 27,
+    "answer": "The service must use the handle{Verb}{Resource} naming, RFC 7807 error formats, JSON logging, testcontainers for testing, and adhere to mTLS/JWKS constraints."
+  },
+  {
+    "q": 28,
+    "answer": "The API Gateway allows the request (limit 2000/s), but the ALB layer triggers a rate limit (1000/min/IP), throttling 500 of the requests."
+  },
+  {
+    "q": 29,
+    "answer": "The Auth Service (for signing), the API Gateway Lambda (for claims injection), and all downstream services like Portfolio and Notify (for JWKS verification)."
+  },
+  {
+    "q": 30,
+    "answer": "GHA (lint/tc/test/build) -> ECR -> ECS Fargate (us-east-1) -> ClaudeCode-review -> Blue-green deployment via ALB for zero downtime."
+  }
+]
