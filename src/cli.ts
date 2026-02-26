@@ -7,7 +7,12 @@ import {
   concatenateContext,
   summarizeDiscovery,
 } from "./discover.js";
-import { generateGenome, editGenome } from "./generate.js";
+import {
+  generateGenome,
+  editGenome,
+  detectProvider,
+  type Provider,
+} from "./generate.js";
 import { createMeta, writeMeta, readMeta } from "./meta.js";
 
 const CLAUDE_MD = "CLAUDE.md";
@@ -39,7 +44,7 @@ async function main(): Promise<void> {
 }
 
 async function init(args: string[]): Promise<void> {
-  const { repoPath, edit, output } = parseArgs(args);
+  const { repoPath, provider, edit, output } = parseArgs(args);
 
   console.log(`Scanning ${repoPath} for context files...\n`);
 
@@ -52,7 +57,6 @@ async function init(args: string[]): Promise<void> {
   }
   console.log(summarizeDiscovery(files));
 
-  // Check for existing genome
   const meta = await readMeta(repoPath);
   if (meta) {
     console.log(
@@ -64,26 +68,25 @@ async function init(args: string[]): Promise<void> {
     process.exit(1);
   }
 
+  const resolvedProvider = await resolveProvider(provider);
   const context = concatenateContext(files);
 
-  console.log("\nGenerating genome...");
-  let genome = await generateGenome(context);
+  console.log(`\nGenerating genome via ${resolvedProvider}...`);
+  let genome = await generateGenome(context, resolvedProvider);
 
   let edited = false;
   if (edit) {
     console.log("Running edit pass...");
-    genome = await editGenome(genome, context);
+    genome = await editGenome(genome, context, resolvedProvider);
     edited = true;
   }
 
-  // Write genome as CLAUDE.md
   const outputPath = join(repoPath, output);
   await writeFile(outputPath, genome + "\n");
   console.log(`Wrote genome to ${output}`);
 
-  // Write meta sidecar
   const genomeMeta = createMeta({
-    provider: "anthropic-api",
+    provider: resolvedProvider,
     edited,
     sourceFiles: files.map((f) => f.relativePath),
     genomeContent: genome,
@@ -96,7 +99,7 @@ async function init(args: string[]): Promise<void> {
 }
 
 async function update(args: string[]): Promise<void> {
-  const { repoPath, edit, output } = parseArgs(args);
+  const { repoPath, provider, edit, output } = parseArgs(args);
 
   const existingMeta = await readMeta(repoPath);
   if (!existingMeta) {
@@ -115,15 +118,18 @@ async function update(args: string[]): Promise<void> {
   }
   console.log(summarizeDiscovery(files));
 
+  const resolvedProvider = await resolveProvider(
+    provider || (existingMeta.provider as Provider),
+  );
   const context = concatenateContext(files);
 
-  console.log("\nRegenerating genome...");
-  let genome = await generateGenome(context);
+  console.log(`\nRegenerating genome via ${resolvedProvider}...`);
+  let genome = await generateGenome(context, resolvedProvider);
 
   let edited = false;
   if (edit) {
     console.log("Running edit pass...");
-    genome = await editGenome(genome, context);
+    genome = await editGenome(genome, context, resolvedProvider);
     edited = true;
   }
 
@@ -132,7 +138,7 @@ async function update(args: string[]): Promise<void> {
   console.log(`Wrote updated genome to ${output}`);
 
   const genomeMeta = createMeta({
-    provider: "anthropic-api",
+    provider: resolvedProvider,
     edited,
     sourceFiles: files.map((f) => f.relativePath),
     genomeContent: genome,
@@ -183,10 +189,12 @@ async function status(args: string[]): Promise<void> {
 
 function parseArgs(args: string[]): {
   repoPath: string;
+  provider: Provider | null;
   edit: boolean;
   output: string;
 } {
   let repoPath = ".";
+  let provider: Provider | null = null;
   let edit = false;
   let output = CLAUDE_MD;
 
@@ -194,6 +202,14 @@ function parseArgs(args: string[]): {
     const arg = args[i];
     if (arg === "--edit" || arg === "-e") {
       edit = true;
+    } else if (arg === "--provider" || arg === "-p") {
+      provider = args[++i] as Provider;
+      if (!["claude", "codex", "gemini"].includes(provider)) {
+        console.error(
+          `Invalid provider: ${provider}. Use claude, codex, or gemini.`,
+        );
+        process.exit(1);
+      }
     } else if (arg === "--output" || arg === "-o") {
       output = args[++i];
     } else if (!arg.startsWith("-")) {
@@ -201,7 +217,24 @@ function parseArgs(args: string[]): {
     }
   }
 
-  return { repoPath: resolve(repoPath), edit, output };
+  return { repoPath: resolve(repoPath), provider, edit, output };
+}
+
+async function resolveProvider(
+  requested: Provider | null,
+): Promise<Provider> {
+  if (requested) return requested;
+
+  const detected = await detectProvider();
+  if (!detected) {
+    console.error(
+      "No LLM CLI found. Install one of: claude, codex, gemini\n" +
+        "Or specify with --provider <name>",
+    );
+    process.exit(1);
+  }
+  console.log(`Auto-detected: ${detected}`);
+  return detected;
 }
 
 function printUsage(): void {
@@ -213,17 +246,16 @@ Usage:
   genome status [path]             Show genome metadata and status
 
 Options:
+  -p, --provider <name>   LLM to use: claude, codex, gemini (auto-detected)
   -e, --edit              Run a refinement pass after generation
   -o, --output <file>     Output file (default: CLAUDE.md)
   -h, --help              Show this help
-
-Environment:
-  ANTHROPIC_API_KEY       Required. Get one at https://console.anthropic.com
 
 Examples:
   genome init                      # Generate genome for current directory
   genome init ../my-project        # Generate for another project
   genome init --edit               # Generate with refinement pass
+  genome init -p gemini            # Use Gemini CLI
   genome update                    # Regenerate from updated sources
   genome status                    # Check genome version and metadata`);
 }

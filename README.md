@@ -12,14 +12,24 @@ LLM agents forget your architecture mid-session. Long CLAUDE.md files waste toke
 npm install -g context-genome
 ```
 
+## Prerequisites
+
+You need one of these CLI tools installed and authenticated:
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`claude`)
+- [Codex CLI](https://github.com/openai/codex) (`codex`)
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli) (`gemini`)
+
+The tool auto-detects whichever you have. No API keys needed — it uses your existing CLI subscription.
+
 ## Usage
 
 ```bash
-# Set your API key
-export ANTHROPIC_API_KEY=sk-ant-...
-
-# Generate a genome from your project
+# Generate a genome from your project (auto-detects CLI)
 genome init
+
+# Use a specific provider
+genome init -p gemini
 
 # Generate with a refinement pass (slightly more accurate)
 genome init --edit
@@ -37,7 +47,7 @@ genome status
 ## What it does
 
 1. **Discovers** context files: CLAUDE.md, AGENTS.md, README.md, package.json, nested CLAUDE.md files in monorepos
-2. **Generates** a structured genome using the Anthropic API (~3,000-4,000 tokens of dense notation)
+2. **Generates** a structured genome via your LLM CLI (~3,000-4,000 tokens of dense notation)
 3. **Writes** the genome as your CLAUDE.md (replaces prose with genome format)
 4. **Tracks** metadata in `.genome.meta` (version, checksum, source files)
 
