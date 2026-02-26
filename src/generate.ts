@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { writeFile, unlink } from "node:fs/promises";
+import { readFile, writeFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomBytes } from "node:crypto";
@@ -50,8 +50,15 @@ async function isAvailable(cmd: string): Promise<boolean> {
   }
 }
 
+/**
+ * Write prompt to temp file, then invoke the LLM CLI.
+ *
+ * - Claude: pipes file content to stdin (`claude -p` reads stdin)
+ * - Codex/Gemini: prompt passed as arg via shell `$(cat tmpfile)` — the temp
+ *   file path is controlled by us (random hex in /tmp), so no injection risk.
+ *   This avoids OS ARG_MAX limits since the shell expands `$(cat)` internally.
+ */
 async function callLLM(prompt: string, provider: Provider): Promise<string> {
-  // Write prompt to temp file — prompts can be 80KB+
   const tmpFile = join(
     tmpdir(),
     `genome-${randomBytes(6).toString("hex")}.txt`,
@@ -61,18 +68,20 @@ async function callLLM(prompt: string, provider: Provider): Promise<string> {
   try {
     switch (provider) {
       case "claude":
-        return await execLLM(
+        // Pipe prompt via stdin — no shell needed
+        return await execWithStdin(
           "claude",
-          ["-p", "--model", "claude-sonnet-4-6"],
-          tmpFile,
+          ["-p", "--model", "claude-sonnet-4-6", "--output-format", "text"],
+          await readFile(tmpFile, "utf-8"),
         );
       case "codex":
-        return await execLLM("codex", ["exec", "--full-auto"], tmpFile);
+        // Shell reads prompt from our controlled temp file
+        return await execShell(
+          `codex exec --full-auto -q "$(cat '${tmpFile}')"`,
+        );
       case "gemini":
-        return await execLLM(
-          "gemini",
-          ["--approval-mode", "yolo"],
-          tmpFile,
+        return await execShell(
+          `gemini --approval-mode yolo "$(cat '${tmpFile}')"`,
         );
     }
   } finally {
@@ -81,35 +90,21 @@ async function callLLM(prompt: string, provider: Provider): Promise<string> {
 }
 
 /**
- * Execute an LLM CLI with the prompt read from a temp file.
- * For Claude: pipes the file content to stdin (claude -p reads stdin).
- * For Codex/Gemini: passes file content as the last argument via shell.
+ * Spawn a process with stdin piping. No shell involved.
  */
-function execLLM(
+function execWithStdin(
   cmd: string,
   args: string[],
-  promptFile: string,
+  stdin: string,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const env = { ...process.env };
-    // Allow running Claude CLI from within a Claude Code session
     delete env.CLAUDECODE;
 
-    let proc;
-
-    if (cmd === "claude") {
-      // Claude -p reads the prompt from stdin when no prompt arg is given
-      proc = spawn("bash", ["-c", `cat "${promptFile}" | ${cmd} ${args.join(" ")}`], {
-        stdio: ["pipe", "pipe", "pipe"],
-        env,
-      });
-    } else {
-      // Codex/Gemini take prompt as last positional argument
-      proc = spawn("bash", ["-c", `${cmd} ${args.join(" ")} "$(cat "${promptFile}")"`], {
-        stdio: ["pipe", "pipe", "pipe"],
-        env,
-      });
-    }
+    const proc = spawn(cmd, args, {
+      stdio: ["pipe", "pipe", "pipe"],
+      env,
+    });
 
     let stdout = "";
     let stderr = "";
@@ -117,7 +112,6 @@ function execLLM(
     proc.stdout.on("data", (data: Buffer) => {
       stdout += data.toString();
     });
-
     proc.stderr.on("data", (data: Buffer) => {
       stderr += data.toString();
     });
@@ -133,10 +127,52 @@ function execLLM(
         );
       }
     });
-
     proc.on("error", (err) => {
       reject(new Error(`Failed to run ${cmd}: ${err.message}`));
     });
+
+    proc.stdin.write(stdin);
+    proc.stdin.end();
+  });
+}
+
+/**
+ * Execute a shell command. Used for Codex/Gemini where the prompt must
+ * be a positional arg. The only interpolated value is our temp file path
+ * (random hex in /tmp — no user-controlled content in the shell string).
+ */
+function execShell(command: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const env = { ...process.env };
+    delete env.CLAUDECODE;
+
+    const proc = spawn("bash", ["-c", command], {
+      stdio: ["pipe", "pipe", "pipe"],
+      env,
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    proc.stdout.on("data", (data: Buffer) => {
+      stdout += data.toString();
+    });
+    proc.stderr.on("data", (data: Buffer) => {
+      stderr += data.toString();
+    });
+
+    proc.on("close", (code) => {
+      if (code === 0) {
+        resolve(stdout.trim());
+      } else {
+        reject(
+          new Error(
+            `command exited with code ${code}: ${(stderr || stdout).slice(0, 500)}`,
+          ),
+        );
+      }
+    });
+    proc.on("error", reject);
   });
 }
 

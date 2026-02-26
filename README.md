@@ -28,6 +28,9 @@ The tool auto-detects whichever you have. No API keys needed — it uses your ex
 # Generate a genome from your project (auto-detects CLI)
 genome init
 
+# Preview without overwriting anything
+genome init --dry-run
+
 # Use a specific provider
 genome init -p gemini
 
@@ -59,6 +62,8 @@ The genome format uses `§` section headers, `|` separators, `{}` groups, `->` f
 
 - **CLAUDE.md** — the genome itself (drop-in replacement, all LLM tools read it)
 - **.genome.meta** — version, checksum, source files, token estimate
+
+Both files should be committed to your repo. The meta file tracks genome version history and enables future `genome diff` / `genome merge` functionality.
 
 ## Research
 

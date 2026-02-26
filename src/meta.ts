@@ -55,9 +55,10 @@ function checksum(content: string): string {
 }
 
 /**
- * Rough token estimate: ~4 chars per token for genome notation.
- * This is approximate — genome notation is denser than prose.
+ * Token estimate calibrated from R12 experiment data:
+ * ~3,170 tokens at ~10,100 chars = ~3.2 chars per token for genome notation.
+ * Genome notation is denser than prose (~4 chars/token) due to symbols and short tokens.
  */
 function estimateTokens(content: string): number {
-  return Math.round(content.length / 4);
+  return Math.round(content.length / 3.2);
 }

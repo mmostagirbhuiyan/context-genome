@@ -44,7 +44,7 @@ async function main(): Promise<void> {
 }
 
 async function init(args: string[]): Promise<void> {
-  const { repoPath, provider, edit, output } = parseArgs(args);
+  const { repoPath, provider, edit, output, dryRun } = parseArgs(args);
 
   console.log(`Scanning ${repoPath} for context files...\n`);
 
@@ -81,16 +81,26 @@ async function init(args: string[]): Promise<void> {
     edited = true;
   }
 
-  const outputPath = join(repoPath, output);
-  await writeFile(outputPath, genome + "\n");
-  console.log(`Wrote genome to ${output}`);
-
   const genomeMeta = createMeta({
     provider: resolvedProvider,
     edited,
     sourceFiles: files.map((f) => f.relativePath),
     genomeContent: genome,
   });
+
+  if (dryRun) {
+    console.log(`\n--- DRY RUN (would write to ${output}) ---\n`);
+    console.log(genome);
+    console.log(
+      `\n--- ~${genomeMeta.tokenEstimate} tokens | checksum: ${genomeMeta.checksum} ---`,
+    );
+    return;
+  }
+
+  const outputPath = join(repoPath, output);
+  await writeFile(outputPath, genome + "\n");
+  console.log(`Wrote genome to ${output}`);
+
   await writeMeta(repoPath, genomeMeta);
   console.log("Wrote metadata to .genome.meta");
   console.log(
@@ -99,7 +109,7 @@ async function init(args: string[]): Promise<void> {
 }
 
 async function update(args: string[]): Promise<void> {
-  const { repoPath, provider, edit, output } = parseArgs(args);
+  const { repoPath, provider, edit, output, dryRun } = parseArgs(args);
 
   const existingMeta = await readMeta(repoPath);
   if (!existingMeta) {
@@ -123,6 +133,9 @@ async function update(args: string[]): Promise<void> {
   );
   const context = concatenateContext(files);
 
+  // TODO: diff against existing genome to show what changed.
+  // For now, regenerates from scratch. Future `genome diff` will
+  // compare section-by-section with per-section merge strategies.
   console.log(`\nRegenerating genome via ${resolvedProvider}...`);
   let genome = await generateGenome(context, resolvedProvider);
 
@@ -133,10 +146,6 @@ async function update(args: string[]): Promise<void> {
     edited = true;
   }
 
-  const outputPath = join(repoPath, output);
-  await writeFile(outputPath, genome + "\n");
-  console.log(`Wrote updated genome to ${output}`);
-
   const genomeMeta = createMeta({
     provider: resolvedProvider,
     edited,
@@ -144,6 +153,22 @@ async function update(args: string[]): Promise<void> {
     genomeContent: genome,
   });
   genomeMeta.version = existingMeta.version + 1;
+
+  if (dryRun) {
+    console.log(
+      `\n--- DRY RUN (would write v${genomeMeta.version} to ${output}) ---\n`,
+    );
+    console.log(genome);
+    console.log(
+      `\n--- ~${genomeMeta.tokenEstimate} tokens | checksum: ${genomeMeta.checksum} ---`,
+    );
+    return;
+  }
+
+  const outputPath = join(repoPath, output);
+  await writeFile(outputPath, genome + "\n");
+  console.log(`Wrote updated genome to ${output}`);
+
   await writeMeta(repoPath, genomeMeta);
   console.log(`Updated .genome.meta (v${genomeMeta.version})`);
   console.log(
@@ -192,11 +217,13 @@ function parseArgs(args: string[]): {
   provider: Provider | null;
   edit: boolean;
   output: string;
+  dryRun: boolean;
 } {
   let repoPath = ".";
   let provider: Provider | null = null;
   let edit = false;
   let output = CLAUDE_MD;
+  let dryRun = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -212,12 +239,14 @@ function parseArgs(args: string[]): {
       }
     } else if (arg === "--output" || arg === "-o") {
       output = args[++i];
+    } else if (arg === "--dry-run" || arg === "-n") {
+      dryRun = true;
     } else if (!arg.startsWith("-")) {
       repoPath = arg;
     }
   }
 
-  return { repoPath: resolve(repoPath), provider, edit, output };
+  return { repoPath: resolve(repoPath), provider, edit, output, dryRun };
 }
 
 async function resolveProvider(
@@ -249,6 +278,7 @@ Options:
   -p, --provider <name>   LLM to use: claude, codex, gemini (auto-detected)
   -e, --edit              Run a refinement pass after generation
   -o, --output <file>     Output file (default: CLAUDE.md)
+  -n, --dry-run           Preview genome without writing files
   -h, --help              Show this help
 
 Examples:
@@ -256,6 +286,7 @@ Examples:
   genome init ../my-project        # Generate for another project
   genome init --edit               # Generate with refinement pass
   genome init -p gemini            # Use Gemini CLI
+  genome init --dry-run            # Preview without writing
   genome update                    # Regenerate from updated sources
   genome status                    # Check genome version and metadata`);
 }
