@@ -9,10 +9,17 @@ const CONTEXT_FILES = [
   "COPILOT.md",
   ".github/copilot-instructions.md",
   "README.md",
+  "CONTRIBUTING.md",
+  "ARCHITECTURE.md",
+  "DEVELOPMENT.md",
+  "METHODOLOGY.md",
   "package.json",
   "Cargo.toml",
   "pyproject.toml",
   "go.mod",
+  "requirements.txt",
+  "docker-compose.yml",
+  "Makefile",
 ];
 
 const NESTED_CLAUDE_PATTERNS = [
