@@ -6,6 +6,40 @@ CLI tool that compresses project context files (CLAUDE.md, README, CONTRIBUTING,
 
 CLAUDE.md files grow into walls of prose. Agents burn tokens reading them and still miss critical rules. The genome format encodes the same information in ~3x fewer tokens using structured notation — section headers, key-value pairs, and explicit DONT rules that agents actually follow.
 
+But not everything should be compressed. Session state, task lists, deployment notes — these are living content that humans and agents update every session. Compressing them breaks workflows.
+
+## Selective compression
+
+The genome compresses **static** project knowledge (architecture, rules, stack, DONTs) and preserves **mutable** sections (session state, tasks, in-progress work) as-is.
+
+The output is a hybrid document:
+
+```
+[GENOME:MyProject v1.0 | tokens:~3200 | density:3.1x]
+
+§STACK
+lang:TypeScript | fw:Next.js+Fastify | db:PostgreSQL+Prisma | ...
+
+§RULES
+1. Behavioral tests only | 2. No default exports | ...
+
+§DONT
+PDF Parser (60% accuracy) | Custom inputTypes (broke schemas) | ...
+
+<!-- GENOME:END -->
+
+## Session State
+Last Updated: 2026-02-25 | Session 156
+Features: auth, dashboard, forms, PDF generation, dark mode
+...
+
+## Active Tasks
+- [ ] Fix inbox highlight bug
+- [ ] Add API rate limiting
+```
+
+Everything above `<!-- GENOME:END -->` is compressed genome notation. Everything below is your original markdown, untouched. When you run `genome update`, only the genome portion is regenerated — mutable sections carry forward exactly as you left them.
+
 ## The interesting finding
 
 In a controlled A/B test (Round 15), an agent with a 100-line genome found a real financial calculation bug that an agent reading the full 763-line documentation missed entirely.
@@ -46,7 +80,7 @@ genome init -p codex               # Use Codex CLI (writes to AGENTS.md)
 genome init -t claude,codex        # Write to both CLAUDE.md and AGENTS.md
 genome init -t claude,cursor,copilot  # Write to all tool formats
 
-genome update                      # Regenerate from updated sources (shows diff)
+genome update                      # Regenerate genome, preserve mutable sections
 genome status                      # Check version, checksum, file status
 
 genome diff                        # Regenerate and compare against current genome
@@ -68,23 +102,25 @@ The genome is the same regardless of where it's written. The output file is chos
 
 Use `--targets` (`-t`) to write to multiple files at once. Target names: `claude`, `codex`, `cursor`, `copilot`. You can also pass raw file paths.
 
-## What it does
+## How it works
 
-1. Discovers context files: CLAUDE.md, AGENTS.md, README.md, CONTRIBUTING.md, package.json, Cargo.toml, nested CLAUDE.md files in monorepos, and others.
-2. Generates a structured genome via your LLM CLI (~3,000-4,000 tokens of dense notation).
-3. Writes the genome to the appropriate file for your tool (or multiple files with `--targets`).
-4. Tracks metadata in `.genome.meta` (version, checksum, source files, output targets).
+1. **Discovers** context files: CLAUDE.md, AGENTS.md, README.md, CONTRIBUTING.md, package.json, Cargo.toml, nested CLAUDE.md files in monorepos, and others.
+2. **Classifies** each section as static (architecture, rules, stack) or mutable (session state, tasks, in-progress work).
+3. **Compresses** static sections into genome notation (~3,000-4,000 tokens of dense structured data).
+4. **Preserves** mutable sections as-is in their original markdown, below the `<!-- GENOME:END -->` marker.
+5. **Tracks** metadata in `.genome.meta` (version, checksum, source files, output targets).
 
-The genome format uses `§` section headers, `|` separators, `{}` groups, `->` flows, and compressed key-value notation while preserving every specific value — file paths, ports, class names, rules, commands.
+### What gets compressed
 
-## Output
+Architecture, tech stack, versions, rules, DONTs, dead approaches, file structure, component patterns, API routes, database models, build commands, demo accounts, environment variables, testing philosophy, cross-cutting change traces.
 
-`genome init` writes:
+### What stays as-is
 
-- The genome file (CLAUDE.md, AGENTS.md, .cursorrules, etc. depending on provider/targets)
-- **.genome.meta** — version, checksum, source files, output targets, token estimate
+Session state, session history, task lists, sprint tracking, TODOs, timestamps, deployment notes, in-progress work, active bugs, scratch notes — anything that changes between sessions.
 
-Both should be committed.
+### Adding new knowledge
+
+Just write it. Add new architecture decisions, rules, or stack changes anywhere in your source files (CLAUDE.md, README, CONTRIBUTING, etc.) in plain markdown. Run `genome update` and the tool compresses the new static content into the genome while leaving your mutable sections untouched.
 
 ## Experiments
 

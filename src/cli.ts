@@ -16,6 +16,7 @@ import {
 import { createMeta, writeMeta, readMeta } from "./meta.js";
 import { diffGenomes, formatDiff, summarizeDiff } from "./diff.js";
 import { mergeGenomes } from "./merge.js";
+import { splitHybrid, joinHybrid } from "./parse.js";
 
 const PROVIDER_DEFAULTS: Record<string, string> = {
   claude: "CLAUDE.md",
@@ -160,12 +161,15 @@ async function update(args: string[]): Promise<void> {
     : existingMeta.outputFiles || resolveOutputs(output, targets, resolvedProvider);
   const context = concatenateContext(files);
 
-  // Read existing genome for diffing after regeneration
-  let oldGenome = "";
+  // Read existing file and split into genome + mutable portions
+  let oldContent = "";
+  let existingMutable = "";
   try {
-    oldGenome = await readFile(join(repoPath, outputs[0]), "utf-8");
+    oldContent = await readFile(join(repoPath, outputs[0]), "utf-8");
+    const split = splitHybrid(oldContent);
+    existingMutable = split.mutable;
   } catch {
-    // No existing file to diff against
+    // No existing file
   }
 
   console.log(`\nRegenerating genome via ${resolvedProvider}...`);
@@ -178,18 +182,26 @@ async function update(args: string[]): Promise<void> {
     edited = true;
   }
 
+  // The LLM may produce its own mutable section from source files.
+  // Merge: use the LLM's mutable output for newly discovered mutable content,
+  // but prefer the existing mutable section (it has live human edits).
+  const newSplit = splitHybrid(genome);
+  const finalMutable = existingMutable || newSplit.mutable;
+  const finalOutput = joinHybrid(newSplit.genome, finalMutable);
+
   const genomeMeta = createMeta({
     provider: resolvedProvider,
     edited,
     sourceFiles: files.map((f) => f.relativePath),
-    genomeContent: genome,
+    genomeContent: finalOutput,
     outputFiles: outputs,
   });
   genomeMeta.version = existingMeta.version + 1;
 
-  // Show section-level diff against previous genome
-  if (oldGenome) {
-    const diffs = diffGenomes(oldGenome, genome);
+  // Show section-level diff against previous genome (genome portion only)
+  if (oldContent) {
+    const oldSplit = splitHybrid(oldContent);
+    const diffs = diffGenomes(oldSplit.genome, newSplit.genome);
     console.log(`\n${summarizeDiff(diffs)}`);
   }
 
@@ -197,7 +209,7 @@ async function update(args: string[]): Promise<void> {
     console.log(
       `\n--- DRY RUN (would write v${genomeMeta.version} to ${outputs.join(", ")}) ---\n`,
     );
-    console.log(genome);
+    console.log(finalOutput);
     console.log(
       `\n--- ~${genomeMeta.tokenEstimate} tokens | checksum: ${genomeMeta.checksum} ---`,
     );
@@ -206,7 +218,7 @@ async function update(args: string[]): Promise<void> {
 
   for (const out of outputs) {
     const outPath = join(repoPath, out);
-    await writeFile(outPath, genome + "\n");
+    await writeFile(outPath, finalOutput + "\n");
     console.log(`Wrote updated genome to ${out}`);
   }
 
