@@ -1,0 +1,78 @@
+{
+  "round": 14,
+  "title": "Real-World A/B Test: Genome Context vs No Context",
+  "date": "2026-02-26",
+  "hypothesis": "Genome context improves implementation quality on complex multi-file tasks",
+  "methodology": {
+    "project": "portfolio-analyzer",
+    "task": "Add collar hedge strategy (protective put + covered call) across 7+ files with Black-Scholes pricing, Section 1256 tax treatment, Monte Carlo integration, VaR impact, and UI components",
+    "model": "claude-opus-4-6",
+    "isolation": "Separate git worktrees (no cross-contamination)",
+    "conditions": {
+      "A": "WITH genome CLAUDE.md (~1913 tokens, 117 lines, 14x compression)",
+      "B": "WITHOUT genome (no CLAUDE.md, must explore codebase from scratch)"
+    },
+    "genome_source": "Auto-generated via gemini CLI from README.md + CONTRIBUTING.md + METHODOLOGY.md + package.json + requirements.txt (70.8KB total)"
+  },
+  "quantitative_results": {
+    "condition_A": {
+      "score": 92,
+      "tokens_used": 45386,
+      "duration_seconds": 801,
+      "tool_calls": 118,
+      "reads": 65,
+      "edits": 27,
+      "writes": 1,
+      "greps": 25,
+      "files_read": 13,
+      "files_edited": 7,
+      "build_result": "SUCCESS (881 modules)",
+      "eslint_result": "0 new errors"
+    },
+    "condition_B": {
+      "score": 90,
+      "tokens_used": 19887,
+      "duration_seconds": 818,
+      "tool_calls": 116,
+      "reads": 64,
+      "edits": 29,
+      "writes": 1,
+      "greps": 22,
+      "files_read": 11,
+      "files_edited": 9,
+      "build_result": "SUCCESS (881 modules)",
+      "eslint_result": "not run"
+    }
+  },
+  "category_scores": {
+    "core_math_correctness": { "A": 9, "B": 9 },
+    "constants_config": { "A": 10, "B": 10 },
+    "state_management": { "A": 9, "B": 9 },
+    "monte_carlo_integration": { "A": 8, "B": 9 },
+    "var_integration": { "A": 8, "B": 9 },
+    "risk_metrics": { "A": 9, "B": 9 },
+    "ui_completeness": { "A": 9, "B": 8 },
+    "prop_threading_completeness": { "A": 10, "B": 8 },
+    "tax_treatment_correctness": { "A": 10, "B": 10 },
+    "build_verification": { "A": 10, "B": 9 }
+  },
+  "where_genome_helped": [
+    "Found legacy InvestmentCalculator.jsx view that B missed — genome listed it as 'Primary UI/Dashboard'",
+    "Triggered ESLint verification — awareness of project linting setup",
+    "More complete prop threading due to genome mapping component hierarchy"
+  ],
+  "where_genome_did_not_help": [
+    "Core math quality identical (BS pricing, skew adjustments, NDX scaling)",
+    "Tax treatment identical (Section 1256 blended rate, short-term penalty)",
+    "B slightly better on Monte Carlo and VaR integration",
+    "Same wall-clock time (~13.5 min)",
+    "Genome caused 2.3x more token usage (agent cross-referenced notation verbosely)"
+  ],
+  "post_test_architecture_analysis": {
+    "initial_slop_diagnosis": "Both agents were initially suspected of adding redundant collar clamping in monteCarloSimulation.js and riskMetrics.js",
+    "actual_finding": "Architecture has 3 independent simulation engines: (1) deterministic year-by-year in orchestrator, (2) GBM Monte Carlo in monteCarloSimulation.js, (3) block-bootstrap VaR paths in orchestrator's simulateLeveragedPath. All three legitimately need collar clamping.",
+    "real_dry_violation": "Collar preset values hardcoded in computeCollarBounds() instead of importing from COLLAR_CONFIG constants",
+    "lesson": "Verify architecture before diagnosing slop. Independent simulation engines are not redundant logic."
+  },
+  "conclusion": "Marginal quality edge (+2 points, 92 vs 90) at 2.3x token cost. Genome's value is cross-cutting awareness (non-obvious files to touch), not implementation quality. Value proposition likely scales with codebase size and number of scattered context files."
+}
