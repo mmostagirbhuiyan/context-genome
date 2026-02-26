@@ -1,0 +1,94 @@
+{
+  "round": 15,
+  "title": "Interpretation-Heavy A/B Test: Leverage Model Audit",
+  "date": "2026-02-26",
+  "hypothesis": "Genome context provides greater advantage on interpretation/audit tasks requiring domain knowledge vs code-pattern tasks",
+  "methodology": {
+    "project": "portfolio-analyzer",
+    "task": "Audit leverage model consistency, diagnose DTE comparison issue, validate conservative offsets, verify Section 1256 tax treatment, create validation functions",
+    "task_type": "interpretation/audit (requires understanding WHY, not just HOW)",
+    "model": "claude-opus-4-6",
+    "isolation": "Separate git worktrees",
+    "conditions": {
+      "A": "WITH genome CLAUDE.md (~1910 tokens, 100 lines, 8.2x compression)",
+      "B": "WITHOUT genome (no CLAUDE.md, must explore codebase from scratch)"
+    },
+    "genome_source": "Auto-generated via gemini CLI from README.md + CONTRIBUTING.md + METHODOLOGY.md + package.json + requirements.txt (70.8KB total)",
+    "key_difference_from_r14": "R14 was a code-centric implementation task (add collar hedge). R15 requires understanding financial methodology, reasoning about WHY certain models apply, and auditing code against documented methodology."
+  },
+  "quantitative_results": {
+    "condition_A": {
+      "tokens_used": 90515,
+      "duration_seconds": 568,
+      "tool_calls": 47,
+      "reads": 21,
+      "edits": 3,
+      "writes": 2,
+      "greps": 19,
+      "globs": 2,
+      "files_read_unique": 7,
+      "files_edited": 3,
+      "read_METHODOLOGY": false,
+      "read_genome": true,
+      "build_result": "SUCCESS",
+      "found_bug": true,
+      "bug_location": "simulateHybridSeries() using compound leverage (1+L*r)^T for LEAPS instead of static leverage Ω × R_total"
+    },
+    "condition_B": {
+      "tokens_used": 115940,
+      "duration_seconds": 879,
+      "tool_calls": 50,
+      "reads": 27,
+      "edits": 2,
+      "writes": 3,
+      "greps": 17,
+      "globs": 1,
+      "files_read_unique": 8,
+      "files_edited": 3,
+      "read_METHODOLOGY": true,
+      "read_genome": false,
+      "build_result": "SUCCESS",
+      "found_bug": false,
+      "bug_diagnosis": "Declared existing code is correct — missed simulateHybridSeries() compound leverage bug"
+    }
+  },
+  "the_bug": {
+    "location": "usePortfolioCalculations.js, simulateHybridSeries(), lines 1351+1366",
+    "buggy_code": "let ret = spyR * spyLeapsLeverage; ... Math.pow(1 + ret, periodYears)",
+    "correct_code": "const underlyingTotal = Math.pow(1 + spyR, periodYears) - 1; const leapsReturn = spyLeapsLeverage * underlyingTotal; invest * (1 + leapsReturn)",
+    "impact": "Compound leverage (1+L*r)^T applied to LEAPS in hedge comparison charts. Makes longer DTE appear relatively better than it should. Main projection loop (lines 706-707) uses correct static leverage.",
+    "confirmed_real": true,
+    "still_exists_in_current_code": true
+  },
+  "quality_comparison": {
+    "bug_identification": { "A": "FOUND — grep'd for all compound leverage patterns", "B": "MISSED — verified main loop only, stopped looking" },
+    "static_vs_compound_understanding": { "A": "Correct, cited genome §LEVERAGE_MECHANICS and §RULES", "B": "Correct, cited METHODOLOGY.md Sections 1.1, 1.5, 7.2" },
+    "dte_optimization_proof": { "A": "Complete with math, tax sweep at 6 rates", "B": "Complete with math, tax sweep at 7 rates, all 4 strategies" },
+    "conservative_offsets": { "A": "4/4 identified with genome refs", "B": "4/4 identified with methodology refs" },
+    "section_1256_verification": { "A": "Complete, 4-strategy conditional check", "B": "Complete, 4-strategy conditional check" },
+    "validation_functions": { "A": "6 checks + DTE scenario + compound comparison", "B": "6 checks + DTE scenario + all 4 strategies + compound comparison" },
+    "code_quality": { "A": "Fixed actual bug + created validation file", "B": "Created validation file + main.jsx import (more thorough testing)" }
+  },
+  "why_genome_found_bug": [
+    "Genome line 88: 'STATIC leverage for LEAPS: Never use (1+L*r)^T for options' — explicit DONT rule",
+    "Genome line 30: 'static-model (LEAPS): R = Ω × R_underlying' — compressed but unambiguous",
+    "Agent grep'd for ALL instances of Math.pow patterns near leverage variables",
+    "Found inconsistency between main loop (lines 706-707, static) and simulateHybridSeries (lines 1351+1366, compound)"
+  ],
+  "why_no_genome_missed_bug": [
+    "Read METHODOLOGY.md — understood the distinction correctly",
+    "Verified main projection loop (lines 706-707) — correctly uses static leverage",
+    "Stopped auditing after confirming main path was correct",
+    "Did not systematically search for ALL leverage computation patterns",
+    "Without the genome's explicit NEVER rule, lacked the suspicion to keep looking"
+  ],
+  "r14_vs_r15_comparison": {
+    "r14_task_type": "Code-centric implementation (add collar hedge)",
+    "r14_genome_advantage": "+2 points (92 vs 90), 2.3x MORE tokens",
+    "r14_conclusion": "Genome helps marginally with cross-cutting file awareness",
+    "r15_task_type": "Interpretation/audit (verify methodology correctness)",
+    "r15_genome_advantage": "BINARY — found real bug vs missed it, 22% FEWER tokens, 55% faster",
+    "r15_conclusion": "Genome provides decisive advantage on domain-knowledge tasks"
+  },
+  "conclusion": "The genome's value is task-type dependent. For code-pattern tasks (R14), the genome provides marginal benefit — agents can pattern-match from existing code. For interpretation/audit tasks (R15) requiring domain knowledge, the genome provides BINARY quality difference: the genome agent found a real bug that the no-genome agent missed entirely. The genome's compressed notation (100 lines vs 763-line METHODOLOGY.md) was also more token-efficient: 22% fewer tokens and 55% faster. The key mechanism is the genome's explicit DONT rules (e.g., 'NEVER use compound leverage for LEAPS') which trigger systematic verification across all code paths."
+}
