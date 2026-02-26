@@ -42,11 +42,12 @@ Auto-detects whichever you have. No API keys needed.
 genome init                        # Generate genome for current directory
 genome init --dry-run              # Preview without writing
 genome init --edit                 # Generate with a refinement pass
-genome init -p gemini              # Use a specific provider
-genome init ../my-project          # Point at a different project
+genome init -p codex               # Use Codex CLI (writes to AGENTS.md)
+genome init -t claude,codex        # Write to both CLAUDE.md and AGENTS.md
+genome init -t claude,cursor,copilot  # Write to all tool formats
 
 genome update                      # Regenerate from updated sources (shows diff)
-genome status                      # Check version, checksum, source files
+genome status                      # Check version, checksum, file status
 
 genome diff                        # Regenerate and compare against current genome
 genome diff old.md new.md          # Compare two genome files directly
@@ -55,21 +56,33 @@ genome merge a.md b.md             # Merge multiple genomes (stdout)
 genome merge a.md b.md -o out.md   # Merge and write to file
 ```
 
+### Output file defaults
+
+The genome is the same regardless of where it's written. The output file is chosen based on which LLM tool will read it:
+
+| Provider | Default output |
+|----------|---------------|
+| claude | CLAUDE.md |
+| codex | AGENTS.md |
+| gemini | CLAUDE.md |
+
+Use `--targets` (`-t`) to write to multiple files at once. Target names: `claude`, `codex`, `cursor`, `copilot`. You can also pass raw file paths.
+
 ## What it does
 
 1. Discovers context files: CLAUDE.md, AGENTS.md, README.md, CONTRIBUTING.md, package.json, Cargo.toml, nested CLAUDE.md files in monorepos, and others.
 2. Generates a structured genome via your LLM CLI (~3,000-4,000 tokens of dense notation).
-3. Writes the genome as your CLAUDE.md (drop-in replacement).
-4. Tracks metadata in `.genome.meta` (version, checksum, source files, token estimate).
+3. Writes the genome to the appropriate file for your tool (or multiple files with `--targets`).
+4. Tracks metadata in `.genome.meta` (version, checksum, source files, output targets).
 
 The genome format uses `§` section headers, `|` separators, `{}` groups, `->` flows, and compressed key-value notation while preserving every specific value — file paths, ports, class names, rules, commands.
 
 ## Output
 
-`genome init` writes two files:
+`genome init` writes:
 
-- **CLAUDE.md** — the genome (all LLM tools read it natively)
-- **.genome.meta** — version, checksum, source files, token estimate
+- The genome file (CLAUDE.md, AGENTS.md, .cursorrules, etc. depending on provider/targets)
+- **.genome.meta** — version, checksum, source files, output targets, token estimate
 
 Both should be committed.
 

@@ -17,7 +17,18 @@ import { createMeta, writeMeta, readMeta } from "./meta.js";
 import { diffGenomes, formatDiff, summarizeDiff } from "./diff.js";
 import { mergeGenomes } from "./merge.js";
 
-const CLAUDE_MD = "CLAUDE.md";
+const PROVIDER_DEFAULTS: Record<string, string> = {
+  claude: "CLAUDE.md",
+  codex: "AGENTS.md",
+  gemini: "CLAUDE.md",
+};
+
+const KNOWN_TARGETS: Record<string, string> = {
+  claude: "CLAUDE.md",
+  codex: "AGENTS.md",
+  cursor: ".cursorrules",
+  copilot: ".github/copilot-instructions.md",
+};
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -52,7 +63,7 @@ async function main(): Promise<void> {
 }
 
 async function init(args: string[]): Promise<void> {
-  const { repoPath, provider, edit, output, dryRun } = parseArgs(args);
+  const { repoPath, provider, edit, output, targets, dryRun } = parseArgs(args);
 
   console.log(`Scanning ${repoPath} for context files...\n`);
 
@@ -77,6 +88,7 @@ async function init(args: string[]): Promise<void> {
   }
 
   const resolvedProvider = await resolveProvider(provider);
+  const outputs = resolveOutputs(output, targets, resolvedProvider);
   const context = concatenateContext(files);
 
   console.log(`\nGenerating genome via ${resolvedProvider}...`);
@@ -94,10 +106,11 @@ async function init(args: string[]): Promise<void> {
     edited,
     sourceFiles: files.map((f) => f.relativePath),
     genomeContent: genome,
+    outputFiles: outputs,
   });
 
   if (dryRun) {
-    console.log(`\n--- DRY RUN (would write to ${output}) ---\n`);
+    console.log(`\n--- DRY RUN (would write to ${outputs.join(", ")}) ---\n`);
     console.log(genome);
     console.log(
       `\n--- ~${genomeMeta.tokenEstimate} tokens | checksum: ${genomeMeta.checksum} ---`,
@@ -105,9 +118,11 @@ async function init(args: string[]): Promise<void> {
     return;
   }
 
-  const outputPath = join(repoPath, output);
-  await writeFile(outputPath, genome + "\n");
-  console.log(`Wrote genome to ${output}`);
+  for (const out of outputs) {
+    const outPath = join(repoPath, out);
+    await writeFile(outPath, genome + "\n");
+    console.log(`Wrote genome to ${out}`);
+  }
 
   await writeMeta(repoPath, genomeMeta);
   console.log("Wrote metadata to .genome.meta");
@@ -117,7 +132,7 @@ async function init(args: string[]): Promise<void> {
 }
 
 async function update(args: string[]): Promise<void> {
-  const { repoPath, provider, edit, output, dryRun } = parseArgs(args);
+  const { repoPath, provider, edit, output, targets, dryRun } = parseArgs(args);
 
   const existingMeta = await readMeta(repoPath);
   if (!existingMeta) {
@@ -139,12 +154,16 @@ async function update(args: string[]): Promise<void> {
   const resolvedProvider = await resolveProvider(
     provider || (existingMeta.provider as Provider),
   );
+  // Use stored output files from meta, falling back to flag/provider defaults
+  const outputs = output || targets.length > 0
+    ? resolveOutputs(output, targets, resolvedProvider)
+    : existingMeta.outputFiles || resolveOutputs(output, targets, resolvedProvider);
   const context = concatenateContext(files);
 
   // Read existing genome for diffing after regeneration
   let oldGenome = "";
   try {
-    oldGenome = await readFile(join(repoPath, output), "utf-8");
+    oldGenome = await readFile(join(repoPath, outputs[0]), "utf-8");
   } catch {
     // No existing file to diff against
   }
@@ -164,6 +183,7 @@ async function update(args: string[]): Promise<void> {
     edited,
     sourceFiles: files.map((f) => f.relativePath),
     genomeContent: genome,
+    outputFiles: outputs,
   });
   genomeMeta.version = existingMeta.version + 1;
 
@@ -175,7 +195,7 @@ async function update(args: string[]): Promise<void> {
 
   if (dryRun) {
     console.log(
-      `\n--- DRY RUN (would write v${genomeMeta.version} to ${output}) ---\n`,
+      `\n--- DRY RUN (would write v${genomeMeta.version} to ${outputs.join(", ")}) ---\n`,
     );
     console.log(genome);
     console.log(
@@ -184,9 +204,11 @@ async function update(args: string[]): Promise<void> {
     return;
   }
 
-  const outputPath = join(repoPath, output);
-  await writeFile(outputPath, genome + "\n");
-  console.log(`Wrote updated genome to ${output}`);
+  for (const out of outputs) {
+    const outPath = join(repoPath, out);
+    await writeFile(outPath, genome + "\n");
+    console.log(`Wrote updated genome to ${out}`);
+  }
 
   await writeMeta(repoPath, genomeMeta);
   console.log(`Updated .genome.meta (v${genomeMeta.version})`);
@@ -204,20 +226,23 @@ async function status(args: string[]): Promise<void> {
     return;
   }
 
-  const claudeMdPath = join(repoPath, CLAUDE_MD);
-  let currentChecksum = "";
-  try {
-    const content = await readFile(claudeMdPath, "utf-8");
-    const { createHash } = await import("node:crypto");
-    currentChecksum = createHash("sha256")
-      .update(content)
-      .digest("hex")
-      .slice(0, 16);
-  } catch {
-    // CLAUDE.md not found
-  }
+  const { createHash } = await import("node:crypto");
+  const outputFiles = meta.outputFiles || ["CLAUDE.md"];
+  const fileStatuses: string[] = [];
 
-  const modified = currentChecksum && currentChecksum !== meta.checksum;
+  for (const file of outputFiles) {
+    try {
+      const content = await readFile(join(repoPath, file), "utf-8");
+      const fileChecksum = createHash("sha256")
+        .update(content)
+        .digest("hex")
+        .slice(0, 16);
+      const modified = fileChecksum !== meta.checksum;
+      fileStatuses.push(`${file}${modified ? " (MODIFIED)" : ""}`);
+    } catch {
+      fileStatuses.push(`${file} (MISSING)`);
+    }
+  }
 
   console.log(`Genome v${meta.version}`);
   console.log(`  Generated: ${meta.generatedAt}`);
@@ -226,9 +251,8 @@ async function status(args: string[]): Promise<void> {
   );
   console.log(`  Tokens:    ~${meta.tokenEstimate}`);
   console.log(`  Sources:   ${meta.sourceFiles.join(", ")}`);
-  console.log(
-    `  Checksum:  ${meta.checksum}${modified ? " (MODIFIED)" : ""}`,
-  );
+  console.log(`  Outputs:   ${fileStatuses.join(", ")}`);
+  console.log(`  Checksum:  ${meta.checksum}`);
 }
 
 async function diff(args: string[]): Promise<void> {
@@ -243,15 +267,21 @@ async function diff(args: string[]): Promise<void> {
     return;
   }
 
-  // Mode 2: genome diff [path] — regenerate and compare against current CLAUDE.md
-  const { repoPath, provider, output } = parseArgs(args);
+  // Mode 2: genome diff [path] — regenerate and compare against current genome
+  const { repoPath, provider, output, targets } = parseArgs(args);
 
-  const outputPath = join(repoPath, output);
+  const existingMeta = await readMeta(repoPath);
+  const resolvedProvider = await resolveProvider(provider || (existingMeta?.provider as Provider) || null);
+  const outputs = output || targets.length > 0
+    ? resolveOutputs(output, targets, resolvedProvider)
+    : existingMeta?.outputFiles || resolveOutputs(output, targets, resolvedProvider);
+  const primaryOutput = outputs[0];
+
   let oldGenome: string;
   try {
-    oldGenome = await readFile(outputPath, "utf-8");
+    oldGenome = await readFile(join(repoPath, primaryOutput), "utf-8");
   } catch {
-    console.error(`No genome found at ${output}. Run 'genome init' first.`);
+    console.error(`No genome found at ${primaryOutput}. Run 'genome init' first.`);
     process.exit(1);
   }
 
@@ -261,7 +291,6 @@ async function diff(args: string[]): Promise<void> {
     process.exit(1);
   }
 
-  const resolvedProvider = await resolveProvider(provider);
   const context = concatenateContext(files);
 
   console.log(`Generating fresh genome via ${resolvedProvider} for comparison...\n`);
@@ -308,13 +337,15 @@ function parseArgs(args: string[]): {
   repoPath: string;
   provider: Provider | null;
   edit: boolean;
-  output: string;
+  output: string | null;
+  targets: string[];
   dryRun: boolean;
 } {
   let repoPath = ".";
   let provider: Provider | null = null;
   let edit = false;
-  let output = CLAUDE_MD;
+  let output: string | null = null;
+  let targets: string[] = [];
   let dryRun = false;
 
   for (let i = 0; i < args.length; i++) {
@@ -331,6 +362,13 @@ function parseArgs(args: string[]): {
       }
     } else if (arg === "--output" || arg === "-o") {
       output = args[++i];
+    } else if (arg === "--targets" || arg === "-t") {
+      targets = args[++i].split(",").map((t) => {
+        const known = KNOWN_TARGETS[t.trim()];
+        if (known) return known;
+        // Allow raw file paths too
+        return t.trim();
+      });
     } else if (arg === "--dry-run" || arg === "-n") {
       dryRun = true;
     } else if (!arg.startsWith("-")) {
@@ -338,7 +376,21 @@ function parseArgs(args: string[]): {
     }
   }
 
-  return { repoPath: resolve(repoPath), provider, edit, output, dryRun };
+  return { repoPath: resolve(repoPath), provider, edit, output, targets, dryRun };
+}
+
+/**
+ * Resolve which files to write the genome to.
+ * Priority: --output flag > --targets flag > provider default.
+ */
+function resolveOutputs(
+  output: string | null,
+  targets: string[],
+  provider: Provider,
+): string[] {
+  if (output) return [output];
+  if (targets.length > 0) return targets;
+  return [PROVIDER_DEFAULTS[provider] || "CLAUDE.md"];
 }
 
 async function resolveProvider(
@@ -372,22 +424,31 @@ Usage:
 Options:
   -p, --provider <name>   LLM to use: claude, codex, gemini (auto-detected)
   -e, --edit              Run a refinement pass after generation
-  -o, --output <file>     Output file (default: CLAUDE.md)
+  -o, --output <file>     Output file (default: auto from provider)
+  -t, --targets <list>    Write to multiple files: claude,codex,cursor,copilot
   -n, --dry-run           Preview genome without writing files
   -h, --help              Show this help
 
+Output defaults by provider:
+  claude -> CLAUDE.md    codex -> AGENTS.md    gemini -> CLAUDE.md
+
+Target names map to:
+  claude  -> CLAUDE.md                  cursor -> .cursorrules
+  codex   -> AGENTS.md                  copilot -> .github/copilot-instructions.md
+
 Examples:
-  genome init                      # Generate genome for current directory
-  genome init ../my-project        # Generate for another project
-  genome init --edit               # Generate with refinement pass
-  genome init -p gemini            # Use Gemini CLI
-  genome init --dry-run            # Preview without writing
-  genome update                    # Regenerate from updated sources
-  genome status                    # Check genome version and metadata
-  genome diff                      # Show what changed since last generation
-  genome diff a.md b.md            # Compare two genome files
-  genome merge apps/*/CLAUDE.md    # Merge monorepo genomes
-  genome merge a.md b.md -o out.md # Merge and write to file`);
+  genome init                           # Auto-detect provider, write its default
+  genome init -p codex                  # Write to AGENTS.md
+  genome init -t claude,codex           # Write to both CLAUDE.md and AGENTS.md
+  genome init -t claude,cursor,copilot  # Write to all three tool formats
+  genome init --edit                    # Generate with refinement pass
+  genome init --dry-run                 # Preview without writing
+  genome update                         # Regenerate (remembers output targets)
+  genome status                         # Check version and file status
+  genome diff                           # Show what changed since last generation
+  genome diff a.md b.md                 # Compare two genome files
+  genome merge apps/*/CLAUDE.md         # Merge monorepo genomes
+  genome merge a.md b.md -o out.md      # Merge and write to file`);
 }
 
 main().catch((err) => {

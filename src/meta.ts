@@ -9,6 +9,7 @@ export interface GenomeMeta {
   edited: boolean;
   checksum: string;
   sourceFiles: string[];
+  outputFiles: string[];
   tokenEstimate: number;
 }
 
@@ -19,6 +20,7 @@ export function createMeta(opts: {
   edited: boolean;
   sourceFiles: string[];
   genomeContent: string;
+  outputFiles: string[];
 }): GenomeMeta {
   return {
     version: 1,
@@ -27,6 +29,7 @@ export function createMeta(opts: {
     edited: opts.edited,
     checksum: checksum(opts.genomeContent + "\n"),
     sourceFiles: opts.sourceFiles,
+    outputFiles: opts.outputFiles,
     tokenEstimate: estimateTokens(opts.genomeContent),
   };
 }
