@@ -25,7 +25,7 @@ export function createMeta(opts: {
     generatedAt: new Date().toISOString(),
     provider: opts.provider,
     edited: opts.edited,
-    checksum: checksum(opts.genomeContent),
+    checksum: checksum(opts.genomeContent + "\n"),
     sourceFiles: opts.sourceFiles,
     tokenEstimate: estimateTokens(opts.genomeContent),
   };
